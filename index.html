@@ -316,34 +316,33 @@ display:flex;gap:24px;align-items:center;
 
   <!-- START SCREEN -->
 
-  <div id="ss">
-    <div class="ss-top">
-      <div class="ss-model">CINEMASCOPE CAMERA</div>
-      <div class="ss-name">SCOPE</div>
-      <div class="ss-sub">FOR FILM &amp; VFX PRODUCTION</div>
+  <div id="ss" style="position:absolute;inset:0;z-index:80;background:#0d0d0d;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0">
+    <div style="flex:1;width:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;border-bottom:1px solid rgba(255,255,255,.06);padding:40px 24px">
+      <div style="font-family:'Barlow Condensed',sans-serif;font-weight:200;font-size:10px;letter-spacing:.28em;color:rgba(255,255,255,.4);text-transform:uppercase">Cinemascope Camera</div>
+      <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:64px;line-height:1;letter-spacing:.08em;color:#e8a030;text-transform:uppercase">SCOPE</div>
+      <div style="font-family:'Barlow Condensed',sans-serif;font-weight:300;font-size:10px;letter-spacing:.2em;color:rgba(255,255,255,.3);text-transform:uppercase;margin-top:2px">For Film &amp; VFX Production</div>
     </div>
-    <div class="ss-bottom">
-      <button id="ss-btn">
-        <span style="font-size:10px;opacity:.6">▶</span>
-        START CAMERA
+    <div style="width:100%;padding:32px 24px;display:flex;flex-direction:column;align-items:center;gap:20px">
+      <button id="ss-btn" style="width:100%;max-width:280px;padding:18px;border:1px solid rgba(232,160,48,.35);background:none;color:#e8a030;font-family:'Barlow Condensed',sans-serif;font-weight:400;font-size:12px;letter-spacing:.22em;cursor:pointer;-webkit-appearance:none;text-transform:uppercase">
+        ▶ &nbsp;START CAMERA
       </button>
-      <div class="ss-specs">
-        <div class="ss-spec">
-          <div class="ss-spec-val">5</div>
-          <div class="ss-spec-lbl">FORMATS</div>
+      <div style="display:flex;gap:28px;align-items:center">
+        <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:16px;letter-spacing:.06em;color:rgba(255,255,255,.55)">5</div>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-weight:200;font-size:8px;letter-spacing:.2em;color:rgba(255,255,255,.25)">FORMATS</div>
         </div>
-        <div class="ss-divider"></div>
-        <div class="ss-spec">
-          <div class="ss-spec-val">4K</div>
-          <div class="ss-spec-lbl">CAPTURE</div>
+        <div style="width:1px;height:30px;background:rgba(255,255,255,.08)"></div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:16px;letter-spacing:.06em;color:rgba(255,255,255,.55)">4K</div>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-weight:200;font-size:8px;letter-spacing:.2em;color:rgba(255,255,255,.25)">CAPTURE</div>
         </div>
-        <div class="ss-divider"></div>
-        <div class="ss-spec">
-          <div class="ss-spec-val">2.39</div>
-          <div class="ss-spec-lbl">DEFAULT</div>
+        <div style="width:1px;height:30px;background:rgba(255,255,255,.08)"></div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:16px;letter-spacing:.06em;color:rgba(255,255,255,.55)">2.39</div>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-weight:200;font-size:8px;letter-spacing:.2em;color:rgba(255,255,255,.25)">DEFAULT</div>
         </div>
       </div>
-      <div id="ss-err"></div>
+      <div id="ss-err" style="font-family:'Barlow Condensed',sans-serif;font-weight:300;font-size:9px;color:rgba(255,80,80,.7);letter-spacing:.14em;text-align:center;display:none;line-height:1.9"></div>
     </div>
   </div>
 </div>
