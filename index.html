@@ -868,31 +868,30 @@ function capture(){
     oc.restore();
   }
 
-  // Grain on capture — Kodak style (scaled for high-res output)
+  // Capture grain — Gaussian noise (same algorithm as preview)
   if(grainVal>0){
-    oc.save();
     const intensity=grainVal/100;
-    const scaleFactor=Math.min(out.width,out.height)/400; // scale grain to res
-
-    // Fine grain overlay
+    // For large captures, use 4x downscale noise then tile
+    const CSCALE=4;
+    const nW=Math.ceil(out.width/CSCALE), nH=Math.ceil(out.height/CSCALE);
+    const gCv=document.createElement('canvas');
+    gCv.width=nW; gCv.height=nH;
+    const gCtx=gCv.getContext('2d');
+    const imgData=gCtx.createImageData(nW,nH);
+    const d2=imgData.data;
+    const sigma=intensity*38+8;
+    for(let i=0;i<d2.length;i+=4){
+      const u1=Math.random()||1e-10;
+      const u2=Math.random();
+      const g=Math.sqrt(-2*Math.log(u1))*Math.cos(6.2832*u2);
+      const v=Math.max(0,Math.min(255,Math.round(128+g*sigma)));
+      d2[i]=v; d2[i+1]=v; d2[i+2]=v; d2[i+3]=255;
+    }
+    gCtx.putImageData(imgData,0,0);
+    oc.save();
     oc.globalCompositeOperation='overlay';
-    const cnt=Math.floor(out.width*out.height*intensity*0.10);
-    for(let i=0;i<cnt;i++){
-      const gx=Math.random()*out.width,gy=Math.random()*out.height;
-      const gs=(Math.random()*0.75+0.1)*scaleFactor;
-      const v=Math.floor(Math.random()*255);
-      const warm=v>180?Math.floor(Math.random()*18):0;
-      oc.fillStyle=`rgba(${Math.min(255,v+warm)},${Math.min(255,v+Math.floor(warm*.4))},${v},0.82)`;
-      oc.fillRect(gx,gy,gs,gs);
-    }
-    // Shadow clumps
-    oc.globalCompositeOperation='soft-light';
-    const shdCnt=Math.floor(out.width*out.height*intensity*0.018);
-    for(let i=0;i<shdCnt;i++){
-      const gx=Math.random()*out.width,gy=Math.random()*out.height;
-      const gs=(Math.random()*1.1+0.25)*scaleFactor;
-      oc.fillStyle=`rgba(20,16,12,${intensity*0.55})`;oc.fillRect(gx,gy,gs,gs);
-    }
+    oc.globalAlpha=intensity*0.62+0.08;
+    oc.drawImage(gCv,0,0,out.width,out.height);
     oc.restore();
   }
 
