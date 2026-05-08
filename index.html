@@ -371,7 +371,7 @@ function getM(){
 // ── CAMERA ──────────────────────────────────────────────────
 async function initCam(){
   if(stream){stream.getTracks().forEach(t=>t.stop());stream=null;}
-  const tries=[{facingMode:{ideal:facing},width:{ideal:3840},height:{ideal:2160}},{facingMode:{ideal:facing}},true];
+  const tries=[{facingMode:{ideal:facing},width:{ideal:65535},height:{ideal:65535}},{facingMode:{ideal:facing}},true];
   for(const c of tries){
     try{
       stream=await navigator.mediaDevices.getUserMedia({video:c,audio:false});
@@ -552,76 +552,75 @@ function updateFnamePreview(){fnamePreview.textContent=buildFilename();}
 
 // ── CAPTURE ─────────────────────────────────────────────────
 function capture(){
-  const vW=vid.videoWidth, vH=vid.videoHeight;
+  const vW=vid.videoWidth,vH=vid.videoHeight;
   if(!vW||!vH){showToast('NO VIDEO');return;}
-
   flash.style.transition='none';flash.style.opacity='1';
   setTimeout(()=>{flash.style.transition='opacity .12s';flash.style.opacity='0';},80);
+  doCapture(new Date());
+}
 
-  const now=new Date();
+// Map viewfinder active area → exact video pixel coordinates
+function getVideoCropRect(){
+  const W=window.innerWidth,H=window.innerHeight;
+  const vW=vid.videoWidth,vH=vid.videoHeight;
+  const m=getM();
+  const scale=Math.max(W/vW,H/vH);
+  const ox=(W-vW*scale)/2, oy=(H-vH*scale)/2;
+  const sx=(m.aL-ox)/scale, sy=(m.aT-oy)/scale;
+  const sw=m.aW/scale, sh=m.aH/scale;
+  return{sx,sy,sw,sh,outW:Math.round(sw),outH:Math.round(sh)};
+}
 
-  // ── TRY IMAGECAPTURE (full sensor resolution) ──────────────────────────
+async function doCapture(now){
+  const vW=vid.videoWidth,vH=vid.videoHeight;
+  // Try ImageCapture for sensor-native resolution
   if(imageCapture&&typeof imageCapture.takePhoto==='function'){
-    imageCapture.takePhoto().then(async blob=>{
+    try{
+      const blob=await imageCapture.takePhoto();
       const bitmap=await createImageBitmap(blob);
-      const bW=bitmap.width, bH=bitmap.height;
-      // Centre-crop to format ratio
-      const r=FMTS[fi].r;
-      let cW,cH,cX,cY;
-      if(bW/bH>r){cH=bH;cW=Math.round(bH*r);cX=Math.round((bW-cW)/2);cY=0;}
-      else{cW=bW;cH=Math.round(bW/r);cX=0;cY=Math.round((bH-cH)/2);}
+      const pW=bitmap.width,pH=bitmap.height;
+      // Scale crop rect from video coords to photo coords
+      const vc=getVideoCropRect();
+      const sX=pW/vW, sY=pH/vH;
+      const cX=Math.max(0,Math.round(vc.sx*sX));
+      const cY=Math.max(0,Math.round(vc.sy*sY));
+      const cW=Math.min(Math.round(vc.sw*sX),pW-cX);
+      const cH=Math.min(Math.round(vc.sh*sY),pH-cY);
       const out=document.createElement('canvas');
       out.width=cW;out.height=cH;
       let oc;try{oc=out.getContext('2d',{colorSpace:capCs.cs});}catch{oc=out.getContext('2d');}
       if(facing==='user'){oc.translate(cW,0);oc.scale(-1,1);}
       oc.drawImage(bitmap,cX,cY,cW,cH,0,0,cW,cH);
-      const fname=buildFilename();
-      out.toBlob(async rawBlob=>{
-        if(!rawBlob)return;
-        let finalBlob=rawBlob;
-        if(capFmt.mime==='image/jpeg'){
-          try{finalBlob=await addExifToJpeg(rawBlob,{width:cW,height:cH,datetime:formatExifDate(now),software:'Cinemascopome',description:FMTS[fi].n+' '+FMTS[fi].l+':1 '+capCs.label,userComment:'Cinemascopome Format:'+FMTS[fi].n+' Ratio:'+FMTS[fi].l+' CS:'+capCs.label});}catch(e){}
-        }
-        const url=URL.createObjectURL(finalBlob);
-        photos.push({url,blob:finalBlob,fmt:FMTS[fi].l,fmtName:FMTS[fi].n,cs:capCs.label,fname,res:cW+'×'+cH,time:now.getTime()});
-        if(photos.length>50){URL.revokeObjectURL(photos[0].url);photos.shift();}
-        updateBadge();
-        showInstantShareToast(photos[photos.length-1],cW+'×'+cH);
-      },capFmt.mime,capFmt.mime==='image/jpeg'?0.96:undefined);
-    }).catch(()=>captureFromVideo(now)); // fallback if takePhoto fails
-    return;
+      bitmap.close();
+      await finalizeCrop(out,cW,cH,now);
+      return;
+    }catch(e){}
   }
-  captureFromVideo(now);
+  // Fallback: draw from video stream
+  const vc=getVideoCropRect();
+  const out=document.createElement('canvas');
+  out.width=vc.outW;out.height=vc.outH;
+  let oc;try{oc=out.getContext('2d',{colorSpace:capCs.cs});}catch{oc=out.getContext('2d');}
+  if(facing==='user'){oc.translate(vc.outW,0);oc.scale(-1,1);}
+  oc.drawImage(vid,vc.sx,vc.sy,vc.sw,vc.sh,0,0,vc.outW,vc.outH);
+  await finalizeCrop(out,vc.outW,vc.outH,now);
 }
 
-// Fallback: capture from video stream (4K max)
-function captureFromVideo(now){
-  const vW=vid.videoWidth, vH=vid.videoHeight;
-  const r=FMTS[fi].r;
-  let cW,cH,cX,cY;
-  if(vW/vH>r){cH=vH;cW=Math.round(vH*r);cX=Math.round((vW-cW)/2);cY=0;}
-  else{cW=vW;cH=Math.round(vW/r);cX=0;cY=Math.round((vH-cH)/2);}
-  const out=document.createElement('canvas');
-  out.width=cW;out.height=cH;
-  let oc;try{oc=out.getContext('2d',{colorSpace:capCs.cs});}catch{oc=out.getContext('2d');}
-  if(facing==='user'){oc.translate(cW,0);oc.scale(-1,1);}
-  oc.drawImage(vid,cX,cY,cW,cH,0,0,cW,cH);
+async function finalizeCrop(canvas,w,h,now){
   const fname=buildFilename();
-  out.toBlob(async rawBlob=>{
+  canvas.toBlob(async rawBlob=>{
     if(!rawBlob)return;
     let finalBlob=rawBlob;
     if(capFmt.mime==='image/jpeg'){
-      try{finalBlob=await addExifToJpeg(rawBlob,{width:cW,height:cH,datetime:formatExifDate(now),software:'Cinemascopome',description:FMTS[fi].n+' '+FMTS[fi].l+':1 '+capCs.label,userComment:'Cinemascopome Format:'+FMTS[fi].n+' Ratio:'+FMTS[fi].l+' CS:'+capCs.label});}catch(e){}
+      try{finalBlob=await addExifToJpeg(rawBlob,{width:w,height:h,datetime:formatExifDate(now),software:'Cinemascopome',description:FMTS[fi].n+' '+FMTS[fi].l+':1 '+capCs.label,userComment:'Cinemascopome Format:'+FMTS[fi].n+' Ratio:'+FMTS[fi].l+' CS:'+capCs.label});}catch(e){}
     }
     const url=URL.createObjectURL(finalBlob);
-    photos.push({url,blob:finalBlob,fmt:FMTS[fi].l,fmtName:FMTS[fi].n,cs:capCs.label,fname,res:cW+'×'+cH,time:now.getTime()});
+    photos.push({url,blob:finalBlob,fmt:FMTS[fi].l,fmtName:FMTS[fi].n,cs:capCs.label,fname,res:w+'×'+h,time:now.getTime()});
     if(photos.length>50){URL.revokeObjectURL(photos[0].url);photos.shift();}
     updateBadge();
-    showInstantShareToast(photos[photos.length-1],cW+'×'+cH);
+    showInstantShareToast(photos[photos.length-1],w+'×'+h);
   },capFmt.mime,capFmt.mime==='image/jpeg'?0.96:undefined);
 }
-
-
 
 function formatExifDate(d){
   const p=n=>String(n).padStart(2,'0');
@@ -694,7 +693,7 @@ function buildExifBuffer(info){
 
 async function addExifToJpeg(blob,info){
   const tiff=buildExifBuffer(info);
-  const exifHeader=[0x45,0x78,0x69,0x66,0x00,0x00]; // "Exif��"
+  const exifHeader=[0x45,0x78,0x69,0x66,0x00,0x00]; // "Exif"
   const segLen=2+exifHeader.length+tiff.length; // includes 2-byte length field
   const orig=new Uint8Array(await blob.arrayBuffer());
   const out=new Uint8Array(2+2+segLen+orig.length-2);
