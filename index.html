@@ -14,71 +14,91 @@
 <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow+Condensed:wght@200;300;400;600;700&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
-html,body{width:100%;height:100%;background:#000;overflow:hidden}
-#wrap{position:fixed;inset:0;background:#000;overflow:hidden}
-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1}
+
+html,body{
+width:100%;height:100%;
+/* dvh = ブラウザUIを除いた実際の高さ */
+height:100dvh;
+background:#000;overflow:hidden;
+}
+
+#wrap{
+position:fixed;inset:0;
+/* dvhが使えるブラウザはdvhを優先 */
+height:100vh;
+height:100dvh;
+background:#000;overflow:hidden;
+display:flex;flex-direction:column;
+}
+
+/* ── VIDEO LAYER (absolute, covers everything) ── */
+video{
+position:absolute;inset:0;width:100%;height:100%;
+object-fit:cover;z-index:1;
+}
 video.mirror{transform:scaleX(-1)}
 canvas{position:absolute;inset:0;z-index:3;pointer-events:none}
 
-/* TOP HUD */
-#top-hud{
-position:absolute;top:0;left:0;right:0;z-index:10;
-padding:env(safe-area-inset-top,16px) 20px 24px;
-background:linear-gradient(to bottom,rgba(0,0,0,.65) 0%,transparent 100%);
+/* ── TOP BAR (compact) ── */
+#top-bar{
+position:relative;z-index:10;flex-shrink:0;
 display:flex;align-items:center;justify-content:space-between;
-pointer-events:none;
+padding:8px 18px 6px;
+background:linear-gradient(to bottom,rgba(0,0,0,.7) 60%,transparent 100%);
 }
-.hud-left{display:flex;flex-direction:column;gap:2px}
-.hud-fmt-label{font-family:‘Barlow Condensed’,sans-serif;font-weight:200;font-size:8px;letter-spacing:.26em;color:rgba(255,255,255,.38)}
-.hud-fmt-name{font-family:‘Barlow Condensed’,sans-serif;font-weight:700;font-size:19px;letter-spacing:.12em;color:#e8a030;line-height:1}
-.hud-center{display:flex;align-items:center;gap:5px}
-.hud-dot{width:6px;height:6px;border-radius:50%;background:#e03333;animation:bl 1.5s infinite}
+.top-left{display:flex;flex-direction:column;gap:1px}
+.top-fmt-lbl{font-family:‘Barlow Condensed’,sans-serif;font-weight:200;font-size:8px;letter-spacing:.24em;color:rgba(255,255,255,.35)}
+.top-fmt-name{font-family:‘Barlow Condensed’,sans-serif;font-weight:700;font-size:16px;letter-spacing:.12em;color:#e8a030;line-height:1}
+.top-center{display:flex;align-items:center;gap:4px}
+.dot{width:5px;height:5px;border-radius:50%;background:#e03333;animation:bl 1.5s infinite}
 @keyframes bl{0%,100%{opacity:1}50%{opacity:.1}}
-.hud-live{font-family:‘Share Tech Mono’,monospace;font-size:9px;color:rgba(255,255,255,.4);letter-spacing:.14em}
-.hud-right{display:flex;flex-direction:column;align-items:flex-end;gap:1px}
-.hud-ratio{font-family:‘Barlow Condensed’,sans-serif;font-weight:600;font-size:22px;line-height:1;letter-spacing:.04em;color:#e8a030}
-.hud-ratio-lbl{font-family:‘Barlow Condensed’,sans-serif;font-weight:200;font-size:7px;letter-spacing:.2em;color:rgba(255,255,255,.26)}
+.live{font-family:‘Share Tech Mono’,monospace;font-size:8px;color:rgba(255,255,255,.38);letter-spacing:.14em}
+.top-right{display:flex;flex-direction:column;align-items:flex-end;gap:0px}
+.top-ratio{font-family:‘Barlow Condensed’,sans-serif;font-weight:600;font-size:18px;line-height:1;letter-spacing:.04em;color:#e8a030}
+.top-ratio-lbl{font-family:‘Barlow Condensed’,sans-serif;font-weight:200;font-size:7px;letter-spacing:.18em;color:rgba(255,255,255,.26)}
 
-/* BOTTOM CARD */
+/* ── VIEWFINDER (flexible, fills remaining space) ── */
+#viewfinder{position:relative;z-index:2;flex:1;min-height:0}
+
+/* ── BOTTOM CARD (compact, fixed height) ── */
 #card{
-position:absolute;bottom:0;left:0;right:0;z-index:10;
-background:#181818;border-radius:22px 22px 0 0;
-padding-bottom:env(safe-area-inset-bottom,0px);
+position:relative;z-index:10;flex-shrink:0;
+background:#181818;
+border-radius:18px 18px 0 0;
+/* Safariのホームバー考慮 */
+padding-bottom:max(env(safe-area-inset-bottom,0px),4px);
 }
-#card::before{content:’’;display:block;width:34px;height:3px;border-radius:2px;background:rgba(255,255,255,.12);margin:10px auto 0}
-
-.card-hdr{
-display:flex;align-items:center;justify-content:space-between;
-padding:10px 22px 8px;border-bottom:1px solid rgba(255,255,255,.06);
+#card::before{
+content:’’;display:block;width:32px;height:3px;border-radius:2px;
+background:rgba(255,255,255,.1);margin:8px auto 0;
 }
-.card-name-col{display:flex;flex-direction:column;gap:1px}
-.card-lbl{font-family:‘Barlow Condensed’,sans-serif;font-weight:200;font-size:8px;letter-spacing:.24em;color:rgba(255,255,255,.28)}
-.card-name{font-family:‘Barlow Condensed’,sans-serif;font-weight:700;font-size:21px;line-height:1;letter-spacing:.1em;color:#e8a030}
-.card-ratio-col{display:flex;flex-direction:column;align-items:flex-end;gap:1px}
-.card-ratio{font-family:‘Barlow Condensed’,sans-serif;font-weight:600;font-size:24px;line-height:1;letter-spacing:.04em;color:rgba(255,255,255,.65)}
-.card-ratio-lbl{font-family:‘Barlow Condensed’,sans-serif;font-weight:200;font-size:7px;letter-spacing:.2em;color:rgba(255,255,255,.24)}
 
-/* LENS ROW */
+/* LENS BUTTONS */
 #lens-row{
-display:none;align-items:center;justify-content:center;gap:8px;
-padding:8px 22px;border-bottom:1px solid rgba(255,255,255,.06);
+display:none;align-items:center;justify-content:center;gap:6px;
+padding:6px 18px 0;
 }
 .lens-btn{
-padding:5px 14px;border-radius:20px;
+padding:4px 12px;border-radius:16px;
 border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.04);
 font-family:‘Barlow Condensed’,sans-serif;font-weight:600;font-size:12px;
-letter-spacing:.06em;color:rgba(255,255,255,.38);
+letter-spacing:.06em;color:rgba(255,255,255,.35);
 cursor:pointer;-webkit-appearance:none;transition:.15s;
 }
 .lens-btn.on{border-color:#e8a030;background:rgba(232,160,48,.12);color:#e8a030}
 .lens-btn:active{opacity:.5}
 
 /* FORMAT PILLS */
-.pill-row{display:flex;align-items:stretch;border-bottom:1px solid rgba(255,255,255,.06)}
+.pill-row{
+display:flex;align-items:stretch;
+margin:6px 0 0;
+border-top:1px solid rgba(255,255,255,.06);
+border-bottom:1px solid rgba(255,255,255,.06);
+}
 .pill{
-flex:1;padding:9px 0;text-align:center;position:relative;
+flex:1;padding:7px 0;text-align:center;position:relative;
 font-family:‘Barlow Condensed’,sans-serif;font-weight:300;font-size:10px;
-letter-spacing:.1em;color:rgba(255,255,255,.22);
+letter-spacing:.1em;color:rgba(255,255,255,.2);
 background:none;border:none;border-right:1px solid rgba(255,255,255,.06);
 cursor:pointer;-webkit-appearance:none;transition:.15s;
 }
@@ -87,172 +107,152 @@ cursor:pointer;-webkit-appearance:none;transition:.15s;
 .pill.on::after{content:’’;position:absolute;bottom:0;left:0;right:0;height:2px;background:#e8a030}
 .pill:active{opacity:.5}
 
-/* CONTROLS */
+/* CONTROLS ROW */
 .ctrl-row{
 display:flex;align-items:center;justify-content:space-between;
-padding:12px 16px 14px;
+padding:8px 14px 8px;
 }
-.ctrl-group{display:flex;align-items:center;gap:6px}
+.ctrl-group{display:flex;align-items:center;gap:4px}
+
 .cb{
 display:flex;flex-direction:column;align-items:center;gap:3px;
 background:none;border:none;cursor:pointer;-webkit-appearance:none;
-min-width:40px;position:relative;
+min-width:38px;position:relative;
 }
 .cb:active{opacity:.4}
 .ci{
-width:40px;height:40px;border-radius:50%;
+width:38px;height:38px;border-radius:50%;
 display:flex;align-items:center;justify-content:center;
 border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);
-font-family:‘Share Tech Mono’,monospace;font-size:15px;color:rgba(255,255,255,.45);
+font-family:‘Share Tech Mono’,monospace;font-size:15px;color:rgba(255,255,255,.42);
 transition:.15s;
 }
 .cb.on .ci{border-color:rgba(232,160,48,.38);background:rgba(232,160,48,.08);color:#e8a030}
 .cl{
 font-family:‘Barlow Condensed’,sans-serif;font-weight:200;font-size:7px;
-letter-spacing:.16em;color:rgba(255,255,255,.2);white-space:nowrap;
+letter-spacing:.14em;color:rgba(255,255,255,.2);
 }
-.cb.on .cl{color:rgba(232,160,48,.6)}
+.cb.on .cl{color:rgba(232,160,48,.55)}
 
-/* Gallery badge */
 .badge{
 position:absolute;top:-2px;right:-2px;
-min-width:16px;height:16px;border-radius:8px;padding:0 4px;
+min-width:15px;height:15px;border-radius:8px;padding:0 3px;
 background:#e8a030;color:#000;
-font-family:‘Barlow Condensed’,sans-serif;font-weight:700;font-size:9px;
+font-family:‘Barlow Condensed’,sans-serif;font-weight:700;font-size:8px;
 display:none;align-items:center;justify-content:center;letter-spacing:0;z-index:2;
 }
 
 /* SHUTTER */
-#cap{display:flex;flex-direction:column;align-items:center;gap:4px;background:none;border:none;cursor:pointer;-webkit-appearance:none}
-.sh{width:66px;height:66px;border-radius:50%;position:relative}
-.sh-ring{position:absolute;inset:0;border-radius:50%;border:2.5px solid rgba(255,255,255,.55)}
-.sh-core{position:absolute;inset:6px;border-radius:50%;background:rgba(255,255,255,.86);transition:.1s}
-#cap:active .sh-ring{border-color:#e8a030}
-#cap:active .sh-core{transform:scale(.8);background:rgba(255,255,255,.25)}
-.sl{font-family:‘Barlow Condensed’,sans-serif;font-weight:200;font-size:7px;letter-spacing:.2em;color:rgba(255,255,255,.2)}
-
-/* MASK INDICATOR on HUD */
-#mask-hud{
-position:absolute;right:20px;z-index:10;pointer-events:none;
-display:flex;flex-direction:column;align-items:flex-end;gap:2px;
+#cap{
+display:flex;flex-direction:column;align-items:center;gap:3px;
+background:none;border:none;cursor:pointer;-webkit-appearance:none;
 }
+.sh{width:60px;height:60px;border-radius:50%;position:relative}
+.sh-ring{position:absolute;inset:0;border-radius:50%;border:2.5px solid rgba(255,255,255,.5)}
+.sh-core{position:absolute;inset:5px;border-radius:50%;background:rgba(255,255,255,.86);transition:.1s}
+#cap:active .sh-ring{border-color:#e8a030}
+#cap:active .sh-core{transform:scale(.8);background:rgba(255,255,255,.22)}
+.sl{font-family:‘Barlow Condensed’,sans-serif;font-weight:200;font-size:7px;letter-spacing:.18em;color:rgba(255,255,255,.18)}
 
-/* FOCUS */
-#focus{position:absolute;width:52px;height:52px;margin:-26px 0 0 -26px;z-index:6;pointer-events:none;opacity:0;transition:opacity .4s}
-.fc{position:absolute;width:10px;height:10px;border-color:#e8a030;border-style:solid}
+/* ── OVERLAYS ── */
+#focus{position:absolute;width:50px;height:50px;margin:-25px 0 0 -25px;z-index:6;pointer-events:none;opacity:0;transition:opacity .4s}
+.fc{position:absolute;width:9px;height:9px;border-color:#e8a030;border-style:solid}
 .fc.tl{top:0;left:0;border-width:1.5px 0 0 1.5px}
 .fc.tr{top:0;right:0;border-width:1.5px 1.5px 0 0}
 .fc.bl{bottom:0;left:0;border-width:0 0 1.5px 1.5px}
 .fc.br{bottom:0;right:0;border-width:0 1.5px 1.5px 0}
 
-#streak{position:absolute;left:0;width:100%;height:1px;z-index:4;pointer-events:none;background:linear-gradient(to right,transparent,rgba(150,210,255,.3) 30%,rgba(200,230,255,.55) 50%,rgba(150,210,255,.3) 70%,transparent);opacity:0}
+#streak{position:absolute;left:0;width:100%;height:1px;z-index:4;pointer-events:none;background:linear-gradient(to right,transparent,rgba(150,210,255,.28) 30%,rgba(200,230,255,.52) 50%,rgba(150,210,255,.28) 70%,transparent);opacity:0}
 #flash{position:absolute;inset:0;background:#fff;z-index:99;opacity:0;pointer-events:none}
 #toast{
 position:absolute;left:50%;transform:translateX(-50%);
 background:rgba(20,20,20,.95);color:#e8a030;
 font-family:‘Barlow Condensed’,sans-serif;font-weight:300;font-size:9px;
-letter-spacing:.2em;padding:8px 18px;z-index:90;opacity:0;
+letter-spacing:.2em;padding:7px 16px;z-index:90;opacity:0;
 white-space:nowrap;border:1px solid rgba(232,160,48,.2);transition:opacity .2s;
 }
-#nocam{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:20;text-align:center;display:none;pointer-events:none}
+#nocam{
+position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+z-index:20;text-align:center;display:none;pointer-events:none;
+}
 .nocam-txt{font-family:‘Barlow Condensed’,sans-serif;font-weight:300;font-size:11px;letter-spacing:.18em;color:rgba(255,255,255,.3);line-height:2}
 
-/* GALLERY */
-#gallery{position:absolute;inset:0;z-index:50;background:#0d0d0d;flex-direction:column;display:none}
-.gal-hdr{display:flex;align-items:center;justify-content:space-between;padding:env(safe-area-inset-top,16px) 20px 12px;border-bottom:1px solid rgba(255,255,255,.07);flex-shrink:0}
-.gal-title{font-family:‘Barlow Condensed’,sans-serif;font-weight:700;font-size:18px;letter-spacing:.18em;color:#fff}
-.gal-count{font-family:‘Barlow Condensed’,sans-serif;font-weight:200;font-size:10px;letter-spacing:.16em;color:rgba(255,255,255,.35)}
-.gal-close{width:36px;height:36px;border-radius:50%;border:1px solid rgba(255,255,255,.15);background:none;color:rgba(255,255,255,.6);font-size:14px;cursor:pointer;-webkit-appearance:none;display:flex;align-items:center;justify-content:center}
+/* ── GALLERY ── */
+#gallery{position:absolute;inset:0;z-index:50;background:#0d0d0d;display:none;flex-direction:column}
+.gal-hdr{
+display:flex;align-items:center;justify-content:space-between;
+padding:12px 18px 10px;
+border-bottom:1px solid rgba(255,255,255,.07);flex-shrink:0;
+}
+.gal-title{font-family:‘Barlow Condensed’,sans-serif;font-weight:700;font-size:17px;letter-spacing:.18em;color:#fff}
+.gal-count{font-family:‘Barlow Condensed’,sans-serif;font-weight:200;font-size:10px;letter-spacing:.16em;color:rgba(255,255,255,.32)}
+.gal-close{width:34px;height:34px;border-radius:50%;border:1px solid rgba(255,255,255,.14);background:none;color:rgba(255,255,255,.55);font-size:13px;cursor:pointer;-webkit-appearance:none;display:flex;align-items:center;justify-content:center}
 .gal-close:active{opacity:.5}
-#gal-grid{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:12px;display:grid;grid-template-columns:repeat(3,1fr);gap:4px;align-content:start}
+#gal-grid{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:10px;display:grid;grid-template-columns:repeat(3,1fr);gap:3px;align-content:start}
 .gal-thumb{position:relative;aspect-ratio:2.39/1;background:#222;cursor:pointer;overflow:hidden}
 .gal-thumb img{width:100%;height:100%;object-fit:cover;display:block}
-.gal-thumb-fmt{position:absolute;bottom:0;left:0;right:0;padding:2px 4px;background:rgba(0,0,0,.55);font-family:‘Barlow Condensed’,sans-serif;font-weight:600;font-size:8px;letter-spacing:.08em;color:#e8a030;text-align:center}
+.gal-thumb-fmt{position:absolute;bottom:0;left:0;right:0;padding:2px 4px;background:rgba(0,0,0,.52);font-family:‘Barlow Condensed’,sans-serif;font-weight:600;font-size:8px;letter-spacing:.08em;color:#e8a030;text-align:center}
 .gal-thumb:active{opacity:.7}
-.gal-empty{grid-column:1/-1;padding:60px 0;text-align:center;font-family:‘Barlow Condensed’,sans-serif;font-weight:300;font-size:11px;letter-spacing:.2em;color:rgba(255,255,255,.22);line-height:2}
-#gal-detail{position:absolute;inset:0;background:#000;z-index:51;flex-direction:column;display:none}
-.gal-detail-hdr{display:flex;align-items:center;justify-content:space-between;padding:env(safe-area-inset-top,16px) 16px 12px;background:rgba(0,0,0,.6);flex-shrink:0}
-.gal-back{display:flex;align-items:center;gap:6px;background:none;border:none;color:rgba(255,255,255,.65);cursor:pointer;-webkit-appearance:none;font-family:‘Barlow Condensed’,sans-serif;font-weight:300;font-size:12px;letter-spacing:.12em}
+.gal-empty{grid-column:1/-1;padding:50px 0;text-align:center;font-family:‘Barlow Condensed’,sans-serif;font-weight:300;font-size:11px;letter-spacing:.2em;color:rgba(255,255,255,.2);line-height:2}
+#gal-detail{position:absolute;inset:0;background:#000;z-index:51;display:none;flex-direction:column}
+.gal-detail-hdr{display:flex;align-items:center;justify-content:space-between;padding:12px 16px 10px;background:rgba(0,0,0,.6);flex-shrink:0}
+.gal-back{background:none;border:none;color:rgba(255,255,255,.6);cursor:pointer;-webkit-appearance:none;font-family:‘Barlow Condensed’,sans-serif;font-weight:300;font-size:12px;letter-spacing:.12em}
 .gal-back:active{opacity:.5}
-.gal-save{padding:8px 20px;border:1px solid rgba(232,160,48,.5);background:none;color:#e8a030;font-family:‘Barlow Condensed’,sans-serif;font-weight:600;font-size:11px;letter-spacing:.18em;cursor:pointer;-webkit-appearance:none}
-.gal-save:active{background:rgba(232,160,48,.15)}
+.gal-save-btn{padding:7px 18px;border:1px solid rgba(232,160,48,.5);background:none;color:#e8a030;font-family:‘Barlow Condensed’,sans-serif;font-weight:600;font-size:11px;letter-spacing:.16em;cursor:pointer;-webkit-appearance:none}
+.gal-save-btn:active{background:rgba(232,160,48,.12)}
 #gal-detail-img{flex:1;object-fit:contain;width:100%;min-height:0}
-.gal-detail-info{padding:12px 20px env(safe-area-inset-bottom,12px);background:rgba(0,0,0,.6);font-family:‘Barlow Condensed’,sans-serif;font-weight:300;font-size:10px;letter-spacing:.14em;color:rgba(255,255,255,.35);display:flex;justify-content:space-between;flex-shrink:0}
+.gal-detail-info{padding:10px 18px 14px;background:rgba(0,0,0,.6);font-family:‘Barlow Condensed’,sans-serif;font-weight:300;font-size:10px;letter-spacing:.14em;color:rgba(255,255,255,.32);display:flex;justify-content:space-between;flex-shrink:0}
 </style>
 
 </head>
 <body>
 <div id="wrap">
+  <!-- Video & Canvas (absolute, behind everything) -->
   <video id="vid" autoplay playsinline muted webkit-playsinline></video>
   <canvas id="cv"></canvas>
   <div id="streak"></div>
 
-  <!-- TOP HUD -->
+  <!-- TOP BAR -->
 
-  <div id="top-hud">
-    <div class="hud-left">
-      <div class="hud-fmt-label">Format</div>
-      <div class="hud-fmt-name" id="fn">CINEMASCOPE</div>
+  <div id="top-bar">
+    <div class="top-left">
+      <div class="top-fmt-lbl">Format</div>
+      <div class="top-fmt-name" id="fn">CINEMASCOPE</div>
     </div>
-    <div class="hud-center"><div class="hud-dot"></div><div class="hud-live">LIVE</div></div>
-    <div class="hud-right">
-      <div class="hud-ratio" id="rl">2.39</div>
-      <div class="hud-ratio-lbl">Aspect Ratio</div>
+    <div class="top-center"><div class="dot"></div><div class="live">LIVE</div></div>
+    <div class="top-right">
+      <div class="top-ratio" id="rl">2.39</div>
+      <div class="top-ratio-lbl">Aspect Ratio</div>
     </div>
   </div>
+
+  <!-- VIEWFINDER (spacer — canvas draws into this area) -->
+
+  <div id="viewfinder"></div>
 
   <!-- BOTTOM CARD -->
 
   <div id="card">
-    <div class="card-hdr">
-      <div class="card-name-col">
-        <div class="card-lbl">Format</div>
-        <div class="card-name" id="cn">CINEMASCOPE</div>
+    <div id="lens-row"></div>
+    <div class="pill-row" id="pills"></div>
+    <div class="ctrl-row">
+      <div class="ctrl-group">
+        <button class="cb" id="gridBtn"><div class="ci">⊞</div><div class="cl">Grid</div></button>
+        <button class="cb" id="safeBtn"><div class="ci">▣</div><div class="cl">Safe</div></button>
+        <button class="cb" id="maskBtn"><div class="ci" id="mask-icon">◻</div><div class="cl" id="mask-lbl">Mask</div></button>
       </div>
-      <div class="card-ratio-col">
-        <div class="card-ratio" id="cr">2.39:1</div>
-        <div class="card-ratio-lbl">Aspect Ratio</div>
+      <button id="cap">
+        <div class="sh"><div class="sh-ring"></div><div class="sh-core"></div></div>
+        <div class="sl">Capture</div>
+      </button>
+      <div class="ctrl-group">
+        <button class="cb" id="galBtn">
+          <div class="ci">▦</div><div class="cl">Gallery</div>
+          <div class="badge" id="badge"></div>
+        </button>
+        <button class="cb" id="flipBtn"><div class="ci">↻</div><div class="cl">Flip</div></button>
       </div>
     </div>
-
-```
-<div id="lens-row"></div>
-<div class="pill-row" id="pills"></div>
-
-<div class="ctrl-row">
-  <!-- Left group -->
-  <div class="ctrl-group">
-    <button class="cb" id="gridBtn">
-      <div class="ci">⊞</div><div class="cl">Grid</div>
-    </button>
-    <button class="cb" id="safeBtn">
-      <div class="ci">▣</div><div class="cl">Safe</div>
-    </button>
-    <button class="cb" id="maskBtn">
-      <div class="ci" id="mask-icon">◻</div>
-      <div class="cl" id="mask-label">Mask</div>
-    </button>
-  </div>
-
-  <!-- Shutter (center) -->
-  <button id="cap">
-    <div class="sh"><div class="sh-ring"></div><div class="sh-core"></div></div>
-    <div class="sl">Capture</div>
-  </button>
-
-  <!-- Right group -->
-  <div class="ctrl-group">
-    <button class="cb" id="galBtn">
-      <div class="ci">▦</div><div class="cl">Gallery</div>
-      <div class="badge" id="badge"></div>
-    </button>
-    <button class="cb" id="flipBtn">
-      <div class="ci">↻</div><div class="cl">Flip</div>
-    </button>
-  </div>
-</div>
-```
-
   </div>
 
   <!-- GALLERY -->
@@ -267,7 +267,7 @@ white-space:nowrap;border:1px solid rgba(232,160,48,.2);transition:opacity .2s;
     <div id="gal-detail">
       <div class="gal-detail-hdr">
         <button class="gal-back" id="gal-back">← BACK</button>
-        <button class="gal-save" id="gal-save-btn">↓ SAVE</button>
+        <button class="gal-save-btn" id="gal-save-btn">↓ SAVE</button>
       </div>
       <img id="gal-detail-img" src="" alt="">
       <div class="gal-detail-info">
@@ -291,19 +291,17 @@ const FMTS=[
   {r:2.39,l:'2.39',n:'CINEMASCOPE'},
   {r:2.76,l:'2.76',n:'ULTRA 70'},
 ];
-// MASK modes: 0=off, 1=dim, 2=black
 const MASK_MODES=[
-  {label:'Mask', icon:'◻', alpha:0},
-  {label:'Dim',  icon:'◑', alpha:0.62},
-  {label:'Black',icon:'◼', alpha:1.0},
+  {label:'Mask',icon:'◻',alpha:0},
+  {label:'Dim', icon:'◑',alpha:0.62},
+  {label:'Black',icon:'◼',alpha:1.0},
 ];
 const LENS_PRESETS=[{label:'0.5×',zoom:0.5},{label:'1×',zoom:1},{label:'2×',zoom:2},{label:'3×',zoom:3}];
 
 let fi=3, maskMode=0, facing='environment', stream=null;
-let gridOn=false, safeOn=false, flareOn=false;
+let gridOn=false, safeOn=false;
 let currentZoom=1, zoomCap=null;
 let needSz=true, ftmr=null, ttmr=null;
-
 const photos=[];
 let detailIdx=null;
 
@@ -311,19 +309,18 @@ const wrap=document.getElementById('wrap');
 const vid=document.getElementById('vid');
 const cv=document.getElementById('cv');
 const ctx=cv.getContext('2d');
+const topBar=document.getElementById('top-bar');
+const viewfinder=document.getElementById('viewfinder');
 const card=document.getElementById('card');
-const topHud=document.getElementById('top-hud');
 const fn=document.getElementById('fn');
 const rl=document.getElementById('rl');
-const cn=document.getElementById('cn');
-const cr=document.getElementById('cr');
 const lensRow=document.getElementById('lens-row');
 const pillBox=document.getElementById('pills');
 const gridBtn=document.getElementById('gridBtn');
 const safeBtn=document.getElementById('safeBtn');
 const maskBtn=document.getElementById('maskBtn');
 const maskIcon=document.getElementById('mask-icon');
-const maskLabel=document.getElementById('mask-label');
+const maskLbl=document.getElementById('mask-lbl');
 const flipBtn=document.getElementById('flipBtn');
 const capBtn=document.getElementById('cap');
 const galBtn=document.getElementById('galBtn');
@@ -339,12 +336,12 @@ const galCount=document.getElementById('gal-count');
 const galClose=document.getElementById('gal-close');
 const galDetail=document.getElementById('gal-detail');
 const galBack=document.getElementById('gal-back');
-const galSaveBtn=document.getElementById('gal-save-btn');
+const galSaveBtnEl=document.getElementById('gal-save-btn');
 const galDetailImg=document.getElementById('gal-detail-img');
 const galDetailFmt=document.getElementById('gal-detail-fmt');
 const galDetailTime=document.getElementById('gal-detail-time');
 
-// Format pills
+// Pills
 FMTS.forEach((f,i)=>{
   const b=document.createElement('button');
   b.className='pill'+(i===fi?' on':'');
@@ -355,16 +352,17 @@ FMTS.forEach((f,i)=>{
 
 function applyFmt(){
   const f=FMTS[fi];
-  fn.textContent=f.n;rl.textContent=f.l;cn.textContent=f.n;cr.textContent=f.l+':1';
+  fn.textContent=f.n; rl.textContent=f.l;
   pillBox.querySelectorAll('.pill').forEach((p,i)=>p.classList.toggle('on',i===fi));
 }
 
+// Metrics: use topBar and card actual heights
 function getM(){
-  const W=window.innerWidth,H=window.innerHeight;
-  const cH=card.offsetHeight||190;
-  const tH=topHud.offsetHeight||60;
-  const fH=H-cH-tH,fT=tH;
-  const r=FMTS[fi].r,ah=W/r;
+  const W=window.innerWidth, H=window.innerHeight;
+  const tH=topBar.offsetHeight||44;
+  const cH=card.offsetHeight||150;
+  const fH=H-tH-cH, fT=tH;
+  const r=FMTS[fi].r, ah=W/r;
   if(ah<=fH){const ex=(fH-ah)/2;return{W,H,aW:W,aH:ah,aT:fT+ex,aL:0,tH,cH};}
   const aw=fH*r,bw=(W-aw)/2;
   return{W,H,aW:aw,aH:fH,aT:fT,aL:bw,tH,cH};
@@ -373,10 +371,7 @@ function getM(){
 // Camera
 async function initCam(){
   if(stream){stream.getTracks().forEach(t=>t.stop());stream=null;}
-  const tries=[
-    {facingMode:{ideal:facing},width:{ideal:3840},height:{ideal:2160}},
-    {facingMode:{ideal:facing}},true
-  ];
+  const tries=[{facingMode:{ideal:facing},width:{ideal:3840},height:{ideal:2160}},{facingMode:{ideal:facing}},true];
   for(const c of tries){
     try{
       stream=await navigator.mediaDevices.getUserMedia({video:c,audio:false});
@@ -387,16 +382,12 @@ async function initCam(){
   nocam.style.display='block';
 }
 
-// Lens
 function checkLens(){
   if(!stream)return;
-  const track=stream.getVideoTracks()[0];
-  if(!track)return;
+  const track=stream.getVideoTracks()[0];if(!track)return;
   try{
     const cap=track.getCapabilities();
-    if(cap&&cap.zoom&&cap.zoom.max>1.5){
-      zoomCap=cap.zoom;buildLensUI();
-    }
+    if(cap&&cap.zoom&&cap.zoom.max>1.5){zoomCap=cap.zoom;buildLensUI();}
   }catch{}
 }
 function buildLensUI(){
@@ -432,53 +423,46 @@ function draw(){
   const m=getM();
   const{aT,aH,aL,aW,tH,cH}=m;
 
-  // ── MASK OVERLAY ────────────────────────────────────────
+  // MASK
   if(maskMode>0){
-    const alpha=MASK_MODES[maskMode].alpha;
-    ctx.fillStyle=`rgba(0,0,0,${alpha})`;
-    // Top strip (between HUD bottom and frame top)
-    ctx.fillRect(0, tH, W, aT-tH);
-    // Bottom strip (between frame bottom and card top)
-    ctx.fillRect(0, aT+aH, W, H-cH-(aT+aH));
-    // Left strip (pillarbox)
-    if(aL>0)ctx.fillRect(0, aT, aL, aH);
-    // Right strip (pillarbox)
-    if(aL+aW<W)ctx.fillRect(aL+aW, aT, W-(aL+aW), aH);
+    const a=MASK_MODES[maskMode].alpha;
+    ctx.fillStyle=`rgba(0,0,0,${a})`;
+    if(aT>tH)ctx.fillRect(0,tH,W,aT-tH);
+    const frameBottom=aT+aH;
+    const cardTop=H-cH;
+    if(frameBottom<cardTop)ctx.fillRect(0,frameBottom,W,cardTop-frameBottom);
+    if(aL>0){ctx.fillRect(0,aT,aL,aH);ctx.fillRect(aL+aW,aT,W-(aL+aW),aH);}
   }
 
-  // ── FRAME BORDER ────────────────────────────────────────
-  // Stronger border when mask is off (helps see the frame)
-  const borderAlpha = maskMode===0 ? 0.28 : 0.18;
-  ctx.strokeStyle=`rgba(232,160,48,${borderAlpha})`;ctx.lineWidth=0.8;
+  // Frame border
+  const bA=maskMode===0?0.3:0.18;
+  ctx.strokeStyle=`rgba(232,160,48,${bA})`;ctx.lineWidth=0.8;
   ctx.strokeRect(aL+0.5,aT+0.5,aW-1,aH-1);
 
-  // ── CORNER BRACKETS ─────────────────────────────────────
-  const cs=18;
-  const bracketAlpha = maskMode===0 ? 0.7 : 0.55;
-  ctx.strokeStyle=`rgba(232,160,48,${bracketAlpha})`;ctx.lineWidth=1.8;
+  // Corner brackets
+  const cs=16,brA=maskMode===0?0.72:0.55;
+  ctx.strokeStyle=`rgba(232,160,48,${brA})`;ctx.lineWidth=1.8;
   [[aL,aT,1,1],[aL+aW,aT,-1,1],[aL,aT+aH,1,-1],[aL+aW,aT+aH,-1,-1]].forEach(([x,y,dx,dy])=>{
     ctx.beginPath();ctx.moveTo(x+dx*cs,y);ctx.lineTo(x,y);ctx.lineTo(x,y+dy*cs);ctx.stroke();
   });
 
-  // ── GRID ────────────────────────────────────────────────
+  // Grid
   if(gridOn){
-    ctx.strokeStyle='rgba(255,255,255,0.16)';ctx.lineWidth=0.5;
+    ctx.strokeStyle='rgba(255,255,255,0.15)';ctx.lineWidth=0.5;
     for(let i=1;i<=2;i++){
       const x=aL+aW*i/3;ctx.beginPath();ctx.moveTo(x,aT);ctx.lineTo(x,aT+aH);ctx.stroke();
       const y=aT+aH*i/3;ctx.beginPath();ctx.moveTo(aL,y);ctx.lineTo(aL+aW,y);ctx.stroke();
     }
-    ctx.fillStyle='rgba(255,255,255,0.32)';
-    for(let i=1;i<=2;i++)for(let j=1;j<=2;j++){
-      ctx.beginPath();ctx.arc(aL+aW*i/3,aT+aH*j/3,2,0,Math.PI*2);ctx.fill();
-    }
+    ctx.fillStyle='rgba(255,255,255,0.3)';
+    for(let i=1;i<=2;i++)for(let j=1;j<=2;j++){ctx.beginPath();ctx.arc(aL+aW*i/3,aT+aH*j/3,2,0,Math.PI*2);ctx.fill();}
     const cx2=aL+aW/2,cy2=aT+aH/2;
     ctx.strokeStyle='rgba(232,160,48,0.6)';ctx.lineWidth=1;
     ctx.beginPath();ctx.moveTo(cx2-12,cy2);ctx.lineTo(cx2+12,cy2);ctx.moveTo(cx2,cy2-12);ctx.lineTo(cx2,cy2+12);ctx.stroke();
-    ctx.strokeStyle='rgba(232,160,48,0.22)';ctx.lineWidth=0.7;
+    ctx.strokeStyle='rgba(232,160,48,0.2)';ctx.lineWidth=0.7;
     ctx.beginPath();ctx.arc(cx2,cy2,4,0,Math.PI*2);ctx.stroke();
   }
 
-  // ── SAFE AREA ───────────────────────────────────────────
+  // Safe areas
   if(safeOn){
     ctx.setLineDash([4,4]);
     ctx.strokeStyle='rgba(255,200,60,0.38)';ctx.lineWidth=0.7;
@@ -487,26 +471,23 @@ function draw(){
     const s2=0.1;ctx.strokeRect(aL+aW*s2,aT+aH*s2,aW*(1-s2*2),aH*(1-s2*2));
     ctx.setLineDash([]);
     ctx.font='700 7px sans-serif';
-    ctx.fillStyle='rgba(255,200,60,0.48)';ctx.fillText('ACTION SAFE',aL+aW*s1+4,aT+aH*s1+10);
-    ctx.fillStyle='rgba(255,110,40,0.48)';ctx.fillText('TITLE SAFE',aL+aW*s2+4,aT+aH*s2+10);
+    ctx.fillStyle='rgba(255,200,60,0.46)';ctx.fillText('ACTION SAFE',aL+aW*s1+4,aT+aH*s1+10);
+    ctx.fillStyle='rgba(255,110,40,0.46)';ctx.fillText('TITLE SAFE',aL+aW*s2+4,aT+aH*s2+10);
   }
 
   requestAnimationFrame(draw);
 }
 
-function updateStreak(){const m=getM();streak.style.top=(m.aT+m.aH/2)+'px';streak.style.opacity=flareOn?'1':'0';}
+function updateStreak(){const m=getM();streak.style.top=(m.aT+m.aH/2)+'px';streak.style.opacity='0';}
 
-// Mask cycle: off → dim → black → off
 function cycleMask(){
   maskMode=(maskMode+1)%3;
   const mode=MASK_MODES[maskMode];
-  maskIcon.textContent=mode.icon;
-  maskLabel.textContent=mode.label;
-  maskBtn.classList.toggle('on', maskMode>0);
+  maskIcon.textContent=mode.icon;maskLbl.textContent=mode.label;
+  maskBtn.classList.toggle('on',maskMode>0);
   showToast(maskMode===0?'MASK OFF':maskMode===1?'DIM':'BLACK');
 }
 
-// Capture
 function capture(){
   const vW=vid.videoWidth,vH=vid.videoHeight;
   if(!vW||!vH){showToast('NO VIDEO');return;}
@@ -525,14 +506,12 @@ function capture(){
   out.toBlob(blob=>{
     if(!blob)return;
     const url=URL.createObjectURL(blob);
-    const fmt=FMTS[fi].l;const time=Date.now();
-    photos.push({url,blob,fmt,time});
+    photos.push({url,blob,fmt:FMTS[fi].l,time:Date.now()});
     if(photos.length>50){URL.revokeObjectURL(photos[0].url);photos.shift();}
     updateBadge();showToast('SHOT '+photos.length);
   },'image/jpeg',0.94);
 }
 
-// Gallery
 function updateBadge(){
   const n=photos.length;
   badge.textContent=n>99?'99+':n;badge.style.display=n>0?'flex':'none';
@@ -542,15 +521,13 @@ function openGallery(){gallery.style.display='flex';renderGrid();}
 function closeGallery(){gallery.style.display='none';galDetail.style.display='none';}
 function renderGrid(){
   galGrid.innerHTML='';
-  if(photos.length===0){
-    galGrid.innerHTML='<div class="gal-empty">NO PHOTOS YET<br>TAP CAPTURE TO SHOOT</div>';return;
-  }
-  [...photos].reverse().forEach((p,revIdx)=>{
-    const realIdx=photos.length-1-revIdx;
+  if(!photos.length){galGrid.innerHTML='<div class="gal-empty">NO PHOTOS YET<br>TAP CAPTURE TO SHOOT</div>';return;}
+  [...photos].reverse().forEach((p,ri)=>{
+    const idx=photos.length-1-ri;
     const div=document.createElement('div');div.className='gal-thumb';
     const img=document.createElement('img');img.src=p.url;img.loading='lazy';
     const lbl=document.createElement('div');lbl.className='gal-thumb-fmt';lbl.textContent=p.fmt;
-    div.appendChild(img);div.appendChild(lbl);div.onclick=()=>openDetail(realIdx);
+    div.appendChild(img);div.appendChild(lbl);div.onclick=()=>openDetail(idx);
     galGrid.appendChild(div);
   });
 }
@@ -562,7 +539,7 @@ function openDetail(idx){
   galDetailTime.textContent=d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0');
   galDetail.style.display='flex';galDetail.style.flexDirection='column';
 }
-function savePhoto(){
+function doSave(){
   if(detailIdx===null)return;
   const p=photos[detailIdx];
   const a=document.createElement('a');
@@ -572,12 +549,11 @@ function savePhoto(){
 }
 
 function showToast(msg){
-  toast.style.bottom=(card.offsetHeight+10)+'px';
+  toast.style.bottom=(card.offsetHeight+8)+'px';
   toast.textContent=msg;toast.style.opacity='1';
   clearTimeout(ttmr);ttmr=setTimeout(()=>toast.style.opacity='0',1800);
 }
 
-// Events
 wrap.addEventListener('click',e=>{
   if(e.target.closest('button')||e.target.closest('#card')||e.target.closest('#gallery'))return;
   if(!stream){initCam();return;}
@@ -588,17 +564,17 @@ wrap.addEventListener('click',e=>{
   }
 });
 
-gridBtn.onclick =()=>{gridOn =!gridOn; gridBtn.classList.toggle('on',gridOn)};
-safeBtn.onclick =()=>{safeOn =!safeOn; safeBtn.classList.toggle('on',safeOn)};
+gridBtn.onclick =()=>{gridOn=!gridOn;gridBtn.classList.toggle('on',gridOn)};
+safeBtn.onclick =()=>{safeOn=!safeOn;safeBtn.classList.toggle('on',safeOn)};
 maskBtn.onclick =cycleMask;
 flipBtn.onclick =()=>{facing=facing==='environment'?'user':'environment';lensRow.style.display='none';lensRow.innerHTML='';zoomCap=null;if(stream)initCam()};
 capBtn.onclick  =capture;
 galBtn.onclick  =openGallery;
 galClose.onclick=closeGallery;
 galBack.onclick =()=>galDetail.style.display='none';
-galSaveBtn.onclick=savePhoto;
+galSaveBtnEl.onclick=doSave;
 
-const onResize=()=>{needSz=true;updateStreak()};
+const onResize=()=>{needSz=true;};
 window.addEventListener('resize',onResize);
 window.addEventListener('orientationchange',()=>setTimeout(onResize,400));
 
