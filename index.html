@@ -731,7 +731,7 @@ fmtOpts.addEventListener('click',e=>{
   btn.classList.add('on');
   capFmt={fmt:btn.dataset.fmt, mime:btn.dataset.mime, ext:btn.dataset.ext};
   updateFnamePreview();
-  showToast(btn.dataset.fmt.toUpperCase()+' selected');
+  showToast(btn.dataset.fmt.toUpperCase()+' selected', true);
 });
 
 // Settings — color space selection
@@ -741,7 +741,7 @@ csOpts.addEventListener('click',e=>{
   btn.classList.add('on');
   capCs={cs:btn.dataset.cs, label:btn.dataset.csLabel};
   updateFnamePreview();
-  showToast(btn.dataset.csLabel+' selected');
+  showToast(btn.dataset.csLabel+' selected', true);
 });
 
 // ── GALLERY ─────────────────────────────────────────────────
@@ -808,11 +808,20 @@ async function shareAll(){
     await new Promise(r=>setTimeout(r,300));
   }
 }
-function showToast(msg){
+function showToast(msg, accent){
   toast.innerHTML=msg;
   toast.style.cursor='default';
   toast.onclick=null;
   toast.style.bottom=(card.offsetHeight+8)+'px';
+  if(accent){
+    toast.style.background='#F5C400';
+    toast.style.color='#000';
+    toast.style.border='1.5px solid #F5C400';
+  } else {
+    toast.style.background='#1e1e1e';
+    toast.style.color='#F5C400';
+    toast.style.border='1.5px solid #F5C400';
+  }
   toast.style.opacity='1';
   clearTimeout(ttmr);ttmr=setTimeout(()=>toast.style.opacity='0',1800);
 }
