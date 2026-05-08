@@ -128,6 +128,8 @@ input[type=range].styled::-webkit-slider-thumb{-webkit-appearance:none;appearanc
 .gal-count{font-family:‘Noto Sans’,sans-serif;font-weight:300;font-size:10px;letter-spacing:.14em;color:rgba(255,255,255,.3)}
 .gal-close{width:34px;height:34px;border-radius:50%;border:1px solid rgba(255,255,255,.12);background:none;color:rgba(255,255,255,.5);font-size:13px;cursor:pointer;-webkit-appearance:none;display:flex;align-items:center;justify-content:center}
 .gal-close:active{opacity:.5}
+.gal-save-all{padding:6px 12px;border:1px solid rgba(245,196,0,.4);background:none;color:#F5C400;font-family:‘Noto Sans’,sans-serif;font-weight:600;font-size:10px;letter-spacing:.14em;cursor:pointer;-webkit-appearance:none;border-radius:4px}
+.gal-save-all:active{background:rgba(245,196,0,.12)}
 #gal-grid{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:10px;display:grid;grid-template-columns:repeat(3,1fr);gap:3px;align-content:start}
 .gal-thumb{position:relative;aspect-ratio:2.39/1;background:#1a1a1a;cursor:pointer;overflow:hidden}
 .gal-thumb img{width:100%;height:100%;object-fit:cover;display:block}
@@ -253,13 +255,16 @@ input[type=range].styled::-webkit-slider-thumb{-webkit-appearance:none;appearanc
     <div class="gal-hdr">
       <div class="gal-title">GALLERY</div>
       <div class="gal-count" id="gal-count">0 PHOTOS</div>
-      <button class="gal-close" id="gal-close">✕</button>
+      <div style="display:flex;gap:8px;align-items:center">
+        <button class="gal-save-all" id="gal-save-all">↓ ALL</button>
+        <button class="gal-close" id="gal-close">✕</button>
+      </div>
     </div>
     <div id="gal-grid"></div>
     <div id="gal-detail">
       <div class="gal-detail-hdr">
         <button class="gal-back" id="gal-back">← BACK</button>
-        <button class="gal-save-btn" id="gal-save-btn">↓ SAVE</button>
+        <button class="gal-save-btn" id="gal-save-btn">↑ 写真に保存</button>
       </div>
       <img id="gal-detail-img" src="" alt="">
       <div class="gal-detail-info"><div class="gal-detail-fname" id="gal-detail-fname"></div></div>
@@ -586,7 +591,9 @@ function capture(){
     photos.push({url,blob,fmt:FMTS[fi].l,fmtName:FMTS[fi].n,cs:capCs.label,fname,
                  res:cropW+'×'+cropH,time:now.getTime()});
     if(photos.length>50){URL.revokeObjectURL(photos[0].url);photos.shift();}
-    updateBadge();showToast(cropW+'×'+cropH);
+    updateBadge();
+    const newPhoto=photos[photos.length-1];
+    showInstantShareToast(newPhoto, cropW+'×'+cropH);
   },capFmt.mime,capFmt.mime==='image/jpeg'?0.96:undefined);
 }
 
@@ -735,15 +742,61 @@ function openDetail(idx){
   galDetailImg.src=p.url;galDetailFname.textContent=p.fname;
   galDetail.style.display='flex';galDetail.style.flexDirection='column';
 }
+// Share single photo via Web Share API → iOS「写真に保存」
+async function sharePhoto(p){
+  if(!p)return;
+  if(navigator.canShare&&navigator.canShare({files:[new File([p.blob],p.fname,{type:p.blob.type})]})){
+    try{
+      await navigator.share({
+        files:[new File([p.blob],p.fname,{type:p.blob.type})],
+        title:'Cinemascopome'
+      });
+      return;
+    }catch(e){if(e.name==='AbortError')return;}
+  }
+  // Fallback: download
+  const a=document.createElement('a');a.href=p.url;a.download=p.fname;
+  document.body.appendChild(a);a.click();document.body.removeChild(a);
+}
+
 function doSave(){
   if(detailIdx===null)return;
-  const p=photos[detailIdx];const a=document.createElement('a');
-  a.href=p.url;a.download=p.fname;document.body.appendChild(a);a.click();document.body.removeChild(a);showToast('SAVED');
+  sharePhoto(photos[detailIdx]);
+}
+
+// Share all photos at once (bulk)
+async function shareAll(){
+  if(!photos.length){showToast('NO PHOTOS');return;}
+  const files=photos.map(p=>new File([p.blob],p.fname,{type:p.blob.type}));
+  if(navigator.canShare&&navigator.canShare({files})){
+    try{
+      await navigator.share({files,title:'Cinemascopome'});
+      return;
+    }catch(e){if(e.name==='AbortError')return;}
+  }
+  // Fallback: download one by one
+  for(const p of photos){
+    const a=document.createElement('a');a.href=p.url;a.download=p.fname;
+    document.body.appendChild(a);a.click();document.body.removeChild(a);
+    await new Promise(r=>setTimeout(r,300));
+  }
 }
 function showToast(msg){
+  toast.innerHTML=msg;
+  toast.style.cursor='default';
+  toast.onclick=null;
   toast.style.bottom=(card.offsetHeight+8)+'px';
-  toast.textContent=msg;toast.style.opacity='1';
+  toast.style.opacity='1';
   clearTimeout(ttmr);ttmr=setTimeout(()=>toast.style.opacity='0',1800);
+}
+
+function showInstantShareToast(photo, resStr){
+  toast.innerHTML=resStr+' &nbsp;<span style="color:#fff;opacity:.6">|</span>&nbsp; <span style="text-decoration:underline;cursor:pointer">写真に保存</span>';
+  toast.style.bottom=(card.offsetHeight+8)+'px';
+  toast.style.opacity='1';
+  toast.style.cursor='pointer';
+  toast.onclick=()=>{sharePhoto(photo);toast.style.opacity='0';};
+  clearTimeout(ttmr);ttmr=setTimeout(()=>{toast.style.opacity='0';toast.onclick=null;},4000);
 }
 
 // ── EVENTS ──────────────────────────────────────────────────
@@ -764,6 +817,7 @@ galBtn.onclick=openGallery;
 setBtn.onclick=openSettings;
 setClose.onclick=closeSettings;
 galClose.onclick=closeGallery;
+document.getElementById('gal-save-all').onclick=shareAll;
 galBack.onclick=()=>galDetail.style.display='none';
 galSaveBtnEl.onclick=doSave;
 
