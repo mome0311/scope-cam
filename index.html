@@ -84,8 +84,6 @@ input[type=range].styled::-webkit-slider-thumb{-webkit-appearance:none;appearanc
 #ca-sl{background:linear-gradient(to right,rgba(245,196,0,.5) 0%,rgba(255,255,255,.12) 0%)}
 #dist-sl{background:rgba(255,255,255,.12)}
 
-.fil-reset-all:active{background:rgba(255,255,255,.06);color:var(–c)}
-
 /* Filter active badge on tab */
 
 /* MISC */
@@ -292,14 +290,12 @@ let fi=3, maskMode=2, facing='environment', stream=null;
 let gridOn=false, safeOn=false;
 let currentZoom=1, zoomCap=null, zoomMin=1, zoomMax=1;
 
-
 let needSz=true, ftmr=null, ttmr=null;
 let expVal=0;
 const photos=[];
 let detailIdx=null;
 let capFmt={fmt:'jpeg',mime:'image/jpeg',ext:'jpg'};
 let capCs={cs:'srgb',label:'sRGB'};
-
 
 // ── DOM ─────────────────────────────────────────────────────
 const wrap=document.getElementById('wrap');
@@ -420,36 +416,6 @@ async function setZoom(z){
 zoomSlider.addEventListener('input',()=>setZoom(parseInt(zoomSlider.value)/10));
 
 
-
-
-// ── FILTERS ─────────────────────────────────────────────────
-
-
-// Update slider track fill
-
-grainSl.addEventListener('input',()=>{
-    grainDisp.textContent=  updateSliderTrack(grainSl,  updateFilterBadge();
-});
-caSl.addEventListener('input',()=>{
-  caVal=parseInt(caSl.value);
-  caDisp.textContent=caVal;
-  updateSliderTrack(caSl,caVal,0,100);
-  updateFilterBadge();
-});
-distSl.addEventListener('input',()=>{
-  distVal=parseInt(distSl.value);
-  distDisp.textContent=distVal;
-  const pct=distVal>=0?(distVal/50)*50+50:50-(Math.abs(distVal)/50)*50;
-  const half=50;
-  const from=Math.min(pct,half), to=Math.max(pct,half);
-  distSl.style.background=`linear-gradient(to right,rgba(255,255,255,.12) ${from}%,rgba(245,196,0,.55) ${from}%,rgba(245,196,0,.55) ${to}%,rgba(255,255,255,.12) ${to}%)`;
-  
-  updateFilterBadge();
-});
-
-
-
-
 // ── DRAW ────────────────────────────────────────────────────
 function draw(){
   const W=window.innerWidth,H=window.innerHeight;
@@ -531,7 +497,6 @@ function draw(){
   ctx.font='8px "Share Tech Mono"';ctx.textAlign='right';
   ctx.fillStyle=capCs.cs==='display-p3'?C:'rgba(255,255,255,.32)';
   ctx.fillText(capCs.label,aR-pad,aT+pad+10);
-
 
   // ── GRID ────────────────────────────────────────────────
   if(gridOn){
@@ -722,8 +687,6 @@ function cycleMask(){
   showToast(maskMode===0?'MASK OFF':maskMode===1?'DIM':'BLACK');
 }
 
-tabFil.onclick=()=>{tabFil.classList.add('on');tabCam.classList.remove('on');panelFil.style.display='block';panelCam.style.display='none';};
-
 // ── SETTINGS ────────────────────────────────────────────────
 function openSettings(){settings.style.display='flex';updateFnamePreview();}
 function closeSettings(){settings.style.display='none';}
@@ -796,7 +759,6 @@ wrap.addEventListener('click',e=>{
 gridBtn.onclick=()=>{gridOn=!gridOn;gridBtn.classList.toggle('on',gridOn)};
 safeBtn.onclick=()=>{safeOn=!safeOn;safeBtn.classList.toggle('on',safeOn)};
 maskBtn.onclick=cycleMask;
-flipBtn.onclick=()=>{facing=facing==='environment'?'user':'environment';lensRow.style.display='none';zoomRow.style.display='none';lensRow.innerHTML='';zoomCap=null;if(stream){initCam();setTimeout(applyDistortionCSS,500);}};
 capBtn.onclick=capture;
 galBtn.onclick=openGallery;
 setBtn.onclick=openSettings;
