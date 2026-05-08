@@ -14,21 +14,15 @@
 <link href="https://fonts.googleapis.com/css2?family=Rokkitt:wght@200;300;400;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
-:root{--c:#DC5857;--cd:rgba(220,88,87,.12);--cb:rgba(220,88,87,.28);}
+:root{--c:#DC5857;--cd:rgba(220,88,87,.11);--cb:rgba(220,88,87,.28);}
 html,body{width:100%;height:100%;height:100dvh;background:#000;overflow:hidden}
 #wrap{position:fixed;inset:0;height:100vh;height:100dvh;background:#000;overflow:hidden;display:flex;flex-direction:column}
-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1}
+video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1;transition:opacity .1s}
 video.mirror{transform:scaleX(-1)}
 canvas{position:absolute;inset:0;z-index:3;pointer-events:none}
 
-/* ── TOP BAR ── */
-#top-bar{
-position:relative;z-index:10;flex-shrink:0;
-display:flex;align-items:center;justify-content:space-between;
-padding:8px 18px 6px;
-background:#0e0e0e;
-border-bottom:1px solid rgba(255,255,255,.06);
-}
+/* TOP BAR */
+#top-bar{position:relative;z-index:10;flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:8px 18px 6px;background:#0e0e0e;border-bottom:1px solid rgba(255,255,255,.06)}
 .top-left{display:flex;flex-direction:column;gap:1px}
 .top-fmt-lbl{font-family:‘Rokkitt’,serif;font-weight:300;font-size:8px;letter-spacing:.22em;color:rgba(255,255,255,.35)}
 .top-fmt-name{font-family:‘Rokkitt’,serif;font-weight:700;font-size:16px;letter-spacing:.1em;color:var(–c);line-height:1}
@@ -40,46 +34,42 @@ border-bottom:1px solid rgba(255,255,255,.06);
 .top-ratio{font-family:‘Rokkitt’,serif;font-weight:700;font-size:18px;line-height:1;letter-spacing:.04em;color:var(–c)}
 .top-ratio-lbl{font-family:‘Rokkitt’,serif;font-weight:200;font-size:7px;letter-spacing:.18em;color:rgba(255,255,255,.26)}
 
-/* ── VIEWFINDER ── */
+/* VIEWFINDER */
 #viewfinder{position:relative;z-index:2;flex:1;min-height:0}
 
-/* ── BOTTOM CARD ── */
-#card{
-position:relative;z-index:10;flex-shrink:0;
-background:#0e0e0e;
-border-radius:16px 16px 0 0;
-border-top:1px solid rgba(220,88,87,.2);
-padding-bottom:max(env(safe-area-inset-bottom,0px),4px);
-}
+/* BOTTOM CARD */
+#card{position:relative;z-index:10;flex-shrink:0;background:#0e0e0e;border-radius:16px 16px 0 0;border-top:1px solid rgba(220,88,87,.2);padding-bottom:max(env(safe-area-inset-bottom,0px),4px)}
 #card::before{content:’’;display:block;width:32px;height:3px;border-radius:2px;background:rgba(255,255,255,.1);margin:8px auto 0}
 
-/* LENS */
-#lens-row{display:none;align-items:center;justify-content:center;gap:6px;padding:6px 18px 0}
-.lens-btn{
-padding:4px 12px;border-radius:16px;
-border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);
-font-family:‘Rokkitt’,serif;font-weight:600;font-size:12px;
-letter-spacing:.06em;color:rgba(255,255,255,.32);
-cursor:pointer;-webkit-appearance:none;transition:.15s;
+/* TAB BAR */
+#tab-bar{display:flex;border-bottom:1px solid rgba(255,255,255,.06);margin-top:4px}
+.tab{
+flex:1;padding:8px 0;
+font-family:‘Rokkitt’,serif;font-weight:600;font-size:11px;letter-spacing:.16em;
+color:rgba(255,255,255,.25);background:none;border:none;cursor:pointer;
+-webkit-appearance:none;position:relative;transition:.15s;
 }
+.tab.on{color:var(–c)}
+.tab.on::after{content:’’;position:absolute;bottom:0;left:20%;right:20%;height:2px;background:var(–c);border-radius:1px}
+.tab:active{opacity:.5}
+
+/* CAMERA PANEL */
+#panel-cam{}
+#lens-row{display:none;align-items:center;justify-content:center;gap:6px;padding:6px 18px 0}
+.lens-btn{padding:4px 12px;border-radius:16px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);font-family:‘Rokkitt’,serif;font-weight:600;font-size:12px;letter-spacing:.06em;color:rgba(255,255,255,.32);cursor:pointer;-webkit-appearance:none;transition:.15s}
 .lens-btn.on{border-color:var(–c);background:var(–cd);color:var(–c)}
 .lens-btn:active{opacity:.5}
-
-/* FORMAT PILLS */
+#zoom-row{display:none;align-items:center;gap:10px;padding:6px 20px 0}
+.zoom-val{font-family:‘Share Tech Mono’,monospace;font-size:10px;color:var(–c);letter-spacing:.06em;min-width:32px;text-align:right;flex-shrink:0}
+input[type=range].styled{flex:1;-webkit-appearance:none;appearance:none;height:2px;background:rgba(255,255,255,.15);border-radius:2px;outline:none;cursor:pointer}
+input[type=range].styled::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:18px;height:18px;border-radius:50%;background:var(–c);border:2px solid rgba(255,255,255,.5);cursor:pointer}
+.zoom-icon{font-family:‘Share Tech Mono’,monospace;font-size:9px;color:rgba(255,255,255,.3);flex-shrink:0}
 .pill-row{display:flex;align-items:stretch;margin:6px 0 0;border-top:1px solid rgba(255,255,255,.05);border-bottom:1px solid rgba(255,255,255,.05)}
-.pill{
-flex:1;padding:7px 0;text-align:center;position:relative;
-font-family:‘Rokkitt’,serif;font-weight:400;font-size:11px;
-letter-spacing:.08em;color:rgba(255,255,255,.2);
-background:none;border:none;border-right:1px solid rgba(255,255,255,.05);
-cursor:pointer;-webkit-appearance:none;transition:.15s;
-}
+.pill{flex:1;padding:7px 0;text-align:center;position:relative;font-family:‘Rokkitt’,serif;font-weight:400;font-size:11px;letter-spacing:.08em;color:rgba(255,255,255,.2);background:none;border:none;border-right:1px solid rgba(255,255,255,.05);cursor:pointer;-webkit-appearance:none;transition:.15s}
 .pill:last-child{border-right:none}
 .pill.on{color:var(–c);background:var(–cd)}
 .pill.on::after{content:’’;position:absolute;bottom:0;left:0;right:0;height:2px;background:var(–c)}
 .pill:active{opacity:.5}
-
-/* CONTROLS */
 .ctrl-row{display:flex;align-items:center;justify-content:space-between;padding:8px 14px 8px}
 .ctrl-group{display:flex;align-items:center;gap:4px}
 .cb{display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;cursor:pointer;-webkit-appearance:none;min-width:38px;position:relative}
@@ -89,8 +79,6 @@ cursor:pointer;-webkit-appearance:none;transition:.15s;
 .cl{font-family:‘Rokkitt’,serif;font-weight:300;font-size:7px;letter-spacing:.14em;color:rgba(255,255,255,.2)}
 .cb.on .cl{color:rgba(220,88,87,.6)}
 .badge{position:absolute;top:-2px;right:-2px;min-width:15px;height:15px;border-radius:8px;padding:0 3px;background:var(–c);color:#fff;font-family:‘Rokkitt’,serif;font-weight:700;font-size:8px;display:none;align-items:center;justify-content:center;letter-spacing:0;z-index:2}
-
-/* SHUTTER */
 #cap{display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;cursor:pointer;-webkit-appearance:none}
 .sh{width:60px;height:60px;border-radius:50%;position:relative}
 .sh-ring{position:absolute;inset:0;border-radius:50%;border:2.5px solid rgba(255,255,255,.5)}
@@ -98,6 +86,68 @@ cursor:pointer;-webkit-appearance:none;transition:.15s;
 #cap:active .sh-ring{border-color:var(–c)}
 #cap:active .sh-core{transform:scale(.8);background:rgba(220,88,87,.3)}
 .sl{font-family:‘Rokkitt’,serif;font-weight:300;font-size:7px;letter-spacing:.18em;color:rgba(255,255,255,.18)}
+
+/* ── FILTER PANEL ── */
+#panel-fil{display:none;padding:10px 18px 4px}
+.fil-item{margin-bottom:12px}
+.fil-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.fil-name{font-family:‘Rokkitt’,serif;font-weight:600;font-size:11px;letter-spacing:.1em;color:rgba(255,255,255,.55)}
+.fil-val-wrap{display:flex;align-items:center;gap:8px}
+.fil-val{font-family:‘Share Tech Mono’,monospace;font-size:10px;color:var(–c);min-width:28px;text-align:right}
+.fil-reset-dot{width:14px;height:14px;border-radius:50%;border:1px solid rgba(255,255,255,.2);background:none;cursor:pointer;-webkit-appearance:none;display:flex;align-items:center;justify-content:center}
+.fil-reset-dot::after{content:’’;width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,.3)}
+.fil-reset-dot:active{opacity:.4}
+.fil-slider-row{display:flex;align-items:center;gap:8px}
+.fil-tick{font-family:‘Share Tech Mono’,monospace;font-size:8px;color:rgba(255,255,255,.22);flex-shrink:0}
+input[type=range].fil-slider{
+flex:1;-webkit-appearance:none;appearance:none;
+height:3px;border-radius:2px;outline:none;cursor:pointer;
+}
+input[type=range].fil-slider::-webkit-slider-thumb{
+-webkit-appearance:none;appearance:none;
+width:16px;height:16px;border-radius:50%;
+background:var(–c);border:2px solid rgba(255,255,255,.45);
+cursor:pointer;
+}
+/* Slider track colors */
+#grain-sl{background:linear-gradient(to right,rgba(220,88,87,.5) 0%,rgba(255,255,255,.12) 0%)}
+#ca-sl{background:linear-gradient(to right,rgba(220,88,87,.5) 0%,rgba(255,255,255,.12) 0%)}
+#dist-sl{background:rgba(255,255,255,.12)}
+.fil-desc{font-family:‘Rokkitt’,serif;font-weight:300;font-size:8px;letter-spacing:.1em;color:rgba(255,255,255,.22);margin-top:3px}
+.fil-reset-all{
+width:100%;padding:8px;margin-top:2px;
+border:1px solid rgba(255,255,255,.1);background:none;
+font-family:‘Rokkitt’,serif;font-weight:400;font-size:10px;letter-spacing:.18em;
+color:rgba(255,255,255,.3);cursor:pointer;-webkit-appearance:none;border-radius:4px;
+transition:.15s;
+}
+.fil-reset-all:active{background:rgba(255,255,255,.06);color:var(–c)}
+
+/* Filter active badge on tab */
+#fil-badge{display:none;position:absolute;top:4px;right:calc(50% - 32px);width:6px;height:6px;border-radius:50%;background:var(–c)}
+
+/* ── FOCUS CONTROLS ── */
+#focus-ctrl{display:none;padding:6px 20px 0;flex-direction:column;gap:6px}
+.focus-mode-row{display:flex;align-items:center;gap:8px}
+.focus-mode-btn{
+padding:5px 16px;border-radius:16px;
+border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);
+font-family:‘Rokkitt’,serif;font-weight:600;font-size:12px;
+letter-spacing:.1em;color:rgba(255,255,255,.3);
+cursor:pointer;-webkit-appearance:none;transition:.15s;
+}
+.focus-mode-btn.on{border-color:var(–c);background:var(–cd);color:var(–c)}
+.focus-mode-btn:active{opacity:.5}
+.focus-status{
+font-family:‘Share Tech Mono’,monospace;font-size:9px;
+color:rgba(255,255,255,.28);letter-spacing:.12em;margin-left:4px;
+}
+#focus-dist-row{display:none;align-items:center;gap:8px}
+.focus-tick{font-family:‘Share Tech Mono’,monospace;font-size:8px;color:rgba(255,255,255,.22);flex-shrink:0;letter-spacing:.06em}
+.focus-val-badge{
+font-family:‘Share Tech Mono’,monospace;font-size:9px;
+color:var(–c);min-width:28px;text-align:right;flex-shrink:0;
+}
 
 /* MISC */
 #focus{position:absolute;width:50px;height:50px;margin:-25px 0 0 -25px;z-index:6;pointer-events:none;opacity:0;transition:opacity .4s}
@@ -107,9 +157,32 @@ cursor:pointer;-webkit-appearance:none;transition:.15s;
 .fc.bl{bottom:0;left:0;border-width:0 0 1.5px 1.5px}
 .fc.br{bottom:0;right:0;border-width:0 1.5px 1.5px 0}
 #flash{position:absolute;inset:0;background:#fff;z-index:99;opacity:0;pointer-events:none}
-#toast{position:absolute;left:50%;transform:translateX(-50%);background:rgba(14,14,14,.95);color:var(–c);font-family:‘Rokkitt’,serif;font-weight:400;font-size:9px;letter-spacing:.18em;padding:7px 16px;z-index:90;opacity:0;white-space:nowrap;border:1px solid var(–cb);transition:opacity .2s}
+#toast{position:absolute;left:50%;transform:translateX(-50%);background:rgba(14,14,14,.95);color:var(–c);font-family:‘Rokkitt’,serif;font-weight:400;font-size:9px;letter-spacing:.16em;padding:7px 16px;z-index:90;opacity:0;white-space:nowrap;border:1px solid var(–cb);transition:opacity .2s}
 #nocam{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:20;text-align:center;display:none;pointer-events:none}
 .nocam-txt{font-family:‘Rokkitt’,serif;font-weight:300;font-size:11px;letter-spacing:.18em;color:rgba(255,255,255,.3);line-height:2}
+
+/* SETTINGS */
+#settings{position:absolute;inset:0;z-index:50;background:#0a0a0a;display:none;flex-direction:column}
+.set-hdr{display:flex;align-items:center;justify-content:space-between;padding:12px 18px 10px;border-bottom:1px solid rgba(255,255,255,.06);flex-shrink:0}
+.set-title{font-family:‘Rokkitt’,serif;font-weight:700;font-size:17px;letter-spacing:.14em;color:#fff}
+.set-close{width:34px;height:34px;border-radius:50%;border:1px solid rgba(255,255,255,.12);background:none;color:rgba(255,255,255,.5);font-size:13px;cursor:pointer;-webkit-appearance:none;display:flex;align-items:center;justify-content:center}
+.set-close:active{opacity:.5}
+.set-body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:20px 18px}
+.set-section{margin-bottom:28px}
+.set-sec-title{font-family:‘Rokkitt’,serif;font-weight:300;font-size:9px;letter-spacing:.24em;color:rgba(255,255,255,.3);text-transform:uppercase;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid rgba(255,255,255,.06)}
+.set-options{display:flex;flex-direction:column;gap:2px}
+.set-opt{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-radius:8px;border:1px solid rgba(255,255,255,.06);background:rgba(255,255,255,.03);cursor:pointer;-webkit-appearance:none;transition:.15s;width:100%}
+.set-opt.on{border-color:var(–cb);background:var(–cd)}
+.set-opt:active{opacity:.6}
+.set-opt-left{display:flex;flex-direction:column;gap:3px;text-align:left}
+.set-opt-name{font-family:‘Rokkitt’,serif;font-weight:600;font-size:13px;letter-spacing:.08em;color:rgba(255,255,255,.75)}
+.set-opt.on .set-opt-name{color:var(–c)}
+.set-opt-desc{font-family:‘Rokkitt’,serif;font-weight:300;font-size:9px;letter-spacing:.1em;color:rgba(255,255,255,.28);line-height:1.5}
+.set-opt-badge{font-family:‘Share Tech Mono’,monospace;font-size:9px;letter-spacing:.08em;padding:3px 8px;border-radius:3px;border:1px solid rgba(255,255,255,.14);color:rgba(255,255,255,.35)}
+.set-opt.on .set-opt-badge{border-color:var(–cb);color:var(–c);background:var(–cd)}
+.set-fname{margin-top:8px;padding:12px 14px;border-radius:8px;background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.06)}
+.set-fname-lbl{font-family:‘Rokkitt’,serif;font-weight:300;font-size:8px;letter-spacing:.2em;color:rgba(255,255,255,.28);margin-bottom:6px}
+.set-fname-val{font-family:‘Share Tech Mono’,monospace;font-size:9px;letter-spacing:.04em;color:var(–c);line-height:1.7;word-break:break-all}
 
 /* GALLERY */
 #gallery{position:absolute;inset:0;z-index:50;background:#0a0a0a;display:none;flex-direction:column}
@@ -121,7 +194,9 @@ cursor:pointer;-webkit-appearance:none;transition:.15s;
 #gal-grid{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:10px;display:grid;grid-template-columns:repeat(3,1fr);gap:3px;align-content:start}
 .gal-thumb{position:relative;aspect-ratio:2.39/1;background:#1a1a1a;cursor:pointer;overflow:hidden}
 .gal-thumb img{width:100%;height:100%;object-fit:cover;display:block}
-.gal-thumb-fmt{position:absolute;bottom:0;left:0;right:0;padding:2px 4px;background:rgba(0,0,0,.55);font-family:‘Rokkitt’,serif;font-weight:600;font-size:8px;letter-spacing:.08em;color:var(–c);text-align:center}
+.gal-thumb-info{position:absolute;bottom:0;left:0;right:0;padding:3px 5px;background:rgba(0,0,0,.6);display:flex;justify-content:space-between;align-items:center}
+.gal-thumb-fmt{font-family:‘Rokkitt’,serif;font-weight:600;font-size:7px;letter-spacing:.08em;color:var(–c)}
+.gal-thumb-cs{font-family:‘Share Tech Mono’,monospace;font-size:7px;color:rgba(255,255,255,.4)}
 .gal-thumb:active{opacity:.7}
 .gal-empty{grid-column:1/-1;padding:50px 0;text-align:center;font-family:‘Rokkitt’,serif;font-weight:300;font-size:11px;letter-spacing:.18em;color:rgba(255,255,255,.2);line-height:2}
 #gal-detail{position:absolute;inset:0;background:#000;z-index:51;display:none;flex-direction:column}
@@ -131,7 +206,8 @@ cursor:pointer;-webkit-appearance:none;transition:.15s;
 .gal-save-btn{padding:7px 18px;border:1px solid var(–cb);background:none;color:var(–c);font-family:‘Rokkitt’,serif;font-weight:600;font-size:11px;letter-spacing:.14em;cursor:pointer;-webkit-appearance:none}
 .gal-save-btn:active{background:var(–cd)}
 #gal-detail-img{flex:1;object-fit:contain;width:100%;min-height:0}
-.gal-detail-info{padding:10px 18px 14px;background:rgba(0,0,0,.7);font-family:‘Rokkitt’,serif;font-weight:300;font-size:10px;letter-spacing:.12em;color:rgba(255,255,255,.3);display:flex;justify-content:space-between;flex-shrink:0}
+.gal-detail-info{padding:10px 18px 14px;background:rgba(0,0,0,.7);flex-shrink:0}
+.gal-detail-fname{font-family:‘Share Tech Mono’,monospace;font-size:8px;letter-spacing:.04em;color:rgba(255,255,255,.35);line-height:1.8;word-break:break-all}
 </style>
 
 </head>
@@ -155,27 +231,166 @@ cursor:pointer;-webkit-appearance:none;transition:.15s;
   <div id="viewfinder"></div>
 
   <div id="card">
-    <div id="lens-row"></div>
-    <div class="pill-row" id="pills"></div>
-    <div class="ctrl-row">
-      <div class="ctrl-group">
-        <button class="cb" id="gridBtn"><div class="ci">⊞</div><div class="cl">Grid</div></button>
-        <button class="cb" id="safeBtn"><div class="ci">▣</div><div class="cl">Safe</div></button>
-        <button class="cb" id="maskBtn"><div class="ci" id="mask-icon">◻</div><div class="cl" id="mask-lbl">Mask</div></button>
-      </div>
-      <button id="cap">
-        <div class="sh"><div class="sh-ring"></div><div class="sh-core"></div></div>
-        <div class="sl">Capture</div>
+    <!-- Tab bar -->
+    <div id="tab-bar">
+      <button class="tab on" id="tab-cam">CAMERA</button>
+      <button class="tab" id="tab-fil" style="position:relative">FILTER
+        <span id="fil-badge"></span>
       </button>
-      <div class="ctrl-group">
-        <button class="cb" id="galBtn">
-          <div class="ci">▦</div><div class="cl">Gallery</div>
-          <div class="badge" id="badge"></div>
-        </button>
-        <button class="cb" id="flipBtn"><div class="ci">↻</div><div class="cl">Flip</div></button>
+    </div>
+
+```
+<!-- CAMERA PANEL -->
+<div id="panel-cam">
+  <div id="lens-row"></div>
+  <div id="zoom-row">
+    <span class="zoom-icon">−</span>
+    <input type="range" id="zoom-slider" class="styled" min="10" max="30" value="10" step="1">
+    <span class="zoom-icon">+</span>
+    <span class="zoom-val" id="zoom-val">1.0×</span>
+  </div>
+
+  <!-- Focus controls -->
+  <div id="focus-ctrl">
+    <div class="focus-mode-row">
+      <button class="focus-mode-btn on" id="af-btn">AF</button>
+      <button class="focus-mode-btn" id="mf-btn">MF</button>
+      <span class="focus-status" id="focus-status">Auto Focus</span>
+    </div>
+    <div id="focus-dist-row">
+      <span class="focus-tick">NEAR</span>
+      <input type="range" class="fil-slider" id="focus-sl" min="0" max="100" value="0" step="1">
+      <span class="focus-tick">∞</span>
+      <span class="focus-val-badge" id="focus-val">∞</span>
+    </div>
+  </div>
+  <div class="pill-row" id="pills"></div>
+  <div class="ctrl-row">
+    <div class="ctrl-group">
+      <button class="cb" id="gridBtn"><div class="ci">⊞</div><div class="cl">Grid</div></button>
+      <button class="cb" id="safeBtn"><div class="ci">▣</div><div class="cl">Safe</div></button>
+      <button class="cb" id="maskBtn"><div class="ci" id="mask-icon">◻</div><div class="cl" id="mask-lbl">Mask</div></button>
+    </div>
+    <button id="cap">
+      <div class="sh"><div class="sh-ring"></div><div class="sh-core"></div></div>
+      <div class="sl">Capture</div>
+    </button>
+    <div class="ctrl-group">
+      <button class="cb" id="galBtn"><div class="ci">▦</div><div class="cl">Gallery</div><div class="badge" id="badge"></div></button>
+      <button class="cb" id="setBtn"><div class="ci">⚙</div><div class="cl">Settings</div></button>
+      <button class="cb" id="flipBtn"><div class="ci">↻</div><div class="cl">Flip</div></button>
+    </div>
+  </div>
+</div>
+
+<!-- FILTER PANEL -->
+<div id="panel-fil">
+  <!-- Film Grain -->
+  <div class="fil-item">
+    <div class="fil-hdr">
+      <span class="fil-name">Film Grain</span>
+      <div class="fil-val-wrap">
+        <span class="fil-val" id="grain-disp">0</span>
+        <button class="fil-reset-dot" id="grain-reset" title="Reset"></button>
+      </div>
+    </div>
+    <div class="fil-slider-row">
+      <span class="fil-tick">0</span>
+      <input type="range" class="fil-slider" id="grain-sl" min="0" max="100" value="0" step="1">
+      <span class="fil-tick">100</span>
+    </div>
+    <div class="fil-desc">ランダムノイズ粒子 — フィルム質感</div>
+  </div>
+
+  <!-- Chromatic Aberration -->
+  <div class="fil-item">
+    <div class="fil-hdr">
+      <span class="fil-name">Chromatic Aberration</span>
+      <div class="fil-val-wrap">
+        <span class="fil-val" id="ca-disp">0</span>
+        <button class="fil-reset-dot" id="ca-reset" title="Reset"></button>
+      </div>
+    </div>
+    <div class="fil-slider-row">
+      <span class="fil-tick">0</span>
+      <input type="range" class="fil-slider" id="ca-sl" min="0" max="100" value="0" step="1">
+      <span class="fil-tick">100</span>
+    </div>
+    <div class="fil-desc">RGB チャンネルシフト — レンズ色収差</div>
+  </div>
+
+  <!-- Lens Distortion -->
+  <div class="fil-item">
+    <div class="fil-hdr">
+      <span class="fil-name">Lens Distortion</span>
+      <div class="fil-val-wrap">
+        <span class="fil-val" id="dist-disp">0</span>
+        <button class="fil-reset-dot" id="dist-reset" title="Reset"></button>
+      </div>
+    </div>
+    <div class="fil-slider-row">
+      <span class="fil-tick" style="font-size:7px">PIN</span>
+      <input type="range" class="fil-slider" id="dist-sl" min="-50" max="50" value="0" step="1">
+      <span class="fil-tick" style="font-size:7px">BAR</span>
+    </div>
+    <div class="fil-desc">ピンクッション ← 0 → バレル歪み</div>
+  </div>
+
+  <button class="fil-reset-all" id="fil-reset-all">RESET ALL FILTERS</button>
+</div>
+```
+
+  </div>
+
+  <!-- SETTINGS -->
+
+  <div id="settings">
+    <div class="set-hdr">
+      <div class="set-title">SETTINGS</div>
+      <button class="set-close" id="set-close">✕</button>
+    </div>
+    <div class="set-body">
+      <div class="set-section">
+        <div class="set-sec-title">Image Format</div>
+        <div class="set-options" id="fmt-opts">
+          <button class="set-opt on" data-fmt="jpeg" data-mime="image/jpeg" data-ext="jpg">
+            <div class="set-opt-left"><div class="set-opt-name">JPEG</div><div class="set-opt-desc">高い互換性・小さいファイルサイズ</div></div>
+            <div class="set-opt-badge">.jpg</div>
+          </button>
+          <button class="set-opt" data-fmt="png" data-mime="image/png" data-ext="png">
+            <div class="set-opt-left"><div class="set-opt-name">PNG</div><div class="set-opt-desc">可逆圧縮・Display P3対応</div></div>
+            <div class="set-opt-badge">.png</div>
+          </button>
+          <button class="set-opt" data-fmt="webp" data-mime="image/webp" data-ext="webp">
+            <div class="set-opt-left"><div class="set-opt-name">WebP</div><div class="set-opt-desc">高圧縮・モダン形式</div></div>
+            <div class="set-opt-badge">.webp</div>
+          </button>
+        </div>
+      </div>
+      <div class="set-section">
+        <div class="set-sec-title">Color Space</div>
+        <div class="set-options" id="cs-opts">
+          <button class="set-opt on" data-cs="srgb" data-cs-label="sRGB">
+            <div class="set-opt-left"><div class="set-opt-name">sRGB</div><div class="set-opt-desc">標準色域・全デバイス対応</div></div>
+            <div class="set-opt-badge">IEC 61966</div>
+          </button>
+          <button class="set-opt" data-cs="display-p3" data-cs-label="P3">
+            <div class="set-opt-left"><div class="set-opt-name">Display P3</div><div class="set-opt-desc">iPhone広色域・PNG推奨</div></div>
+            <div class="set-opt-badge">DCI-P3</div>
+          </button>
+        </div>
+      </div>
+      <div class="set-section">
+        <div class="set-sec-title">Filename Preview</div>
+        <div class="set-fname">
+          <div class="set-fname-lbl">NEXT CAPTURE</div>
+          <div class="set-fname-val" id="fname-preview">—</div>
+        </div>
       </div>
     </div>
   </div>
+
+  <!-- GALLERY -->
 
   <div id="gallery">
     <div class="gal-hdr">
@@ -190,10 +405,7 @@ cursor:pointer;-webkit-appearance:none;transition:.15s;
         <button class="gal-save-btn" id="gal-save-btn">↓ SAVE</button>
       </div>
       <img id="gal-detail-img" src="" alt="">
-      <div class="gal-detail-info">
-        <span id="gal-detail-fmt"></span>
-        <span id="gal-detail-time"></span>
-      </div>
+      <div class="gal-detail-info"><div class="gal-detail-fname" id="gal-detail-fname"></div></div>
     </div>
   </div>
 
@@ -204,34 +416,37 @@ cursor:pointer;-webkit-appearance:none;transition:.15s;
 </div>
 
 <script>
+// ── CONSTANTS ──────────────────────────────────────────────
 const FMTS=[
   {r:1.33,l:'1.33',n:'ACADEMY'},
-  {r:1.78,l:'1.78',n:'HDTV 16:9'},
+  {r:1.78,l:'1.78',n:'HDTV_16-9'},
   {r:1.85,l:'1.85',n:'FLAT'},
   {r:2.39,l:'2.39',n:'CINEMASCOPE'},
-  {r:2.76,l:'2.76',n:'ULTRA 70'},
+  {r:2.76,l:'2.76',n:'ULTRA70'},
 ];
-const MASK_MODES=[
-  {label:'Mask',icon:'◻',alpha:0},
-  {label:'Dim', icon:'◑',alpha:0.62},
-  {label:'Black',icon:'◼',alpha:1.0},
-];
-const LENS_PRESETS=[{label:'0.5×',zoom:0.5},{label:'1×',zoom:1},{label:'2×',zoom:2},{label:'3×',zoom:3}];
-const C='#DC5857';
-const CA='rgba(220,88,87,';
+const MASK_MODES=[{label:'Mask',icon:'◻',alpha:0},{label:'Dim',icon:'◑',alpha:0.62},{label:'Black',icon:'◼',alpha:1.0}];
+const LENS_PRESETS=[{label:'0.5×',zoom:.5},{label:'1×',zoom:1},{label:'2×',zoom:2},{label:'3×',zoom:3}];
+const C='#DC5857', CA='rgba(220,88,87,';
 
+// ── STATE ───────────────────────────────────────────────────
 let fi=3, maskMode=0, facing='environment', stream=null;
 let gridOn=false, safeOn=false;
-let currentZoom=1, zoomCap=null;
+let currentZoom=1, zoomCap=null, zoomMin=1, zoomMax=1;
+
+// Focus
+let focusModeState='auto', focusCap=null, focusDistMin=0, focusDistMax=1;
+let focusSliderVal=0;
 let needSz=true, ftmr=null, ttmr=null;
+let expVal=0;
 const photos=[];
 let detailIdx=null;
+let capFmt={fmt:'jpeg',mime:'image/jpeg',ext:'jpg'};
+let capCs={cs:'srgb',label:'sRGB'};
 
-// Simulated still camera values
-let shutterIdx=4;
-const SHUTTERS=['1/30','1/60','1/125','1/250','1/500','1/1000','1/2000'];
-let expVal=0; // exposure compensation -2 to +2
+// Filter values
+let grainVal=0, caVal=0, distVal=0;
 
+// ── DOM ─────────────────────────────────────────────────────
 const wrap=document.getElementById('wrap');
 const vid=document.getElementById('vid');
 const cv=document.getElementById('cv');
@@ -241,6 +456,9 @@ const card=document.getElementById('card');
 const fn=document.getElementById('fn');
 const rl=document.getElementById('rl');
 const lensRow=document.getElementById('lens-row');
+const zoomRow=document.getElementById('zoom-row');
+const zoomSlider=document.getElementById('zoom-slider');
+const zoomVal=document.getElementById('zoom-val');
 const pillBox=document.getElementById('pills');
 const gridBtn=document.getElementById('gridBtn');
 const safeBtn=document.getElementById('safeBtn');
@@ -250,11 +468,28 @@ const maskLbl=document.getElementById('mask-lbl');
 const flipBtn=document.getElementById('flipBtn');
 const capBtn=document.getElementById('cap');
 const galBtn=document.getElementById('galBtn');
+const setBtn=document.getElementById('setBtn');
 const badge=document.getElementById('badge');
 const flash=document.getElementById('flash');
 const toast=document.getElementById('toast');
 const focus=document.getElementById('focus');
 const nocam=document.getElementById('nocam');
+const tabCam=document.getElementById('tab-cam');
+const tabFil=document.getElementById('tab-fil');
+const panelCam=document.getElementById('panel-cam');
+const panelFil=document.getElementById('panel-fil');
+const filBadge=document.getElementById('fil-badge');
+const grainSl=document.getElementById('grain-sl');
+const caSl=document.getElementById('ca-sl');
+const distSl=document.getElementById('dist-sl');
+const grainDisp=document.getElementById('grain-disp');
+const caDisp=document.getElementById('ca-disp');
+const distDisp=document.getElementById('dist-disp');
+const settings=document.getElementById('settings');
+const setClose=document.getElementById('set-close');
+const fmtOpts=document.getElementById('fmt-opts');
+const csOpts=document.getElementById('cs-opts');
+const fnamePreview=document.getElementById('fname-preview');
 const gallery=document.getElementById('gallery');
 const galGrid=document.getElementById('gal-grid');
 const galCount=document.getElementById('gal-count');
@@ -263,30 +498,41 @@ const galDetail=document.getElementById('gal-detail');
 const galBack=document.getElementById('gal-back');
 const galSaveBtnEl=document.getElementById('gal-save-btn');
 const galDetailImg=document.getElementById('gal-detail-img');
-const galDetailFmt=document.getElementById('gal-detail-fmt');
-const galDetailTime=document.getElementById('gal-detail-time');
+const galDetailFname=document.getElementById('gal-detail-fname');
 
+// ── FORMAT PILLS ────────────────────────────────────────────
 FMTS.forEach((f,i)=>{
   const b=document.createElement('button');
   b.className='pill'+(i===fi?' on':'');
-  b.textContent=f.l;b.onclick=()=>{fi=i;applyFmt()};
+  b.textContent=f.l;b.onclick=()=>{fi=i;applyFmt();updateFnamePreview()};
   pillBox.appendChild(b);
 });
-
 function applyFmt(){
-  const f=FMTS[fi];fn.textContent=f.n;rl.textContent=f.l;
+  const f=FMTS[fi];fn.textContent=f.n.replace(/_/g,' ');rl.textContent=f.l;
   pillBox.querySelectorAll('.pill').forEach((p,i)=>p.classList.toggle('on',i===fi));
 }
 
+// ── METRICS ─────────────────────────────────────────────────
 function getM(){
   const W=window.innerWidth,H=window.innerHeight;
-  const tH=topBar.offsetHeight||44, cH=card.offsetHeight||150;
+  const tH=topBar.offsetHeight||44,cH=card.offsetHeight||150;
   const fH=H-tH-cH,fT=tH;
   const r=FMTS[fi].r,ah=W/r;
   if(ah<=fH){const ex=(fH-ah)/2;return{W,H,aW:W,aH:ah,aT:fT+ex,aL:0,tH,cH};}
   const aw=fH*r;return{W,H,aW:aw,aH:fH,aT:fT,aL:(W-aw)/2,tH,cH};
 }
 
+// Video source rect (accounts for object-fit:cover)
+function getVSrc(m){
+  const vW=vid.videoWidth,vH=vid.videoHeight;
+  if(!vW||!vH)return null;
+  const{W,H,aL,aT,aW,aH}=m;
+  const sc=Math.max(W/vW,H/vH);
+  const ox=(W-vW*sc)/2,oy=(H-vH*sc)/2;
+  return{sx:(aL-ox)/sc,sy:(aT-oy)/sc,sw:aW/sc,sh:aH/sc};
+}
+
+// ── CAMERA ──────────────────────────────────────────────────
 async function initCam(){
   if(stream){stream.getTracks().forEach(t=>t.stop());stream=null;}
   const tries=[{facingMode:{ideal:facing},width:{ideal:3840},height:{ideal:2160}},{facingMode:{ideal:facing}},true];
@@ -294,7 +540,7 @@ async function initCam(){
     try{
       stream=await navigator.mediaDevices.getUserMedia({video:c,audio:false});
       vid.srcObject=stream;vid.classList.toggle('mirror',facing==='user');
-      await vid.play();nocam.style.display='none';checkLens();return;
+      await vid.play();nocam.style.display='none';checkLens();checkFocus();return;
     }catch{}
   }
   nocam.style.display='block';
@@ -302,157 +548,352 @@ async function initCam(){
 function checkLens(){
   if(!stream)return;
   const track=stream.getVideoTracks()[0];if(!track)return;
-  try{const cap=track.getCapabilities();if(cap&&cap.zoom&&cap.zoom.max>1.5){zoomCap=cap.zoom;buildLensUI();}}catch{}
+  try{
+    const cap=track.getCapabilities();
+    if(cap&&cap.zoom&&cap.zoom.max>1.2){
+      zoomCap=cap.zoom;zoomMin=cap.zoom.min||1;zoomMax=cap.zoom.max||3;
+      buildLensUI();buildZoomSlider();
+    }
+  }catch{}
 }
 function buildLensUI(){
-  if(!zoomCap)return;
-  const{min,max}=zoomCap;lensRow.innerHTML='';
-  const avail=LENS_PRESETS.filter(p=>p.zoom>=min*0.8&&p.zoom<=max*1.1);
-  if(avail.length<2)return;lensRow.style.display='flex';
+  const avail=LENS_PRESETS.filter(p=>p.zoom>=zoomMin*.8&&p.zoom<=zoomMax*1.1);
+  if(avail.length<2)return;
+  lensRow.innerHTML='';lensRow.style.display='flex';
   avail.forEach(p=>{
     const b=document.createElement('button');
-    b.className='lens-btn'+(Math.abs(p.zoom-currentZoom)<0.01?' on':'');
-    b.textContent=p.label;b.dataset.zoom=p.zoom;b.onclick=()=>setLens(p.zoom);lensRow.appendChild(b);
+    b.className='lens-btn'+(Math.abs(p.zoom-currentZoom)<.01?' on':'');
+    b.textContent=p.label;b.dataset.zoom=p.zoom;b.onclick=()=>setZoom(p.zoom);lensRow.appendChild(b);
   });
 }
-async function setLens(zoom){
-  if(!stream||!zoomCap)return;const track=stream.getVideoTracks()[0];if(!track)return;
-  try{const z=Math.max(zoomCap.min,Math.min(zoomCap.max,zoom));await track.applyConstraints({advanced:[{zoom:z}]});currentZoom=zoom;
-    lensRow.querySelectorAll('.lens-btn').forEach(b=>b.classList.toggle('on',Math.abs(parseFloat(b.dataset.zoom)-zoom)<0.01));
+function buildZoomSlider(){
+  zoomSlider.min=Math.round(zoomMin*10);
+  zoomSlider.max=Math.round(zoomMax*10);
+  zoomSlider.value=Math.round(currentZoom*10);
+  zoomRow.style.display='flex';
+}
+async function setZoom(z){
+  if(!stream||!zoomCap)return;
+  const track=stream.getVideoTracks()[0];if(!track)return;
+  try{
+    z=Math.max(zoomMin,Math.min(zoomMax,z));
+    await track.applyConstraints({advanced:[{zoom:z}]});
+    currentZoom=z;zoomVal.textContent=z.toFixed(1)+'×';
+    zoomSlider.value=Math.round(z*10);
+    lensRow.querySelectorAll('.lens-btn').forEach(b=>b.classList.toggle('on',Math.abs(parseFloat(b.dataset.zoom)-z)<.15));
   }catch(e){}
 }
+zoomSlider.addEventListener('input',()=>setZoom(parseInt(zoomSlider.value)/10));
 
-// ── DRAW ──────────────────────────────────────────────────────
+// ── FOCUS ───────────────────────────────────────────────────
+function checkFocus(){
+  if(!stream)return;
+  const track=stream.getVideoTracks()[0];if(!track)return;
+  try{
+    const cap=track.getCapabilities();
+    const focusCtrl=document.getElementById('focus-ctrl');
+    if(cap&&cap.focusMode&&cap.focusMode.length>0){
+      focusCap=cap;
+      if(cap.focusDistance){
+        focusDistMin=cap.focusDistance.min||0;
+        focusDistMax=cap.focusDistance.max||1;
+      }
+      focusCtrl.style.display='flex';
+      setFocusMode('auto');
+    } else {
+      // Show anyway for devices where capabilities aren't reported but may still work
+      focusCtrl.style.display='flex';
+      document.getElementById('focus-status').textContent='Focus (limited)';
+    }
+  }catch(e){
+    // Show with warning
+    const focusCtrl=document.getElementById('focus-ctrl');
+    focusCtrl.style.display='flex';
+    document.getElementById('focus-status').textContent='Focus (limited)';
+  }
+}
+
+async function setFocusMode(mode){
+  if(!stream)return;
+  const track=stream.getVideoTracks()[0];if(!track)return;
+  focusModeState=mode;
+  const afBtn=document.getElementById('af-btn');
+  const mfBtn=document.getElementById('mf-btn');
+  const focusDistRow=document.getElementById('focus-dist-row');
+  const focusStatus=document.getElementById('focus-status');
+  afBtn.classList.toggle('on',mode==='auto');
+  mfBtn.classList.toggle('on',mode==='manual');
+  focusDistRow.style.display=mode==='manual'?'flex':'none';
+  focusStatus.textContent=mode==='auto'?'Auto Focus':'Manual Focus';
+  try{
+    await track.applyConstraints({advanced:[{focusMode:mode}]});
+  }catch(e){
+    focusStatus.textContent=mode==='auto'?'AF (tap screen)':'MF — drag slider';
+  }
+}
+
+async function applyManualFocus(sliderVal){
+  if(!stream)return;
+  const track=stream.getVideoTracks()[0];if(!track)return;
+  focusSliderVal=sliderVal;
+  // Map slider 0→100 to focusDistance max→min (0=near, 100=far/infinity)
+  // Invert: slider left=near (large distance number closer), right=far (infinity=0 on some devices)
+  const norm=1-(sliderVal/100); // 0=far(infinity), 1=near
+  const dist=focusDistMin+(focusDistMax-focusDistMin)*norm;
+  const focusValEl=document.getElementById('focus-val');
+  focusValEl.textContent=sliderVal===100?'∞':sliderVal.toString();
+  try{
+    await track.applyConstraints({advanced:[{focusMode:'manual',focusDistance:dist}]});
+  }catch(e){
+    // Silently fail — some devices don't support focusDistance
+  }
+}
+
+document.getElementById('af-btn').onclick=()=>setFocusMode('auto');
+document.getElementById('mf-btn').onclick=()=>setFocusMode('manual');
+document.getElementById('focus-sl').addEventListener('input',function(){
+  applyManualFocus(parseInt(this.value));
+  // Update track fill
+  const pct=(parseInt(this.value)/100)*100;
+  this.style.background=`linear-gradient(to right,rgba(220,88,87,.55) ${pct}%,rgba(255,255,255,.12) ${pct}%)`;
+});
+
+
+// ── FILTERS ─────────────────────────────────────────────────
+function hasEffects(){return grainVal>0||caVal>0||distVal!==0;}
+
+function updateFilterBadge(){
+  const on=hasEffects();
+  filBadge.style.display=on?'block':'none';
+  tabFil.style.color=on?'var(--c)':'';
+}
+
+// Update slider track fill
+function updateSliderTrack(el,val,min,max){
+  const pct=(val-min)/(max-min)*100;
+  el.style.background=`linear-gradient(to right,rgba(220,88,87,.55) ${pct}%,rgba(255,255,255,.12) ${pct}%)`;
+}
+
+grainSl.addEventListener('input',()=>{
+  grainVal=parseInt(grainSl.value);
+  grainDisp.textContent=grainVal;
+  updateSliderTrack(grainSl,grainVal,0,100);
+  updateVideoVisibility();updateFilterBadge();
+});
+caSl.addEventListener('input',()=>{
+  caVal=parseInt(caSl.value);
+  caDisp.textContent=caVal;
+  updateSliderTrack(caSl,caVal,0,100);
+  updateVideoVisibility();updateFilterBadge();
+});
+distSl.addEventListener('input',()=>{
+  distVal=parseInt(distSl.value);
+  distDisp.textContent=distVal;
+  // center-origin track
+  const pct=distVal>=0?(distVal/50)*50+50:50-(Math.abs(distVal)/50)*50;
+  const half=50;
+  const from=Math.min(pct,half), to=Math.max(pct,half);
+  distSl.style.background=`linear-gradient(to right,rgba(255,255,255,.12) ${from}%,rgba(220,88,87,.55) ${from}%,rgba(220,88,87,.55) ${to}%,rgba(255,255,255,.12) ${to}%)`;
+  updateVideoVisibility();updateFilterBadge();
+});
+
+function resetGrain(){grainVal=0;grainSl.value=0;grainDisp.textContent=0;updateSliderTrack(grainSl,0,0,100);updateVideoVisibility();updateFilterBadge();}
+function resetCA(){caVal=0;caSl.value=0;caDisp.textContent=0;updateSliderTrack(caSl,0,0,100);updateVideoVisibility();updateFilterBadge();}
+function resetDist(){distVal=0;distSl.value=0;distDisp.textContent=0;distSl.style.background='rgba(255,255,255,.12)';updateVideoVisibility();updateFilterBadge();}
+
+document.getElementById('grain-reset').onclick=resetGrain;
+document.getElementById('ca-reset').onclick=resetCA;
+document.getElementById('dist-reset').onclick=resetDist;
+document.getElementById('fil-reset-all').onclick=()=>{resetGrain();resetCA();resetDist();};
+
+function updateVideoVisibility(){
+  // Hide video when effects need canvas rendering
+  vid.style.opacity=hasEffects()?'0':'1';
+}
+
+// ── DRAW ────────────────────────────────────────────────────
+// Barrel distortion draw (grid-based warp)
+function drawBarrel(sx,sy,sw,sh,dx,dy,dw,dh,k){
+  const N=10;
+  ctx.save();
+  ctx.beginPath();ctx.rect(dx,dy,dw,dh);ctx.clip();
+  for(let row=0;row<N;row++){
+    for(let col=0;col<N;col++){
+      const nx=(col+.5)/N*2-1, ny=(row+.5)/N*2-1;
+      const r2=nx*nx+ny*ny;
+      const f=1+k*r2;
+      const vx=sx+(col/N)*sw, vy=sy+(row/N)*sh;
+      const vw=sw/N+1, vh=sh/N+1;
+      const destCx=dx+(.5+nx*f*.5)*dw;
+      const destCy=dy+(.5+ny*f*.5)*dh;
+      const destW=(dw/N)*f+1, destH=(dh/N)*f+1;
+      ctx.drawImage(vid,vx,vy,vw,vh,destCx-destW/2,destCy-destH/2,destW,destH);
+    }
+  }
+  ctx.restore();
+}
+
 function draw(){
   const W=window.innerWidth,H=window.innerHeight;
   if(needSz){cv.width=W;cv.height=H;needSz=false;}
   ctx.clearRect(0,0,W,H);
   const m=getM();
   const{aT,aH,aL,aW,tH,cH}=m;
-  const aR=aL+aW, aB=aT+aH;
-  const pad=10; // inner padding for HUD text
+  const aR=aL+aW,aB=aT+aH,pad=10;
+  const vs=getVSrc(m);
 
-  // ── MASK ──
+  // ── DRAW VIDEO WITH EFFECTS ──────────────────────────────
+  if(hasEffects()&&vs){
+    const{sx,sy,sw,sh}=vs;
+
+    // Barrel / Pincushion distortion
+    if(distVal!==0){
+      const k=(distVal/50)*0.28; // max barrel = 0.28
+      drawBarrel(sx,sy,sw,sh,aL,aT,aW,aH,k);
+    } else {
+      ctx.drawImage(vid,sx,sy,sw,sh,aL,aT,aW,aH);
+    }
+
+    // Chromatic aberration overlay
+    if(caVal>0){
+      const offset=(caVal/100)*14; // max 14px screen offset
+      const alpha=(caVal/100)*0.55;
+      const fringeAlpha=(caVal/100)*0.4;
+
+      // Red channel — shift left
+      ctx.save();
+      ctx.globalCompositeOperation='screen';
+      ctx.globalAlpha=fringeAlpha;
+      ctx.filter='sepia(1) saturate(8) hue-rotate(330deg) brightness(0.9)';
+      ctx.drawImage(vid,sx,sy,sw,sh,aL-offset,aT,aW,aH);
+      // Cyan/Blue channel — shift right
+      ctx.filter='sepia(1) saturate(8) hue-rotate(150deg) brightness(0.9)';
+      ctx.drawImage(vid,sx,sy,sw,sh,aL+offset,aT,aW,aH);
+      ctx.restore();
+
+      // Edge fringe lines
+      ctx.save();
+      ctx.globalCompositeOperation='screen';
+      ctx.globalAlpha=fringeAlpha*0.6;
+      ctx.filter='sepia(1) saturate(12) hue-rotate(330deg)';
+      ctx.drawImage(vid,sx,sy,sw,sh,aL-offset*1.8,aT,aW,aH);
+      ctx.filter='sepia(1) saturate(12) hue-rotate(150deg)';
+      ctx.drawImage(vid,sx,sy,sw,sh,aL+offset*1.8,aT,aW,aH);
+      ctx.restore();
+    }
+
+    // Film grain
+    if(grainVal>0){
+      ctx.save();
+      ctx.globalCompositeOperation='overlay';
+      const grainAlpha=(grainVal/100)*0.55;
+      const grainCount=Math.floor(grainVal*6);
+      for(let i=0;i<grainCount;i++){
+        const gx=aL+Math.random()*aW;
+        const gy=aT+Math.random()*aH;
+        const gs=Math.random()*2+0.2;
+        const gv=Math.floor(Math.random()*255);
+        ctx.fillStyle=`rgba(${gv},${gv},${gv},${grainAlpha*2.5})`;
+        ctx.fillRect(gx,gy,gs,gs);
+      }
+      // Occasional larger clumps for organic feel
+      for(let i=0;i<Math.floor(grainVal*0.5);i++){
+        const gx=aL+Math.random()*aW;
+        const gy=aT+Math.random()*aH;
+        const gs=Math.random()*3+1;
+        ctx.fillStyle=`rgba(200,200,200,${grainAlpha*0.6})`;
+        ctx.fillRect(gx,gy,gs,gs);
+      }
+      ctx.restore();
+    }
+  }
+
+  // ── MASK ────────────────────────────────────────────────
   if(maskMode>0){
     const a=MASK_MODES[maskMode].alpha;
     ctx.fillStyle=`rgba(0,0,0,${a})`;
     if(aT>tH)ctx.fillRect(0,tH,W,aT-tH);
-    const cardTop=H-cH;
-    if(aB<cardTop)ctx.fillRect(0,aB,W,cardTop-aB);
+    const cardTop=H-cH;if(aB<cardTop)ctx.fillRect(0,aB,W,cardTop-aB);
     if(aL>0){ctx.fillRect(0,aT,aL,aH);ctx.fillRect(aR,aT,W-aR,aH);}
   }
 
-  // ── VIGNETTE inside frame ──
-  const vg=ctx.createRadialGradient(aL+aW/2,aT+aH/2,aH*0.2,aL+aW/2,aT+aH/2,aH*0.78);
-  vg.addColorStop(0,'rgba(0,0,0,0)');
-  vg.addColorStop(1,'rgba(0,0,0,0.45)');
+  // ── VIGNETTE ────────────────────────────────────────────
+  const vg=ctx.createRadialGradient(aL+aW/2,aT+aH/2,aH*.18,aL+aW/2,aT+aH/2,aH*.76);
+  vg.addColorStop(0,'rgba(0,0,0,0)');vg.addColorStop(1,'rgba(0,0,0,0.42)');
   ctx.fillStyle=vg;ctx.fillRect(aL,aT,aW,aH);
 
-  // ── CORNER BRACKETS ──
-  const cs=20, cr=4;
+  // ── CORNER BRACKETS ─────────────────────────────────────
+  const cs=20,cr=4;
   ctx.strokeStyle=C;ctx.lineWidth=2;ctx.setLineDash([]);
   [[aL,aT,1,1],[aR,aT,-1,1],[aL,aB,1,-1],[aR,aB,-1,-1]].forEach(([x,y,dx,dy])=>{
-    ctx.beginPath();
-    ctx.moveTo(x+dx*cs,y);ctx.lineTo(x+dx*cr,y);
-    ctx.quadraticCurveTo(x,y,x,y+dy*cr);
-    ctx.lineTo(x,y+dy*cs);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(x+dx*cs,y);ctx.lineTo(x+dx*cr,y);
+    ctx.quadraticCurveTo(x,y,x,y+dy*cr);ctx.lineTo(x,y+dy*cs);ctx.stroke();
   });
+  ctx.strokeStyle=CA+'0.1)';ctx.lineWidth=0.7;
+  ctx.strokeRect(aL+.5,aT+.5,aW-1,aH-1);
 
-  // ── FRAME BORDER (subtle) ──
-  ctx.strokeStyle=CA+'0.12)';ctx.lineWidth=0.7;
-  ctx.strokeRect(aL+0.5,aT+0.5,aW-1,aH-1);
-
-  // ── HUD TOP (REC/FPS/timecode removed — still camera) ──
-
-  // ── CENTER FOCUS BRACKET ──
-  const fcW=aW*0.12, fcH=aH*0.14;
-  const fcX=aL+aW/2-fcW/2, fcY=aT+aH/2-fcH/2;
-  const fcs=8, fcr=3; // corner size, radius
-  ctx.strokeStyle=CA+'0.75)';ctx.lineWidth=1.2;
+  // ── CENTER FOCUS BRACKET ─────────────────────────────────
+  const fcW=aW*.12,fcH=aH*.14;
+  const fcX=aL+aW/2-fcW/2,fcY=aT+aH/2-fcH/2,fcs=8,fcr2=3;
+  ctx.strokeStyle=CA+'0.7)';ctx.lineWidth=1.2;
   [[fcX,fcY,1,1],[fcX+fcW,fcY,-1,1],[fcX,fcY+fcH,1,-1],[fcX+fcW,fcY+fcH,-1,-1]].forEach(([x,y,dx,dy])=>{
-    ctx.beginPath();
-    ctx.moveTo(x+dx*fcs,y);ctx.lineTo(x+dx*fcr,y);
-    ctx.quadraticCurveTo(x,y,x,y+dy*fcr);
-    ctx.lineTo(x,y+dy*fcs);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(x+dx*fcs,y);ctx.lineTo(x+dx*fcr2,y);
+    ctx.quadraticCurveTo(x,y,x,y+dy*fcr2);ctx.lineTo(x,y+dy*fcs);ctx.stroke();
   });
-  // Center dot
-  ctx.fillStyle=CA+'0.6)';ctx.beginPath();ctx.arc(aL+aW/2,aT+aH/2,2,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle=CA+'0.55)';ctx.beginPath();ctx.arc(aL+aW/2,aT+aH/2,2,0,Math.PI*2);ctx.fill();
 
-  // ── LEFT SIDE: Exposure meter ──
+  // ── LEFT EXPOSURE METER ──────────────────────────────────
   const mX=aL+pad+6;
-  const mTop=aT+aH*0.3, mBot=aT+aH*0.7, mH=mBot-mTop;
-  // Track
-  ctx.strokeStyle='rgba(255,255,255,.18)';ctx.lineWidth=1;
+  const mTop=aT+aH*.3,mBot=aT+aH*.7,mH=mBot-mTop;
+  ctx.strokeStyle='rgba(255,255,255,.16)';ctx.lineWidth=1;
   ctx.beginPath();ctx.moveTo(mX,mTop);ctx.lineTo(mX,mBot);ctx.stroke();
-  // Center tick
-  ctx.strokeStyle='rgba(255,255,255,.35)';ctx.lineWidth=1;
+  ctx.strokeStyle='rgba(255,255,255,.3)';
   ctx.beginPath();ctx.moveTo(mX-4,aT+aH/2);ctx.lineTo(mX+4,aT+aH/2);ctx.stroke();
-  // Ticks at ±1, ±2
-  for(let t=-2;t<=2;t++){
-    if(t===0)continue;
-    const ty=aT+aH/2+t*(mH/4.5);
-    ctx.strokeStyle='rgba(255,255,255,.22)';
-    ctx.beginPath();ctx.moveTo(mX-2,ty);ctx.lineTo(mX+2,ty);ctx.stroke();
-  }
-  // Indicator
-  const indY=aT+aH/2+expVal*(mH/4.5);
-  ctx.fillStyle=expVal===0?'rgba(255,255,255,.8)':C;
-  ctx.fillRect(mX-3,indY-2,6,4);
-  // Labels
-  ctx.font='7px "Share Tech Mono"';ctx.fillStyle='rgba(255,255,255,.35)';ctx.textAlign='left';
+  for(let t=-2;t<=2;t++){if(t===0)continue;const ty=aT+aH/2+t*(mH/4.5);ctx.strokeStyle='rgba(255,255,255,.18)';ctx.beginPath();ctx.moveTo(mX-2,ty);ctx.lineTo(mX+2,ty);ctx.stroke();}
+  ctx.fillStyle=expVal===0?'rgba(255,255,255,.72)':C;ctx.fillRect(mX-3,aT+aH/2+expVal*(mH/4.5)-2,6,4);
+  ctx.font='7px "Share Tech Mono"';ctx.fillStyle='rgba(255,255,255,.28)';ctx.textAlign='left';
   ctx.fillText('+2',mX+6,mTop+5);ctx.fillText('-2',mX+6,mBot+3);
 
-  // ── BOTTOM HUD inside frame ──
+  // ── BOTTOM HUD ───────────────────────────────────────────
   const bY=aB-pad-2;
-  ctx.font='10px "Share Tech Mono"';ctx.fillStyle='rgba(255,255,255,.75)';
-  ctx.textAlign='left';
-  // Shutter
-  const shutterLabel=SHUTTERS[shutterIdx];
-  // bracket
-  ctx.strokeStyle=CA+'0.4)';ctx.lineWidth=1;
-  const sX=aL+pad;
+  ctx.font='10px "Share Tech Mono"';ctx.fillStyle='rgba(255,255,255,.7)';ctx.textAlign='left';
+  const sLabel='1/125',sX=aL+pad;
+  ctx.strokeStyle=CA+'0.36)';ctx.lineWidth=1;
   ctx.beginPath();ctx.moveTo(sX,bY-11);ctx.lineTo(sX,bY+1);ctx.lineTo(sX+4,bY+1);ctx.stroke();
-  ctx.beginPath();ctx.moveTo(sX+ctx.measureText(shutterLabel).width+10,bY-11);
-  ctx.lineTo(sX+ctx.measureText(shutterLabel).width+10,bY+1);
-  ctx.lineTo(sX+ctx.measureText(shutterLabel).width+6,bY+1);ctx.stroke();
-  ctx.fillText(shutterLabel,sX+4,bY);
-
-  // AWB
-  ctx.font='9px "Share Tech Mono"';ctx.fillStyle='rgba(255,255,255,.5)';
-  ctx.fillText('AWB',aL+pad+62,bY);
-
-  // Exposure scale (center bottom)
-  const scaleW=aW*0.28, scaleX=aL+aW/2-scaleW/2;
-  ctx.fillStyle='rgba(255,255,255,.2)';
-  for(let i=0;i<=20;i++){
-    const sx=scaleX+i*(scaleW/20);
-    const sh=(i%5===0)?5:(i%2===0?3:2);
-    ctx.fillRect(sx-0.5,bY-sh,1,sh);
-  }
-  // Center marker
-  ctx.fillStyle=C;ctx.fillRect(aL+aW/2-0.5,bY-7,1,7);
-
-  // AF indicator
-  ctx.font='bold 10px "Share Tech Mono"';ctx.fillStyle=CA+'0.8)';
-  ctx.textAlign='center';ctx.fillText('A',aL+aW/2+scaleW/2+16,bY);
-
-  // Aperture
-  ctx.font='10px "Share Tech Mono"';ctx.fillStyle='rgba(255,255,255,.75)';
-  ctx.textAlign='right';
-  const apLabel='F1.8';
-  const apX=aR-pad;
+  const sW=ctx.measureText(sLabel).width;
+  ctx.beginPath();ctx.moveTo(sX+sW+10,bY-11);ctx.lineTo(sX+sW+10,bY+1);ctx.lineTo(sX+sW+6,bY+1);ctx.stroke();
+  ctx.fillText(sLabel,sX+4,bY);
+  ctx.font='9px "Share Tech Mono"';ctx.fillStyle='rgba(255,255,255,.45)';ctx.fillText('AWB',aL+pad+60,bY);
+  const scW=aW*.26,scX=aL+aW/2-scW/2;
+  ctx.fillStyle='rgba(255,255,255,.18)';
+  for(let i=0;i<=20;i++){const sx=scX+i*(scW/20);const sh=i%5===0?5:i%2===0?3:2;ctx.fillRect(sx-.5,bY-sh,1,sh);}
+  ctx.fillStyle=C;ctx.fillRect(aL+aW/2-.5,bY-7,1,7);
+  ctx.font='bold 10px "Share Tech Mono"';ctx.fillStyle=CA+'0.72)';ctx.textAlign='center';ctx.fillText('A',aL+aW/2+scW/2+14,bY);
+  ctx.font='10px "Share Tech Mono"';ctx.fillStyle='rgba(255,255,255,.7)';ctx.textAlign='right';
+  const apLabel='F1.8',apX=aR-pad,apW=ctx.measureText(apLabel).width;
+  ctx.strokeStyle=CA+'0.36)';ctx.lineWidth=1;
   ctx.beginPath();ctx.moveTo(apX,bY-11);ctx.lineTo(apX,bY+1);ctx.lineTo(apX-4,bY+1);ctx.stroke();
-  ctx.strokeStyle=CA+'0.4)';ctx.lineWidth=1;
-  ctx.beginPath();ctx.moveTo(apX-ctx.measureText(apLabel).width-10,bY-11);
-  ctx.lineTo(apX-ctx.measureText(apLabel).width-10,bY+1);
-  ctx.lineTo(apX-ctx.measureText(apLabel).width-6,bY+1);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(apX-apW-10,bY-11);ctx.lineTo(apX-apW-10,bY+1);ctx.lineTo(apX-apW-6,bY+1);ctx.stroke();
   ctx.fillText(apLabel,apX-4,bY);
+  ctx.font='9px "Share Tech Mono"';ctx.fillStyle='rgba(255,255,255,.45)';ctx.fillText('AUTO ISO',aR-pad-60,bY);
 
-  // ISO
-  ctx.font='9px "Share Tech Mono"';ctx.fillStyle='rgba(255,255,255,.5)';
-  ctx.fillText('AUTO ISO',aR-pad-62,bY);
+  // Color space + focus mode indicator (top right inside frame)
+  ctx.font='8px "Share Tech Mono"';ctx.textAlign='right';
+  ctx.fillStyle=capCs.cs==='display-p3'?C:'rgba(255,255,255,.32)';
+  ctx.fillText(capCs.label,aR-pad,aT+pad+10);
+  // Focus mode badge
+  const fmBadge=focusModeState==='manual'?`MF ${focusSliderVal===100?'∞':focusSliderVal}`:'AF';
+  ctx.fillStyle=focusModeState==='manual'?C:'rgba(255,255,255,.4)';
+  ctx.font='bold 8px "Share Tech Mono"';
+  ctx.fillText(fmBadge,aR-pad,aT+pad+22);
 
-  // ── GRID ──
+  // Active filter indicators (top-left inside frame)
+  let filX=aL+pad;
+  if(grainVal>0){ctx.font='bold 7px "Share Tech Mono"';ctx.fillStyle=CA+'0.7)';ctx.textAlign='left';ctx.fillText('GRAIN',filX,aT+pad+10);filX+=38;}
+  if(caVal>0){ctx.font='bold 7px "Share Tech Mono"';ctx.fillStyle=CA+'0.7)';ctx.textAlign='left';ctx.fillText('CA',filX,aT+pad+10);filX+=22;}
+  if(distVal!==0){ctx.font='bold 7px "Share Tech Mono"';ctx.fillStyle=CA+'0.7)';ctx.textAlign='left';ctx.fillText(distVal>0?'BARREL':'PIN',filX,aT+pad+10);}
+
+  // ── GRID ────────────────────────────────────────────────
   if(gridOn){
     ctx.strokeStyle='rgba(255,255,255,0.13)';ctx.lineWidth=0.5;ctx.setLineDash([]);
     for(let i=1;i<=2;i++){
@@ -461,23 +902,111 @@ function draw(){
     }
   }
 
-  // ── SAFE AREA ──
+  // ── SAFE AREA ───────────────────────────────────────────
   if(safeOn){
     ctx.setLineDash([4,4]);
     ctx.strokeStyle=CA+'0.36)';ctx.lineWidth=0.7;
-    const s1=0.05;ctx.strokeRect(aL+aW*s1,aT+aH*s1,aW*(1-s1*2),aH*(1-s1*2));
-    ctx.strokeStyle='rgba(220,88,87,.22)';
-    const s2=0.1;ctx.strokeRect(aL+aW*s2,aT+aH*s2,aW*(1-s2*2),aH*(1-s2*2));
-    ctx.setLineDash([]);
-    ctx.font='700 7px sans-serif';ctx.textAlign='left';
-    ctx.fillStyle=CA+'0.5)';ctx.fillText('ACTION SAFE',aL+aW*s1+4,aT+aH*s1+10);
-    ctx.fillStyle=CA+'0.38)';ctx.fillText('TITLE SAFE',aL+aW*s2+4,aT+aH*s2+10);
+    const s1=.05;ctx.strokeRect(aL+aW*s1,aT+aH*s1,aW*(1-s1*2),aH*(1-s1*2));
+    ctx.strokeStyle=CA+'0.22)';
+    const s2=.1;ctx.strokeRect(aL+aW*s2,aT+aH*s2,aW*(1-s2*2),aH*(1-s2*2));
+    ctx.setLineDash([]);ctx.font='700 7px sans-serif';ctx.textAlign='left';
+    ctx.fillStyle=CA+'0.48)';ctx.fillText('ACTION SAFE',aL+aW*s1+4,aT+aH*s1+10);
+    ctx.fillStyle=CA+'0.32)';ctx.fillText('TITLE SAFE',aL+aW*s2+4,aT+aH*s2+10);
   }
 
-  ctx.textAlign='left'; // reset
+  ctx.textAlign='left';
   requestAnimationFrame(draw);
 }
 
+// ── FILENAME ────────────────────────────────────────────────
+function buildFilename(ext){
+  const now=new Date();
+  const d=`${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}`;
+  const t=`${String(now.getHours()).padStart(2,'0')}${String(now.getMinutes()).padStart(2,'0')}${String(now.getSeconds()).padStart(2,'0')}`;
+  const fmtStr=FMTS[fi].n;
+  const ratio=FMTS[fi].l.replace('.','p');
+  const cs=capCs.label;
+  const fxParts=[];
+  if(grainVal>0)fxParts.push(`GRN${grainVal}`);
+  if(caVal>0)fxParts.push(`CA${caVal}`);
+  if(distVal!==0)fxParts.push(distVal>0?`BAR${distVal}`:`PIN${Math.abs(distVal)}`);
+  const fx=fxParts.length>0?'_'+fxParts.join('-'):'';
+  return `SCOPE_${fmtStr}_${ratio}_${cs}${fx}_${d}_${t}.${ext||capFmt.ext}`;
+}
+function updateFnamePreview(){fnamePreview.textContent=buildFilename();}
+
+// ── CAPTURE ─────────────────────────────────────────────────
+function capture(){
+  const vW=vid.videoWidth,vH=vid.videoHeight;
+  if(!vW||!vH){showToast('NO VIDEO');return;}
+  const W=window.innerWidth,H=window.innerHeight;
+  const m=getM();
+  const sc=Math.max(W/vW,H/vH);
+  const ox=(W-vW*sc)/2,oy=(H-vH*sc)/2;
+  const sx=(m.aL-ox)/sc,sy=(m.aT-oy)/sc,sw=m.aW/sc,sh=m.aH/sc;
+  const out=document.createElement('canvas');
+  out.width=Math.round(Math.abs(sw));out.height=Math.round(Math.abs(sh));
+  let oc;try{oc=out.getContext('2d',{colorSpace:capCs.cs});}catch{oc=out.getContext('2d');}
+  if(facing==='user'){oc.translate(out.width,0);oc.scale(-1,1);}
+
+  // Apply distortion to capture
+  if(distVal!==0){
+    const k=(distVal/50)*.28;
+    const N=10;
+    for(let row=0;row<N;row++){
+      for(let col=0;col<N;col++){
+        const nx=(col+.5)/N*2-1,ny=(row+.5)/N*2-1;
+        const r2=nx*nx+ny*ny,f=1+k*r2;
+        const vx=sx+(col/N)*sw,vy=sy+(row/N)*sh;
+        const vw=sw/N+1,vh=sh/N+1;
+        const dcx=(.5+nx*f*.5)*out.width;
+        const dcy=(.5+ny*f*.5)*out.height;
+        const dw=(out.width/N)*f+1,dh=(out.height/N)*f+1;
+        oc.drawImage(vid,vx,vy,vw,vh,dcx-dw/2,dcy-dh/2,dw,dh);
+      }
+    }
+  } else {
+    oc.drawImage(vid,sx,sy,sw,sh,0,0,out.width,out.height);
+  }
+
+  // CA on capture
+  if(caVal>0){
+    const offset=(caVal/100)*out.width*0.012;
+    const fringeAlpha=(caVal/100)*.45;
+    oc.save();oc.globalCompositeOperation='screen';oc.globalAlpha=fringeAlpha;
+    oc.filter='sepia(1) saturate(8) hue-rotate(330deg) brightness(.9)';
+    oc.drawImage(vid,sx,sy,sw,sh,-offset,0,out.width,out.height);
+    oc.filter='sepia(1) saturate(8) hue-rotate(150deg) brightness(.9)';
+    oc.drawImage(vid,sx,sy,sw,sh,offset,0,out.width,out.height);
+    oc.restore();
+  }
+
+  // Grain on capture
+  if(grainVal>0){
+    oc.save();oc.globalCompositeOperation='overlay';
+    const grainAlpha=(grainVal/100)*.5;
+    const cnt=Math.floor(out.width*out.height*grainVal*0.00008);
+    for(let i=0;i<cnt;i++){
+      const gx=Math.random()*out.width,gy=Math.random()*out.height;
+      const gs=Math.random()*2+.2,gv=Math.floor(Math.random()*255);
+      oc.fillStyle=`rgba(${gv},${gv},${gv},${grainAlpha*2.5})`;oc.fillRect(gx,gy,gs,gs);
+    }
+    oc.restore();
+  }
+
+  flash.style.transition='none';flash.style.opacity='1';
+  setTimeout(()=>{flash.style.transition='opacity .12s';flash.style.opacity='0';},80);
+  const fname=buildFilename();
+  out.toBlob(blob=>{
+    if(!blob)return;
+    const url=URL.createObjectURL(blob);
+    photos.push({url,blob,fmt:FMTS[fi].l,fmtName:FMTS[fi].n,cs:capCs.label,fname,time:Date.now()});
+    if(photos.length>50){URL.revokeObjectURL(photos[0].url);photos.shift();}
+    updateBadge();showToast('SHOT '+photos.length);
+  },capFmt.mime,capFmt.mime==='image/jpeg'?0.94:undefined);
+}
+
+// ── MASK ────────────────────────────────────────────────────
 function cycleMask(){
   maskMode=(maskMode+1)%3;
   const mode=MASK_MODES[maskMode];
@@ -486,28 +1015,21 @@ function cycleMask(){
   showToast(maskMode===0?'MASK OFF':maskMode===1?'DIM':'BLACK');
 }
 
-function capture(){
-  const vW=vid.videoWidth,vH=vid.videoHeight;if(!vW||!vH){showToast('NO VIDEO');return;}
-  const W=window.innerWidth,H=window.innerHeight,m=getM();
-  const sc=Math.max(W/vW,H/vH);
-  const ox=(W-vW*sc)/2,oy=(H-vH*sc)/2;
-  const sx=(m.aL-ox)/sc,sy=(m.aT-oy)/sc,sw=m.aW/sc,sh=m.aH/sc;
-  const out=document.createElement('canvas');
-  out.width=Math.round(Math.abs(sw));out.height=Math.round(Math.abs(sh));
-  const oc=out.getContext('2d');
-  if(facing==='user'){oc.translate(out.width,0);oc.scale(-1,1);}
-  oc.drawImage(vid,sx,sy,sw,sh,0,0,out.width,out.height);
-  flash.style.transition='none';flash.style.opacity='1';
-  setTimeout(()=>{flash.style.transition='opacity .12s';flash.style.opacity='0';},80);
-  out.toBlob(blob=>{
-    if(!blob)return;
-    const url=URL.createObjectURL(blob);
-    photos.push({url,blob,fmt:FMTS[fi].l,time:Date.now()});
-    if(photos.length>50){URL.revokeObjectURL(photos[0].url);photos.shift();}
-    updateBadge();showToast('SHOT '+photos.length);
-  },'image/jpeg',0.94);
-}
+// ── TABS ────────────────────────────────────────────────────
+tabCam.onclick=()=>{tabCam.classList.add('on');tabFil.classList.remove('on');panelCam.style.display='';panelFil.style.display='none';};
+tabFil.onclick=()=>{tabFil.classList.add('on');tabCam.classList.remove('on');panelFil.style.display='block';panelCam.style.display='none';};
 
+// ── SETTINGS ────────────────────────────────────────────────
+function openSettings(){settings.style.display='flex';updateFnamePreview();}
+function closeSettings(){settings.style.display='none';}
+fmtOpts.querySelectorAll('.set-opt').forEach(btn=>{
+  btn.onclick=()=>{fmtOpts.querySelectorAll('.set-opt').forEach(b=>b.classList.remove('on'));btn.classList.add('on');capFmt={fmt:btn.dataset.fmt,mime:btn.dataset.mime,ext:btn.dataset.ext};updateFnamePreview();};
+});
+csOpts.querySelectorAll('.set-opt').forEach(btn=>{
+  btn.onclick=()=>{csOpts.querySelectorAll('.set-opt').forEach(b=>b.classList.remove('on'));btn.classList.add('on');capCs={cs:btn.dataset.cs,label:btn.dataset.csLabel};updateFnamePreview();};
+});
+
+// ── GALLERY ─────────────────────────────────────────────────
 function updateBadge(){
   const n=photos.length;badge.textContent=n>99?'99+':n;badge.style.display=n>0?'flex':'none';
   galCount.textContent=n+' PHOTO'+(n!==1?'S':'');
@@ -521,23 +1043,21 @@ function renderGrid(){
     const idx=photos.length-1-ri;
     const div=document.createElement('div');div.className='gal-thumb';
     const img=document.createElement('img');img.src=p.url;img.loading='lazy';
-    const lbl=document.createElement('div');lbl.className='gal-thumb-fmt';lbl.textContent=p.fmt;
-    div.appendChild(img);div.appendChild(lbl);div.onclick=()=>openDetail(idx);
+    const info=document.createElement('div');info.className='gal-thumb-info';
+    info.innerHTML=`<span class="gal-thumb-fmt">${p.fmtName}</span><span class="gal-thumb-cs">${p.cs}</span>`;
+    div.appendChild(img);div.appendChild(info);div.onclick=()=>openDetail(idx);
     galGrid.appendChild(div);
   });
 }
 function openDetail(idx){
-  detailIdx=idx;const p=photos[idx];galDetailImg.src=p.url;
-  galDetailFmt.textContent=FMTS.find(f=>f.l===p.fmt)?.n||p.fmt;
-  const d=new Date(p.time);
-  galDetailTime.textContent=d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0');
+  detailIdx=idx;const p=photos[idx];
+  galDetailImg.src=p.url;galDetailFname.textContent=p.fname;
   galDetail.style.display='flex';galDetail.style.flexDirection='column';
 }
 function doSave(){
   if(detailIdx===null)return;
   const p=photos[detailIdx];const a=document.createElement('a');
-  a.href=p.url;a.download='SCOPE_'+p.fmt.replace('.','p')+'_'+p.time+'.jpg';
-  document.body.appendChild(a);a.click();document.body.removeChild(a);showToast('SAVED');
+  a.href=p.url;a.download=p.fname;document.body.appendChild(a);a.click();document.body.removeChild(a);showToast('SAVED');
 }
 function showToast(msg){
   toast.style.bottom=(card.offsetHeight+8)+'px';
@@ -545,8 +1065,9 @@ function showToast(msg){
   clearTimeout(ttmr);ttmr=setTimeout(()=>toast.style.opacity='0',1800);
 }
 
+// ── EVENTS ──────────────────────────────────────────────────
 wrap.addEventListener('click',e=>{
-  if(e.target.closest('button')||e.target.closest('#card')||e.target.closest('#gallery'))return;
+  if(e.target.closest('button')||e.target.closest('#card')||e.target.closest('#gallery')||e.target.closest('#settings'))return;
   if(!stream){initCam();return;}
   const m=getM(),x=e.clientX,y=e.clientY;
   if(x>=m.aL&&x<=m.aL+m.aW&&y>=m.aT&&y<=m.aT+m.aH){
@@ -554,13 +1075,14 @@ wrap.addEventListener('click',e=>{
     clearTimeout(ftmr);ftmr=setTimeout(()=>focus.style.opacity='0',1400);
   }
 });
-
 gridBtn.onclick=()=>{gridOn=!gridOn;gridBtn.classList.toggle('on',gridOn)};
 safeBtn.onclick=()=>{safeOn=!safeOn;safeBtn.classList.toggle('on',safeOn)};
 maskBtn.onclick=cycleMask;
-flipBtn.onclick=()=>{facing=facing==='environment'?'user':'environment';lensRow.style.display='none';lensRow.innerHTML='';zoomCap=null;if(stream)initCam()};
+flipBtn.onclick=()=>{facing=facing==='environment'?'user':'environment';lensRow.style.display='none';zoomRow.style.display='none';document.getElementById('focus-ctrl').style.display='none';lensRow.innerHTML='';zoomCap=null;focusCap=null;if(stream)initCam()};
 capBtn.onclick=capture;
 galBtn.onclick=openGallery;
+setBtn.onclick=openSettings;
+setClose.onclick=closeSettings;
 galClose.onclick=closeGallery;
 galBack.onclick=()=>galDetail.style.display='none';
 galSaveBtnEl.onclick=doSave;
@@ -569,7 +1091,7 @@ const onResize=()=>{needSz=true;};
 window.addEventListener('resize',onResize);
 window.addEventListener('orientationchange',()=>setTimeout(onResize,400));
 
-applyFmt();draw();initCam();
+applyFmt();draw();initCam();updateFnamePreview();
 </script>
 
 </body>
