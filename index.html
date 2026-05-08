@@ -12,9 +12,10 @@
 <link rel="manifest" href="manifest.json">
 <title>Cinemascopome</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,200;0,300;0,400;0,600;0,700;1,300&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-<style>
+<style>:root{--c:#F5C400;--cd:rgba(245,196,0,.11);--cb:rgba(245,196,0,.28);}
+
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
-:root{--c:#F5C400;--cd:rgba(245,196,0,.11);--cb:rgba(245,196,0,.28);}
+
 html,body{width:100%;height:100%;height:100dvh;background:#000;overflow:hidden}
 #wrap{position:fixed;inset:0;height:100vh;height:100dvh;background:#000;overflow:hidden;display:flex;flex-direction:column}
 video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1;transition:opacity .1s}
@@ -24,14 +25,14 @@ canvas{position:absolute;inset:0;z-index:3;pointer-events:none}
 /* TOP BAR */
 #top-bar{position:relative;z-index:10;flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:8px 18px 6px;background:#0e0e0e;border-bottom:1px solid rgba(255,255,255,.06)}
 .top-left{display:flex;flex-direction:column;gap:1px}
-.top-fmt-lbl{font-family:‘Noto Sans’,sans-serif;font-weight:300;font-size:8px;letter-spacing:.22em;color:rgba(255,255,255,.35)}
-.top-fmt-name{font-family:‘Noto Sans’,sans-serif;font-weight:700;font-size:16px;letter-spacing:.1em;color:var(–c);line-height:1}
+.top-fmt-lbl{color:rgba(255,255,255,.38) !important;font-family:‘Noto Sans’,sans-serif;font-weight:300;font-size:8px;letter-spacing:.22em;color:rgba(255,255,255,.35)}
+.top-fmt-name{color:#F5C400 !important;font-family:‘Noto Sans’,sans-serif;font-weight:700;font-size:16px;letter-spacing:.1em;color:var(–c);line-height:1}
 .top-center{display:flex;align-items:center;gap:4px}
 .dot{width:5px;height:5px;border-radius:50%;background:var(–c);animation:bl 1.5s infinite}
 @keyframes bl{0%,100%{opacity:1}50%{opacity:.15}}
-.live{font-family:‘Share Tech Mono’,monospace;font-size:8px;color:rgba(255,255,255,.4);letter-spacing:.14em}
+.live{color:rgba(255,255,255,.5) !important;font-family:‘Share Tech Mono’,monospace;font-size:8px;color:rgba(255,255,255,.4);letter-spacing:.14em}
 .top-right{display:flex;flex-direction:column;align-items:flex-end}
-.top-ratio{font-family:‘Noto Sans’,sans-serif;font-weight:700;font-size:18px;line-height:1;letter-spacing:.04em;color:var(–c)}
+.top-ratio{color:#F5C400 !important;font-family:‘Noto Sans’,sans-serif;font-weight:700;font-size:18px;line-height:1;letter-spacing:.04em;color:var(–c)}
 .top-ratio-lbl{font-family:‘Noto Sans’,sans-serif;font-weight:200;font-size:7px;letter-spacing:.18em;color:rgba(255,255,255,.26)}
 
 /* VIEWFINDER */
@@ -49,7 +50,7 @@ canvas{position:absolute;inset:0;z-index:3;pointer-events:none}
 #panel-cam{}
 #lens-row{display:none;align-items:center;justify-content:center;gap:6px;padding:6px 18px 0}
 .lens-btn{padding:4px 12px;border-radius:16px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);font-family:‘Noto Sans’,sans-serif;font-weight:600;font-size:12px;letter-spacing:.06em;color:rgba(255,255,255,.32);cursor:pointer;-webkit-appearance:none;transition:.15s}
-.lens-btn.on{border-color:var(–c);background:var(–cd);color:var(–c)}
+.lens-btn.on{border-color:#F5C400 !important;background:rgba(245,196,0,.11) !important;color:#F5C400 !important;border-color:var(–c);background:var(–cd);color:var(–c)}
 .lens-btn:active{opacity:.5}
 #zoom-row{display:none;align-items:center;gap:10px;padding:6px 20px 0}
 .zoom-val{font-family:‘Share Tech Mono’,monospace;font-size:10px;color:var(–c);letter-spacing:.06em;min-width:32px;text-align:right;flex-shrink:0}
@@ -59,17 +60,17 @@ input[type=range].styled::-webkit-slider-thumb{-webkit-appearance:none;appearanc
 .pill-row{display:flex;align-items:stretch;margin:6px 0 0;border-top:1px solid rgba(255,255,255,.05);border-bottom:1px solid rgba(255,255,255,.05)}
 .pill{flex:1;padding:7px 0;text-align:center;position:relative;font-family:‘Noto Sans’,sans-serif;font-weight:400;font-size:11px;letter-spacing:.08em;color:rgba(255,255,255,.2);background:none;border:none;border-right:1px solid rgba(255,255,255,.05);cursor:pointer;-webkit-appearance:none;transition:.15s}
 .pill:last-child{border-right:none}
-.pill.on{color:var(–c);background:var(–cd)}
-.pill.on::after{content:’’;position:absolute;bottom:0;left:0;right:0;height:2px;background:var(–c)}
+.pill.on{color:#F5C400 !important;background:rgba(245,196,0,.11) !important;color:var(–c);background:var(–cd)}
+.pill.on::after{content:’’;position:absolute;bottom:0;left:0;right:0;height:2px;background:#F5C400 !important;}
 .pill:active{opacity:.5}
 .ctrl-row{display:flex;align-items:center;justify-content:space-between;padding:8px 14px 8px}
 .ctrl-group{display:flex;align-items:center;gap:4px}
 .cb{display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;cursor:pointer;-webkit-appearance:none;min-width:38px;position:relative}
 .cb:active{opacity:.4}
 .ci{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);font-family:‘Share Tech Mono’,monospace;font-size:15px;color:rgba(255,255,255,.42);transition:.15s}
-.cb.on .ci{border-color:var(–cb);background:var(–cd);color:var(–c)}
+.cb.on .ci{border-color:rgba(245,196,0,.4) !important;background:rgba(245,196,0,.11) !important;color:#F5C400 !important;border-color:var(–cb);background:var(–cd);color:var(–c)}
 .cl{font-family:‘Noto Sans’,sans-serif;font-weight:300;font-size:7px;letter-spacing:.14em;color:rgba(255,255,255,.2)}
-.cb.on .cl{color:rgba(245,196,0,.6)}
+.cb.on .cl{color:rgba(245,196,0,.7) !important;color:rgba(245,196,0,.6)}
 .badge{position:absolute;top:-2px;right:-2px;min-width:15px;height:15px;border-radius:8px;padding:0 3px;background:var(–c);color:#fff;font-family:‘Noto Sans’,sans-serif;font-weight:700;font-size:8px;display:none;align-items:center;justify-content:center;letter-spacing:0;z-index:2}
 #cap{display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;cursor:pointer;-webkit-appearance:none}
 .sh{width:60px;height:60px;border-radius:50%;position:relative}
