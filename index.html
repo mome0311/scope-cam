@@ -261,7 +261,7 @@ color:var(–c);min-width:28px;text-align:right;flex-shrink:0;
       <span class="focus-tick">NEAR</span>
       <input type="range" class="fil-slider" id="focus-sl" min="0" max="100" value="0" step="1">
       <span class="focus-tick">∞</span>
-      <span class="focus-val-badge" id="focus-val">∞</span>
+      <span class="focus-val-badge" id="focus-val">NEAR</span>
     </div>
   </div>
   <div class="pill-row" id="pills"></div>
@@ -586,31 +586,23 @@ async function setZoom(z){
 zoomSlider.addEventListener('input',()=>setZoom(parseInt(zoomSlider.value)/10));
 
 // ── FOCUS ───────────────────────────────────────────────────
+// iOS Safari focus: focusMode supported, focusDistance NOT supported.
+// MF mode uses pointOfInterest (tap) + lock. Slider = focus region sweep.
+
 function checkFocus(){
   if(!stream)return;
   const track=stream.getVideoTracks()[0];if(!track)return;
+  const focusCtrl=document.getElementById('focus-ctrl');
+  focusCtrl.style.display='flex';
   try{
     const cap=track.getCapabilities();
-    const focusCtrl=document.getElementById('focus-ctrl');
-    if(cap&&cap.focusMode&&cap.focusMode.length>0){
+    if(cap&&cap.focusDistance){
+      focusDistMin=cap.focusDistance.min||0;
+      focusDistMax=cap.focusDistance.max||1;
       focusCap=cap;
-      if(cap.focusDistance){
-        focusDistMin=cap.focusDistance.min||0;
-        focusDistMax=cap.focusDistance.max||1;
-      }
-      focusCtrl.style.display='flex';
-      setFocusMode('auto');
-    } else {
-      // Show anyway for devices where capabilities aren't reported but may still work
-      focusCtrl.style.display='flex';
-      document.getElementById('focus-status').textContent='Focus (limited)';
     }
-  }catch(e){
-    // Show with warning
-    const focusCtrl=document.getElementById('focus-ctrl');
-    focusCtrl.style.display='flex';
-    document.getElementById('focus-status').textContent='Focus (limited)';
-  }
+  }catch(e){}
+  setFocusMode('auto');
 }
 
 async function setFocusMode(mode){
@@ -624,11 +616,19 @@ async function setFocusMode(mode){
   afBtn.classList.toggle('on',mode==='auto');
   mfBtn.classList.toggle('on',mode==='manual');
   focusDistRow.style.display=mode==='manual'?'flex':'none';
-  focusStatus.textContent=mode==='auto'?'Auto Focus':'Manual Focus';
-  try{
-    await track.applyConstraints({advanced:[{focusMode:mode}]});
-  }catch(e){
-    focusStatus.textContent=mode==='auto'?'AF (tap screen)':'MF — drag slider';
+
+  if(mode==='auto'){
+    focusStatus.textContent='Auto Focus';
+    try{ await track.applyConstraints({advanced:[{focusMode:'continuous'}]}); }catch(e){}
+    // Also try 'auto' as fallback
+    try{ await track.applyConstraints({advanced:[{focusMode:'auto'}]}); }catch(e){}
+  } else {
+    focusStatus.textContent='Tap viewfinder to set focus';
+    // In MF mode we first trigger a single auto-focus, then lock
+    try{ await track.applyConstraints({advanced:[{focusMode:'auto'}]}); }catch(e){}
+    setTimeout(async ()=>{
+      try{ await track.applyConstraints({advanced:[{focusMode:'manual'}]}); }catch(e){}
+    }, 800);
   }
 }
 
@@ -636,16 +636,48 @@ async function applyManualFocus(sliderVal){
   if(!stream)return;
   const track=stream.getVideoTracks()[0];if(!track)return;
   focusSliderVal=sliderVal;
-  // Map slider 0→100 to focusDistance max→min (0=near, 100=far/infinity)
-  // Invert: slider left=near (large distance number closer), right=far (infinity=0 on some devices)
-  const norm=1-(sliderVal/100); // 0=far(infinity), 1=near
-  const dist=focusDistMin+(focusDistMax-focusDistMin)*norm;
   const focusValEl=document.getElementById('focus-val');
-  focusValEl.textContent=sliderVal===100?'∞':sliderVal.toString();
+  focusValEl.textContent=sliderVal===0?'NEAR':sliderVal===100?'∞':sliderVal.toString();
+
+  // Map slider to pointOfInterest: sweep from near (center) to far (edges/horizon)
+  // pointOfInterest x: 0.5 center, y: 0.5 center — near
+  // y: 0.1 horizon — far
+  const yPOI = 0.5 - (sliderVal / 100) * 0.4; // 0.5 (center/near) → 0.1 (top/far)
+
+  if(focusCap){
+    // Device supports focusDistance — use it
+    const norm = 1 - (sliderVal / 100);
+    const dist = focusDistMin + (focusDistMax - focusDistMin) * norm;
+    try{
+      await track.applyConstraints({advanced:[{focusMode:'manual',focusDistance:dist}]});
+      return;
+    }catch(e){}
+  }
+
+  // Fallback: use pointOfInterest to sweep focus depth
   try{
-    await track.applyConstraints({advanced:[{focusMode:'manual',focusDistance:dist}]});
+    await track.applyConstraints({advanced:[{pointOfInterest:{x:0.5,y:yPOI},focusMode:'auto'}]});
+    // Lock after brief focus
+    setTimeout(async()=>{
+      try{ await track.applyConstraints({advanced:[{focusMode:'manual'}]}); }catch(e){}
+    }, 600);
+  }catch(e){}
+}
+
+// Tap-to-focus in MF mode: sets pointOfInterest to tapped area
+async function tapFocus(clientX, clientY){
+  if(!stream||focusModeState!=='manual')return;
+  const track=stream.getVideoTracks()[0];if(!track)return;
+  const W=window.innerWidth,H=window.innerHeight;
+  const poi={x:clientX/W, y:clientY/H};
+  try{
+    await track.applyConstraints({advanced:[{pointOfInterest:poi,focusMode:'auto'}]});
+    setTimeout(async()=>{
+      try{ await track.applyConstraints({advanced:[{focusMode:'manual'}]}); }catch(e){}
+    }, 700);
+    document.getElementById('focus-status').textContent='Focus locked';
   }catch(e){
-    // Silently fail — some devices don't support focusDistance
+    document.getElementById('focus-status').textContent='Focus (tap to set)';
   }
 }
 
@@ -653,14 +685,13 @@ document.getElementById('af-btn').onclick=()=>setFocusMode('auto');
 document.getElementById('mf-btn').onclick=()=>setFocusMode('manual');
 document.getElementById('focus-sl').addEventListener('input',function(){
   applyManualFocus(parseInt(this.value));
-  // Update track fill
   const pct=(parseInt(this.value)/100)*100;
   this.style.background=`linear-gradient(to right,rgba(220,88,87,.55) ${pct}%,rgba(255,255,255,.12) ${pct}%)`;
 });
 
 
 // ── FILTERS ─────────────────────────────────────────────────
-function hasEffects(){return grainVal>0||caVal>0||distVal!==0;}
+function hasEffects(){return grainVal>0||caVal>0||distVal!==0;} // for filter badge/indicators
 
 function updateFilterBadge(){
   const on=hasEffects();
@@ -689,17 +720,17 @@ caSl.addEventListener('input',()=>{
 distSl.addEventListener('input',()=>{
   distVal=parseInt(distSl.value);
   distDisp.textContent=distVal;
-  // center-origin track
   const pct=distVal>=0?(distVal/50)*50+50:50-(Math.abs(distVal)/50)*50;
   const half=50;
   const from=Math.min(pct,half), to=Math.max(pct,half);
   distSl.style.background=`linear-gradient(to right,rgba(255,255,255,.12) ${from}%,rgba(220,88,87,.55) ${from}%,rgba(220,88,87,.55) ${to}%,rgba(255,255,255,.12) ${to}%)`;
+  applyDistortionCSS();
   updateVideoVisibility();updateFilterBadge();
 });
 
 function resetGrain(){grainVal=0;grainSl.value=0;grainDisp.textContent=0;updateSliderTrack(grainSl,0,0,100);updateVideoVisibility();updateFilterBadge();}
 function resetCA(){caVal=0;caSl.value=0;caDisp.textContent=0;updateSliderTrack(caSl,0,0,100);updateVideoVisibility();updateFilterBadge();}
-function resetDist(){distVal=0;distSl.value=0;distDisp.textContent=0;distSl.style.background='rgba(255,255,255,.12)';updateVideoVisibility();updateFilterBadge();}
+function resetDist(){distVal=0;distSl.value=0;distDisp.textContent=0;distSl.style.background='rgba(255,255,255,.12)';applyDistortionCSS();updateVideoVisibility();updateFilterBadge();}
 
 document.getElementById('grain-reset').onclick=resetGrain;
 document.getElementById('ca-reset').onclick=resetCA;
@@ -707,30 +738,33 @@ document.getElementById('dist-reset').onclick=resetDist;
 document.getElementById('fil-reset-all').onclick=()=>{resetGrain();resetCA();resetDist();};
 
 function updateVideoVisibility(){
-  // Hide video when effects need canvas rendering
-  vid.style.opacity=hasEffects()?'0':'1';
+  // Only hide video when grain or CA are active (need canvas rendering)
+  // Distortion uses CSS so video stays visible
+  const needsCanvas = grainVal > 0 || caVal > 0;
+  vid.style.opacity = needsCanvas ? '0' : '1';
 }
 
 // ── DRAW ────────────────────────────────────────────────────
-// Barrel distortion draw (grid-based warp)
-function drawBarrel(sx,sy,sw,sh,dx,dy,dw,dh,k){
-  const N=10;
-  ctx.save();
-  ctx.beginPath();ctx.rect(dx,dy,dw,dh);ctx.clip();
-  for(let row=0;row<N;row++){
-    for(let col=0;col<N;col++){
-      const nx=(col+.5)/N*2-1, ny=(row+.5)/N*2-1;
-      const r2=nx*nx+ny*ny;
-      const f=1+k*r2;
-      const vx=sx+(col/N)*sw, vy=sy+(row/N)*sh;
-      const vw=sw/N+1, vh=sh/N+1;
-      const destCx=dx+(.5+nx*f*.5)*dw;
-      const destCy=dy+(.5+ny*f*.5)*dh;
-      const destW=(dw/N)*f+1, destH=(dh/N)*f+1;
-      ctx.drawImage(vid,vx,vy,vw,vh,destCx-destW/2,destCy-destH/2,destW,destH);
-    }
+// CSS-based distortion (applied to video element, no grid artifacts)
+function applyDistortionCSS(){
+  const k = distVal / 50; // -1(pin) to +1(barrel)
+  const mirror = facing === 'user' ? 'scaleX(-1) ' : '';
+  if(k === 0){
+    vid.style.transform = mirror.trim()||'none';
+    vid.style.borderRadius = '0';
+    return;
   }
-  ctx.restore();
+  if(k > 0){
+    // Barrel: scale up (center inflates outward)
+    const sc = 1 + k * 0.09;
+    vid.style.transform = mirror + `scale(${sc.toFixed(3)})`;
+    vid.style.borderRadius = (k * 6).toFixed(1) + '%';
+  } else {
+    // Pincushion: scale down (edges pull inward)
+    const sc = 1 + k * 0.06;
+    vid.style.transform = mirror + `scale(${sc.toFixed(3)})`;
+    vid.style.borderRadius = '0';
+  }
 }
 
 function draw(){
@@ -746,13 +780,8 @@ function draw(){
   if(hasEffects()&&vs){
     const{sx,sy,sw,sh}=vs;
 
-    // Barrel / Pincushion distortion
-    if(distVal!==0){
-      const k=(distVal/50)*0.28; // max barrel = 0.28
-      drawBarrel(sx,sy,sw,sh,aL,aT,aW,aH,k);
-    } else {
-      ctx.drawImage(vid,sx,sy,sw,sh,aL,aT,aW,aH);
-    }
+    // Draw video (CSS handles distortion visually)
+    ctx.drawImage(vid,sx,sy,sw,sh,aL,aT,aW,aH);
 
     // Chromatic aberration overlay
     if(caVal>0){
@@ -949,22 +978,16 @@ function capture(){
   let oc;try{oc=out.getContext('2d',{colorSpace:capCs.cs});}catch{oc=out.getContext('2d');}
   if(facing==='user'){oc.translate(out.width,0);oc.scale(-1,1);}
 
-  // Apply distortion to capture
+  // Capture: CSS distortion is scale-based, replicate in crop
   if(distVal!==0){
-    const k=(distVal/50)*.28;
-    const N=10;
-    for(let row=0;row<N;row++){
-      for(let col=0;col<N;col++){
-        const nx=(col+.5)/N*2-1,ny=(row+.5)/N*2-1;
-        const r2=nx*nx+ny*ny,f=1+k*r2;
-        const vx=sx+(col/N)*sw,vy=sy+(row/N)*sh;
-        const vw=sw/N+1,vh=sh/N+1;
-        const dcx=(.5+nx*f*.5)*out.width;
-        const dcy=(.5+ny*f*.5)*out.height;
-        const dw=(out.width/N)*f+1,dh=(out.height/N)*f+1;
-        oc.drawImage(vid,vx,vy,vw,vh,dcx-dw/2,dcy-dh/2,dw,dh);
-      }
-    }
+    const k=distVal/50; // -1 to 1
+    const cssScale = k>0 ? 1+k*0.09 : 1+k*0.06;
+    // The video is CSS-scaled, so center crop is tighter
+    const cropSw = sw / cssScale;
+    const cropSh = sh / cssScale;
+    const cropSx = sx + (sw - cropSw) / 2;
+    const cropSy = sy + (sh - cropSh) / 2;
+    oc.drawImage(vid, cropSx, cropSy, cropSw, cropSh, 0, 0, out.width, out.height);
   } else {
     oc.drawImage(vid,sx,sy,sw,sh,0,0,out.width,out.height);
   }
@@ -1073,12 +1096,13 @@ wrap.addEventListener('click',e=>{
   if(x>=m.aL&&x<=m.aL+m.aW&&y>=m.aT&&y<=m.aT+m.aH){
     focus.style.left=x+'px';focus.style.top=y+'px';focus.style.opacity='1';
     clearTimeout(ftmr);ftmr=setTimeout(()=>focus.style.opacity='0',1400);
+    tapFocus(x,y); // MF mode: tap-to-focus
   }
 });
 gridBtn.onclick=()=>{gridOn=!gridOn;gridBtn.classList.toggle('on',gridOn)};
 safeBtn.onclick=()=>{safeOn=!safeOn;safeBtn.classList.toggle('on',safeOn)};
 maskBtn.onclick=cycleMask;
-flipBtn.onclick=()=>{facing=facing==='environment'?'user':'environment';lensRow.style.display='none';zoomRow.style.display='none';document.getElementById('focus-ctrl').style.display='none';lensRow.innerHTML='';zoomCap=null;focusCap=null;if(stream)initCam()};
+flipBtn.onclick=()=>{facing=facing==='environment'?'user':'environment';lensRow.style.display='none';zoomRow.style.display='none';document.getElementById('focus-ctrl').style.display='none';lensRow.innerHTML='';zoomCap=null;focusCap=null;if(stream){initCam();setTimeout(applyDistortionCSS,500);}};
 capBtn.onclick=capture;
 galBtn.onclick=openGallery;
 setBtn.onclick=openSettings;
