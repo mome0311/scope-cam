@@ -294,6 +294,7 @@ const C='#F5C400', CA='rgba(245,196,0,';
 let fi=3, maskMode=2, facing='environment', stream=null;
 let gridOn=false, safeOn=false;
 let currentZoom=1, zoomCap=null, zoomMin=1, zoomMax=1;
+let imageCapture=null;
 
 let needSz=true, ftmr=null, ttmr=null;
 let expVal=0;
@@ -375,7 +376,15 @@ async function initCam(){
     try{
       stream=await navigator.mediaDevices.getUserMedia({video:c,audio:false});
       vid.srcObject=stream;vid.classList.toggle('mirror',facing==='user');
-      await vid.play();nocam.style.display='none';checkLens();return;
+      await vid.play();nocam.style.display='none';checkLens();
+      // ImageCapture for native full-resolution still
+      try{
+        const track=stream.getVideoTracks()[0];
+        if(track&&typeof ImageCapture!=='undefined'){
+          imageCapture=new ImageCapture(track);
+        }
+      }catch(e){imageCapture=null;}
+      return;
     }catch{}
   }
   nocam.style.display='block';
@@ -546,56 +555,73 @@ function capture(){
   const vW=vid.videoWidth, vH=vid.videoHeight;
   if(!vW||!vH){showToast('NO VIDEO');return;}
 
-  // ── NATIVE RESOLUTION CROP ──────────────────────────────
-  const r=FMTS[fi].r;
-  let cropW,cropH,cropX,cropY;
-  if(vW/vH > r){
-    // Video wider than format: crop left/right
-    cropH=vH; cropW=Math.round(vH*r);
-    cropX=Math.round((vW-cropW)/2); cropY=0;
-  } else {
-    // Video taller than format: crop top/bottom
-    cropW=vW; cropH=Math.round(vW/r);
-    cropX=0; cropY=Math.round((vH-cropH)/2);
-  }
-
-  const out=document.createElement('canvas');
-  out.width=cropW; out.height=cropH;
-  let oc;
-  try{oc=out.getContext('2d',{colorSpace:capCs.cs});}
-  catch{oc=out.getContext('2d');}
-  if(facing==='user'){oc.translate(cropW,0);oc.scale(-1,1);}
-  oc.drawImage(vid, cropX, cropY, cropW, cropH, 0, 0, cropW, cropH);
-
   flash.style.transition='none';flash.style.opacity='1';
   setTimeout(()=>{flash.style.transition='opacity .12s';flash.style.opacity='0';},80);
 
   const now=new Date();
-  const fname=buildFilename();
 
-  out.toBlob(async blob=>{
-    if(!blob)return;
-    // EXIF embed (JPEG only)
+  // ── TRY IMAGECAPTURE (full sensor resolution) ──────────────────────────
+  if(imageCapture&&typeof imageCapture.takePhoto==='function'){
+    imageCapture.takePhoto().then(async blob=>{
+      const bitmap=await createImageBitmap(blob);
+      const bW=bitmap.width, bH=bitmap.height;
+      // Centre-crop to format ratio
+      const r=FMTS[fi].r;
+      let cW,cH,cX,cY;
+      if(bW/bH>r){cH=bH;cW=Math.round(bH*r);cX=Math.round((bW-cW)/2);cY=0;}
+      else{cW=bW;cH=Math.round(bW/r);cX=0;cY=Math.round((bH-cH)/2);}
+      const out=document.createElement('canvas');
+      out.width=cW;out.height=cH;
+      let oc;try{oc=out.getContext('2d',{colorSpace:capCs.cs});}catch{oc=out.getContext('2d');}
+      if(facing==='user'){oc.translate(cW,0);oc.scale(-1,1);}
+      oc.drawImage(bitmap,cX,cY,cW,cH,0,0,cW,cH);
+      const fname=buildFilename();
+      out.toBlob(async rawBlob=>{
+        if(!rawBlob)return;
+        let finalBlob=rawBlob;
+        if(capFmt.mime==='image/jpeg'){
+          try{finalBlob=await addExifToJpeg(rawBlob,{width:cW,height:cH,datetime:formatExifDate(now),software:'Cinemascopome',description:FMTS[fi].n+' '+FMTS[fi].l+':1 '+capCs.label,userComment:'Cinemascopome Format:'+FMTS[fi].n+' Ratio:'+FMTS[fi].l+' CS:'+capCs.label});}catch(e){}
+        }
+        const url=URL.createObjectURL(finalBlob);
+        photos.push({url,blob:finalBlob,fmt:FMTS[fi].l,fmtName:FMTS[fi].n,cs:capCs.label,fname,res:cW+'×'+cH,time:now.getTime()});
+        if(photos.length>50){URL.revokeObjectURL(photos[0].url);photos.shift();}
+        updateBadge();
+        showInstantShareToast(photos[photos.length-1],cW+'×'+cH);
+      },capFmt.mime,capFmt.mime==='image/jpeg'?0.96:undefined);
+    }).catch(()=>captureFromVideo(now)); // fallback if takePhoto fails
+    return;
+  }
+  captureFromVideo(now);
+}
+
+// Fallback: capture from video stream (4K max)
+function captureFromVideo(now){
+  const vW=vid.videoWidth, vH=vid.videoHeight;
+  const r=FMTS[fi].r;
+  let cW,cH,cX,cY;
+  if(vW/vH>r){cH=vH;cW=Math.round(vH*r);cX=Math.round((vW-cW)/2);cY=0;}
+  else{cW=vW;cH=Math.round(vW/r);cX=0;cY=Math.round((vH-cH)/2);}
+  const out=document.createElement('canvas');
+  out.width=cW;out.height=cH;
+  let oc;try{oc=out.getContext('2d',{colorSpace:capCs.cs});}catch{oc=out.getContext('2d');}
+  if(facing==='user'){oc.translate(cW,0);oc.scale(-1,1);}
+  oc.drawImage(vid,cX,cY,cW,cH,0,0,cW,cH);
+  const fname=buildFilename();
+  out.toBlob(async rawBlob=>{
+    if(!rawBlob)return;
+    let finalBlob=rawBlob;
     if(capFmt.mime==='image/jpeg'){
-      try{
-        blob=await addExifToJpeg(blob,{
-          width:cropW, height:cropH,
-          datetime:formatExifDate(now),
-          software:'Cinemascopome',
-          description:FMTS[fi].n+' '+FMTS[fi].l+':1 '+capCs.label,
-          userComment:'Cinemascopome Format:'+FMTS[fi].n+' Ratio:'+FMTS[fi].l+' CS:'+capCs.label
-        });
-      }catch(e){}
+      try{finalBlob=await addExifToJpeg(rawBlob,{width:cW,height:cH,datetime:formatExifDate(now),software:'Cinemascopome',description:FMTS[fi].n+' '+FMTS[fi].l+':1 '+capCs.label,userComment:'Cinemascopome Format:'+FMTS[fi].n+' Ratio:'+FMTS[fi].l+' CS:'+capCs.label});}catch(e){}
     }
-    const url=URL.createObjectURL(blob);
-    photos.push({url,blob,fmt:FMTS[fi].l,fmtName:FMTS[fi].n,cs:capCs.label,fname,
-                 res:cropW+'×'+cropH,time:now.getTime()});
+    const url=URL.createObjectURL(finalBlob);
+    photos.push({url,blob:finalBlob,fmt:FMTS[fi].l,fmtName:FMTS[fi].n,cs:capCs.label,fname,res:cW+'×'+cH,time:now.getTime()});
     if(photos.length>50){URL.revokeObjectURL(photos[0].url);photos.shift();}
     updateBadge();
-    const newPhoto=photos[photos.length-1];
-    showInstantShareToast(newPhoto, cropW+'×'+cropH);
+    showInstantShareToast(photos[photos.length-1],cW+'×'+cH);
   },capFmt.mime,capFmt.mime==='image/jpeg'?0.96:undefined);
 }
+
+
 
 function formatExifDate(d){
   const p=n=>String(n).padStart(2,'0');
