@@ -11,10 +11,10 @@
 <link rel="apple-touch-icon" href="icon.png">
 <link rel="manifest" href="manifest.json">
 <title>SCOPE CAM</title>
-<link href="https://fonts.googleapis.com/css2?family=Rokkitt:wght@200;300;400;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,200;0,300;0,400;0,600;0,700;1,300&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
-:root{--c:#DC5857;--cd:rgba(220,88,87,.11);--cb:rgba(220,88,87,.28);}
+:root{--c:#F5C400;--cd:rgba(245,196,0,.11);--cb:rgba(245,196,0,.28);}
 html,body{width:100%;height:100%;height:100dvh;background:#000;overflow:hidden}
 #wrap{position:fixed;inset:0;height:100vh;height:100dvh;background:#000;overflow:hidden;display:flex;flex-direction:column}
 video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1;transition:opacity .1s}
@@ -24,28 +24,28 @@ canvas{position:absolute;inset:0;z-index:3;pointer-events:none}
 /* TOP BAR */
 #top-bar{position:relative;z-index:10;flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:8px 18px 6px;background:#0e0e0e;border-bottom:1px solid rgba(255,255,255,.06)}
 .top-left{display:flex;flex-direction:column;gap:1px}
-.top-fmt-lbl{font-family:‘Rokkitt’,serif;font-weight:300;font-size:8px;letter-spacing:.22em;color:rgba(255,255,255,.35)}
-.top-fmt-name{font-family:‘Rokkitt’,serif;font-weight:700;font-size:16px;letter-spacing:.1em;color:var(–c);line-height:1}
+.top-fmt-lbl{font-family:‘Noto Sans’,sans-serif;font-weight:300;font-size:8px;letter-spacing:.22em;color:rgba(255,255,255,.35)}
+.top-fmt-name{font-family:‘Noto Sans’,sans-serif;font-weight:700;font-size:16px;letter-spacing:.1em;color:var(–c);line-height:1}
 .top-center{display:flex;align-items:center;gap:4px}
 .dot{width:5px;height:5px;border-radius:50%;background:var(–c);animation:bl 1.5s infinite}
 @keyframes bl{0%,100%{opacity:1}50%{opacity:.15}}
 .live{font-family:‘Share Tech Mono’,monospace;font-size:8px;color:rgba(255,255,255,.4);letter-spacing:.14em}
 .top-right{display:flex;flex-direction:column;align-items:flex-end}
-.top-ratio{font-family:‘Rokkitt’,serif;font-weight:700;font-size:18px;line-height:1;letter-spacing:.04em;color:var(–c)}
-.top-ratio-lbl{font-family:‘Rokkitt’,serif;font-weight:200;font-size:7px;letter-spacing:.18em;color:rgba(255,255,255,.26)}
+.top-ratio{font-family:‘Noto Sans’,sans-serif;font-weight:700;font-size:18px;line-height:1;letter-spacing:.04em;color:var(–c)}
+.top-ratio-lbl{font-family:‘Noto Sans’,sans-serif;font-weight:200;font-size:7px;letter-spacing:.18em;color:rgba(255,255,255,.26)}
 
 /* VIEWFINDER */
 #viewfinder{position:relative;z-index:2;flex:1;min-height:0}
 
 /* BOTTOM CARD */
-#card{position:relative;z-index:10;flex-shrink:0;background:#0e0e0e;border-radius:16px 16px 0 0;border-top:1px solid rgba(220,88,87,.2);padding-bottom:max(env(safe-area-inset-bottom,0px),4px)}
+#card{position:relative;z-index:10;flex-shrink:0;background:#0e0e0e;border-radius:16px 16px 0 0;border-top:1px solid rgba(245,196,0,.2);padding-bottom:max(env(safe-area-inset-bottom,0px),4px)}
 #card::before{content:’’;display:block;width:32px;height:3px;border-radius:2px;background:rgba(255,255,255,.1);margin:8px auto 0}
 
 /* TAB BAR */
 #tab-bar{display:flex;border-bottom:1px solid rgba(255,255,255,.06);margin-top:4px}
 .tab{
 flex:1;padding:8px 0;
-font-family:‘Rokkitt’,serif;font-weight:600;font-size:11px;letter-spacing:.16em;
+font-family:‘Noto Sans’,sans-serif;font-weight:600;font-size:11px;letter-spacing:.16em;
 color:rgba(255,255,255,.25);background:none;border:none;cursor:pointer;
 -webkit-appearance:none;position:relative;transition:.15s;
 }
@@ -56,7 +56,7 @@ color:rgba(255,255,255,.25);background:none;border:none;cursor:pointer;
 /* CAMERA PANEL */
 #panel-cam{}
 #lens-row{display:none;align-items:center;justify-content:center;gap:6px;padding:6px 18px 0}
-.lens-btn{padding:4px 12px;border-radius:16px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);font-family:‘Rokkitt’,serif;font-weight:600;font-size:12px;letter-spacing:.06em;color:rgba(255,255,255,.32);cursor:pointer;-webkit-appearance:none;transition:.15s}
+.lens-btn{padding:4px 12px;border-radius:16px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);font-family:‘Noto Sans’,sans-serif;font-weight:600;font-size:12px;letter-spacing:.06em;color:rgba(255,255,255,.32);cursor:pointer;-webkit-appearance:none;transition:.15s}
 .lens-btn.on{border-color:var(–c);background:var(–cd);color:var(–c)}
 .lens-btn:active{opacity:.5}
 #zoom-row{display:none;align-items:center;gap:10px;padding:6px 20px 0}
@@ -65,7 +65,7 @@ input[type=range].styled{flex:1;-webkit-appearance:none;appearance:none;height:2
 input[type=range].styled::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:18px;height:18px;border-radius:50%;background:var(–c);border:2px solid rgba(255,255,255,.5);cursor:pointer}
 .zoom-icon{font-family:‘Share Tech Mono’,monospace;font-size:9px;color:rgba(255,255,255,.3);flex-shrink:0}
 .pill-row{display:flex;align-items:stretch;margin:6px 0 0;border-top:1px solid rgba(255,255,255,.05);border-bottom:1px solid rgba(255,255,255,.05)}
-.pill{flex:1;padding:7px 0;text-align:center;position:relative;font-family:‘Rokkitt’,serif;font-weight:400;font-size:11px;letter-spacing:.08em;color:rgba(255,255,255,.2);background:none;border:none;border-right:1px solid rgba(255,255,255,.05);cursor:pointer;-webkit-appearance:none;transition:.15s}
+.pill{flex:1;padding:7px 0;text-align:center;position:relative;font-family:‘Noto Sans’,sans-serif;font-weight:400;font-size:11px;letter-spacing:.08em;color:rgba(255,255,255,.2);background:none;border:none;border-right:1px solid rgba(255,255,255,.05);cursor:pointer;-webkit-appearance:none;transition:.15s}
 .pill:last-child{border-right:none}
 .pill.on{color:var(–c);background:var(–cd)}
 .pill.on::after{content:’’;position:absolute;bottom:0;left:0;right:0;height:2px;background:var(–c)}
@@ -76,22 +76,22 @@ input[type=range].styled::-webkit-slider-thumb{-webkit-appearance:none;appearanc
 .cb:active{opacity:.4}
 .ci{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);font-family:‘Share Tech Mono’,monospace;font-size:15px;color:rgba(255,255,255,.42);transition:.15s}
 .cb.on .ci{border-color:var(–cb);background:var(–cd);color:var(–c)}
-.cl{font-family:‘Rokkitt’,serif;font-weight:300;font-size:7px;letter-spacing:.14em;color:rgba(255,255,255,.2)}
-.cb.on .cl{color:rgba(220,88,87,.6)}
-.badge{position:absolute;top:-2px;right:-2px;min-width:15px;height:15px;border-radius:8px;padding:0 3px;background:var(–c);color:#fff;font-family:‘Rokkitt’,serif;font-weight:700;font-size:8px;display:none;align-items:center;justify-content:center;letter-spacing:0;z-index:2}
+.cl{font-family:‘Noto Sans’,sans-serif;font-weight:300;font-size:7px;letter-spacing:.14em;color:rgba(255,255,255,.2)}
+.cb.on .cl{color:rgba(245,196,0,.6)}
+.badge{position:absolute;top:-2px;right:-2px;min-width:15px;height:15px;border-radius:8px;padding:0 3px;background:var(–c);color:#fff;font-family:‘Noto Sans’,sans-serif;font-weight:700;font-size:8px;display:none;align-items:center;justify-content:center;letter-spacing:0;z-index:2}
 #cap{display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;cursor:pointer;-webkit-appearance:none}
 .sh{width:60px;height:60px;border-radius:50%;position:relative}
 .sh-ring{position:absolute;inset:0;border-radius:50%;border:2.5px solid rgba(255,255,255,.5)}
 .sh-core{position:absolute;inset:5px;border-radius:50%;background:rgba(255,255,255,.86);transition:.1s}
 #cap:active .sh-ring{border-color:var(–c)}
-#cap:active .sh-core{transform:scale(.8);background:rgba(220,88,87,.3)}
-.sl{font-family:‘Rokkitt’,serif;font-weight:300;font-size:7px;letter-spacing:.18em;color:rgba(255,255,255,.18)}
+#cap:active .sh-core{transform:scale(.8);background:rgba(245,196,0,.3)}
+.sl{font-family:‘Noto Sans’,sans-serif;font-weight:300;font-size:7px;letter-spacing:.18em;color:rgba(255,255,255,.18)}
 
 /* ── FILTER PANEL ── */
 #panel-fil{display:none;padding:10px 18px 4px}
 .fil-item{margin-bottom:12px}
 .fil-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
-.fil-name{font-family:‘Rokkitt’,serif;font-weight:600;font-size:11px;letter-spacing:.1em;color:rgba(255,255,255,.55)}
+.fil-name{font-family:‘Noto Sans’,sans-serif;font-weight:600;font-size:11px;letter-spacing:.1em;color:rgba(255,255,255,.55)}
 .fil-val-wrap{display:flex;align-items:center;gap:8px}
 .fil-val{font-family:‘Share Tech Mono’,monospace;font-size:10px;color:var(–c);min-width:28px;text-align:right}
 .fil-reset-dot{width:14px;height:14px;border-radius:50%;border:1px solid rgba(255,255,255,.2);background:none;cursor:pointer;-webkit-appearance:none;display:flex;align-items:center;justify-content:center}
@@ -110,14 +110,14 @@ background:var(–c);border:2px solid rgba(255,255,255,.45);
 cursor:pointer;
 }
 /* Slider track colors */
-#grain-sl{background:linear-gradient(to right,rgba(220,88,87,.5) 0%,rgba(255,255,255,.12) 0%)}
-#ca-sl{background:linear-gradient(to right,rgba(220,88,87,.5) 0%,rgba(255,255,255,.12) 0%)}
+#grain-sl{background:linear-gradient(to right,rgba(245,196,0,.5) 0%,rgba(255,255,255,.12) 0%)}
+#ca-sl{background:linear-gradient(to right,rgba(245,196,0,.5) 0%,rgba(255,255,255,.12) 0%)}
 #dist-sl{background:rgba(255,255,255,.12)}
-.fil-desc{font-family:‘Rokkitt’,serif;font-weight:300;font-size:8px;letter-spacing:.1em;color:rgba(255,255,255,.22);margin-top:3px}
+.fil-desc{font-family:‘Noto Sans’,sans-serif;font-weight:300;font-size:8px;letter-spacing:.1em;color:rgba(255,255,255,.22);margin-top:3px}
 .fil-reset-all{
 width:100%;padding:8px;margin-top:2px;
 border:1px solid rgba(255,255,255,.1);background:none;
-font-family:‘Rokkitt’,serif;font-weight:400;font-size:10px;letter-spacing:.18em;
+font-family:‘Noto Sans’,sans-serif;font-weight:400;font-size:10px;letter-spacing:.18em;
 color:rgba(255,255,255,.3);cursor:pointer;-webkit-appearance:none;border-radius:4px;
 transition:.15s;
 }
@@ -125,29 +125,6 @@ transition:.15s;
 
 /* Filter active badge on tab */
 #fil-badge{display:none;position:absolute;top:4px;right:calc(50% - 32px);width:6px;height:6px;border-radius:50%;background:var(–c)}
-
-/* ── FOCUS CONTROLS ── */
-#focus-ctrl{display:none;padding:6px 20px 0;flex-direction:column;gap:6px}
-.focus-mode-row{display:flex;align-items:center;gap:8px}
-.focus-mode-btn{
-padding:5px 16px;border-radius:16px;
-border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);
-font-family:‘Rokkitt’,serif;font-weight:600;font-size:12px;
-letter-spacing:.1em;color:rgba(255,255,255,.3);
-cursor:pointer;-webkit-appearance:none;transition:.15s;
-}
-.focus-mode-btn.on{border-color:var(–c);background:var(–cd);color:var(–c)}
-.focus-mode-btn:active{opacity:.5}
-.focus-status{
-font-family:‘Share Tech Mono’,monospace;font-size:9px;
-color:rgba(255,255,255,.28);letter-spacing:.12em;margin-left:4px;
-}
-#focus-dist-row{display:none;align-items:center;gap:8px}
-.focus-tick{font-family:‘Share Tech Mono’,monospace;font-size:8px;color:rgba(255,255,255,.22);flex-shrink:0;letter-spacing:.06em}
-.focus-val-badge{
-font-family:‘Share Tech Mono’,monospace;font-size:9px;
-color:var(–c);min-width:28px;text-align:right;flex-shrink:0;
-}
 
 /* MISC */
 #focus{position:absolute;width:50px;height:50px;margin:-25px 0 0 -25px;z-index:6;pointer-events:none;opacity:0;transition:opacity .4s}
@@ -157,53 +134,53 @@ color:var(–c);min-width:28px;text-align:right;flex-shrink:0;
 .fc.bl{bottom:0;left:0;border-width:0 0 1.5px 1.5px}
 .fc.br{bottom:0;right:0;border-width:0 1.5px 1.5px 0}
 #flash{position:absolute;inset:0;background:#fff;z-index:99;opacity:0;pointer-events:none}
-#toast{position:absolute;left:50%;transform:translateX(-50%);background:rgba(14,14,14,.95);color:var(–c);font-family:‘Rokkitt’,serif;font-weight:400;font-size:9px;letter-spacing:.16em;padding:7px 16px;z-index:90;opacity:0;white-space:nowrap;border:1px solid var(–cb);transition:opacity .2s}
+#toast{position:absolute;left:50%;transform:translateX(-50%);background:rgba(14,14,14,.95);color:var(–c);font-family:‘Noto Sans’,sans-serif;font-weight:400;font-size:9px;letter-spacing:.16em;padding:7px 16px;z-index:90;opacity:0;white-space:nowrap;border:1px solid var(–cb);transition:opacity .2s}
 #nocam{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:20;text-align:center;display:none;pointer-events:none}
-.nocam-txt{font-family:‘Rokkitt’,serif;font-weight:300;font-size:11px;letter-spacing:.18em;color:rgba(255,255,255,.3);line-height:2}
+.nocam-txt{font-family:‘Noto Sans’,sans-serif;font-weight:300;font-size:11px;letter-spacing:.18em;color:rgba(255,255,255,.3);line-height:2}
 
 /* SETTINGS */
 #settings{position:absolute;inset:0;z-index:50;background:#0a0a0a;display:none;flex-direction:column}
 .set-hdr{display:flex;align-items:center;justify-content:space-between;padding:12px 18px 10px;border-bottom:1px solid rgba(255,255,255,.06);flex-shrink:0}
-.set-title{font-family:‘Rokkitt’,serif;font-weight:700;font-size:17px;letter-spacing:.14em;color:#fff}
+.set-title{font-family:‘Noto Sans’,sans-serif;font-weight:700;font-size:17px;letter-spacing:.14em;color:#fff}
 .set-close{width:34px;height:34px;border-radius:50%;border:1px solid rgba(255,255,255,.12);background:none;color:rgba(255,255,255,.5);font-size:13px;cursor:pointer;-webkit-appearance:none;display:flex;align-items:center;justify-content:center}
 .set-close:active{opacity:.5}
 .set-body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:20px 18px}
 .set-section{margin-bottom:28px}
-.set-sec-title{font-family:‘Rokkitt’,serif;font-weight:300;font-size:9px;letter-spacing:.24em;color:rgba(255,255,255,.3);text-transform:uppercase;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid rgba(255,255,255,.06)}
+.set-sec-title{font-family:‘Noto Sans’,sans-serif;font-weight:300;font-size:9px;letter-spacing:.24em;color:rgba(255,255,255,.3);text-transform:uppercase;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid rgba(255,255,255,.06)}
 .set-options{display:flex;flex-direction:column;gap:2px}
 .set-opt{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-radius:8px;border:1px solid rgba(255,255,255,.06);background:rgba(255,255,255,.03);cursor:pointer;-webkit-appearance:none;transition:.15s;width:100%}
 .set-opt.on{border-color:var(–cb);background:var(–cd)}
 .set-opt:active{opacity:.6}
 .set-opt-left{display:flex;flex-direction:column;gap:3px;text-align:left}
-.set-opt-name{font-family:‘Rokkitt’,serif;font-weight:600;font-size:13px;letter-spacing:.08em;color:rgba(255,255,255,.75)}
+.set-opt-name{font-family:‘Noto Sans’,sans-serif;font-weight:600;font-size:13px;letter-spacing:.08em;color:rgba(255,255,255,.75)}
 .set-opt.on .set-opt-name{color:var(–c)}
-.set-opt-desc{font-family:‘Rokkitt’,serif;font-weight:300;font-size:9px;letter-spacing:.1em;color:rgba(255,255,255,.28);line-height:1.5}
+.set-opt-desc{font-family:‘Noto Sans’,sans-serif;font-weight:300;font-size:9px;letter-spacing:.1em;color:rgba(255,255,255,.28);line-height:1.5}
 .set-opt-badge{font-family:‘Share Tech Mono’,monospace;font-size:9px;letter-spacing:.08em;padding:3px 8px;border-radius:3px;border:1px solid rgba(255,255,255,.14);color:rgba(255,255,255,.35)}
 .set-opt.on .set-opt-badge{border-color:var(–cb);color:var(–c);background:var(–cd)}
 .set-fname{margin-top:8px;padding:12px 14px;border-radius:8px;background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.06)}
-.set-fname-lbl{font-family:‘Rokkitt’,serif;font-weight:300;font-size:8px;letter-spacing:.2em;color:rgba(255,255,255,.28);margin-bottom:6px}
+.set-fname-lbl{font-family:‘Noto Sans’,sans-serif;font-weight:300;font-size:8px;letter-spacing:.2em;color:rgba(255,255,255,.28);margin-bottom:6px}
 .set-fname-val{font-family:‘Share Tech Mono’,monospace;font-size:9px;letter-spacing:.04em;color:var(–c);line-height:1.7;word-break:break-all}
 
 /* GALLERY */
 #gallery{position:absolute;inset:0;z-index:50;background:#0a0a0a;display:none;flex-direction:column}
 .gal-hdr{display:flex;align-items:center;justify-content:space-between;padding:12px 18px 10px;border-bottom:1px solid rgba(255,255,255,.06);flex-shrink:0}
-.gal-title{font-family:‘Rokkitt’,serif;font-weight:700;font-size:17px;letter-spacing:.14em;color:#fff}
-.gal-count{font-family:‘Rokkitt’,serif;font-weight:300;font-size:10px;letter-spacing:.14em;color:rgba(255,255,255,.3)}
+.gal-title{font-family:‘Noto Sans’,sans-serif;font-weight:700;font-size:17px;letter-spacing:.14em;color:#fff}
+.gal-count{font-family:‘Noto Sans’,sans-serif;font-weight:300;font-size:10px;letter-spacing:.14em;color:rgba(255,255,255,.3)}
 .gal-close{width:34px;height:34px;border-radius:50%;border:1px solid rgba(255,255,255,.12);background:none;color:rgba(255,255,255,.5);font-size:13px;cursor:pointer;-webkit-appearance:none;display:flex;align-items:center;justify-content:center}
 .gal-close:active{opacity:.5}
 #gal-grid{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:10px;display:grid;grid-template-columns:repeat(3,1fr);gap:3px;align-content:start}
 .gal-thumb{position:relative;aspect-ratio:2.39/1;background:#1a1a1a;cursor:pointer;overflow:hidden}
 .gal-thumb img{width:100%;height:100%;object-fit:cover;display:block}
 .gal-thumb-info{position:absolute;bottom:0;left:0;right:0;padding:3px 5px;background:rgba(0,0,0,.6);display:flex;justify-content:space-between;align-items:center}
-.gal-thumb-fmt{font-family:‘Rokkitt’,serif;font-weight:600;font-size:7px;letter-spacing:.08em;color:var(–c)}
+.gal-thumb-fmt{font-family:‘Noto Sans’,sans-serif;font-weight:600;font-size:7px;letter-spacing:.08em;color:var(–c)}
 .gal-thumb-cs{font-family:‘Share Tech Mono’,monospace;font-size:7px;color:rgba(255,255,255,.4)}
 .gal-thumb:active{opacity:.7}
-.gal-empty{grid-column:1/-1;padding:50px 0;text-align:center;font-family:‘Rokkitt’,serif;font-weight:300;font-size:11px;letter-spacing:.18em;color:rgba(255,255,255,.2);line-height:2}
+.gal-empty{grid-column:1/-1;padding:50px 0;text-align:center;font-family:‘Noto Sans’,sans-serif;font-weight:300;font-size:11px;letter-spacing:.18em;color:rgba(255,255,255,.2);line-height:2}
 #gal-detail{position:absolute;inset:0;background:#000;z-index:51;display:none;flex-direction:column}
 .gal-detail-hdr{display:flex;align-items:center;justify-content:space-between;padding:12px 16px 10px;background:rgba(0,0,0,.7);flex-shrink:0}
-.gal-back{background:none;border:none;color:rgba(255,255,255,.55);cursor:pointer;-webkit-appearance:none;font-family:‘Rokkitt’,serif;font-weight:300;font-size:12px;letter-spacing:.1em}
+.gal-back{background:none;border:none;color:rgba(255,255,255,.55);cursor:pointer;-webkit-appearance:none;font-family:‘Noto Sans’,sans-serif;font-weight:300;font-size:12px;letter-spacing:.1em}
 .gal-back:active{opacity:.5}
-.gal-save-btn{padding:7px 18px;border:1px solid var(–cb);background:none;color:var(–c);font-family:‘Rokkitt’,serif;font-weight:600;font-size:11px;letter-spacing:.14em;cursor:pointer;-webkit-appearance:none}
+.gal-save-btn{padding:7px 18px;border:1px solid var(–cb);background:none;color:var(–c);font-family:‘Noto Sans’,sans-serif;font-weight:600;font-size:11px;letter-spacing:.14em;cursor:pointer;-webkit-appearance:none}
 .gal-save-btn:active{background:var(–cd)}
 #gal-detail-img{flex:1;object-fit:contain;width:100%;min-height:0}
 .gal-detail-info{padding:10px 18px 14px;background:rgba(0,0,0,.7);flex-shrink:0}
@@ -250,20 +227,6 @@ color:var(–c);min-width:28px;text-align:right;flex-shrink:0;
     <span class="zoom-val" id="zoom-val">1.0×</span>
   </div>
 
-  <!-- Focus controls -->
-  <div id="focus-ctrl">
-    <div class="focus-mode-row">
-      <button class="focus-mode-btn on" id="af-btn">AF</button>
-      <button class="focus-mode-btn" id="mf-btn">MF</button>
-      <span class="focus-status" id="focus-status">Auto Focus</span>
-    </div>
-    <div id="focus-dist-row">
-      <span class="focus-tick">NEAR</span>
-      <input type="range" class="fil-slider" id="focus-sl" min="0" max="100" value="0" step="1">
-      <span class="focus-tick">∞</span>
-      <span class="focus-val-badge" id="focus-val">NEAR</span>
-    </div>
-  </div>
   <div class="pill-row" id="pills"></div>
   <div class="ctrl-row">
     <div class="ctrl-group">
@@ -426,16 +389,14 @@ const FMTS=[
 ];
 const MASK_MODES=[{label:'Mask',icon:'◻',alpha:0},{label:'Dim',icon:'◑',alpha:0.62},{label:'Black',icon:'◼',alpha:1.0}];
 const LENS_PRESETS=[{label:'0.5×',zoom:.5},{label:'1×',zoom:1},{label:'2×',zoom:2},{label:'3×',zoom:3}];
-const C='#DC5857', CA='rgba(220,88,87,';
+const C='#F5C400', CA='rgba(245,196,0,';
 
 // ── STATE ───────────────────────────────────────────────────
 let fi=3, maskMode=0, facing='environment', stream=null;
 let gridOn=false, safeOn=false;
 let currentZoom=1, zoomCap=null, zoomMin=1, zoomMax=1;
 
-// Focus
-let focusModeState='auto', focusCap=null, focusDistMin=0, focusDistMax=1;
-let focusSliderVal=0;
+
 let needSz=true, ftmr=null, ttmr=null;
 let expVal=0;
 const photos=[];
@@ -540,7 +501,7 @@ async function initCam(){
     try{
       stream=await navigator.mediaDevices.getUserMedia({video:c,audio:false});
       vid.srcObject=stream;vid.classList.toggle('mirror',facing==='user');
-      await vid.play();nocam.style.display='none';checkLens();checkFocus();return;
+      await vid.play();nocam.style.display='none';checkLens();return;
     }catch{}
   }
   nocam.style.display='block';
@@ -585,109 +546,7 @@ async function setZoom(z){
 }
 zoomSlider.addEventListener('input',()=>setZoom(parseInt(zoomSlider.value)/10));
 
-// ── FOCUS ───────────────────────────────────────────────────
-// iOS Safari focus: focusMode supported, focusDistance NOT supported.
-// MF mode uses pointOfInterest (tap) + lock. Slider = focus region sweep.
 
-function checkFocus(){
-  if(!stream)return;
-  const track=stream.getVideoTracks()[0];if(!track)return;
-  const focusCtrl=document.getElementById('focus-ctrl');
-  focusCtrl.style.display='flex';
-  try{
-    const cap=track.getCapabilities();
-    if(cap&&cap.focusDistance){
-      focusDistMin=cap.focusDistance.min||0;
-      focusDistMax=cap.focusDistance.max||1;
-      focusCap=cap;
-    }
-  }catch(e){}
-  setFocusMode('auto');
-}
-
-async function setFocusMode(mode){
-  if(!stream)return;
-  const track=stream.getVideoTracks()[0];if(!track)return;
-  focusModeState=mode;
-  const afBtn=document.getElementById('af-btn');
-  const mfBtn=document.getElementById('mf-btn');
-  const focusDistRow=document.getElementById('focus-dist-row');
-  const focusStatus=document.getElementById('focus-status');
-  afBtn.classList.toggle('on',mode==='auto');
-  mfBtn.classList.toggle('on',mode==='manual');
-  focusDistRow.style.display=mode==='manual'?'flex':'none';
-
-  if(mode==='auto'){
-    focusStatus.textContent='Auto Focus';
-    try{ await track.applyConstraints({advanced:[{focusMode:'continuous'}]}); }catch(e){}
-    // Also try 'auto' as fallback
-    try{ await track.applyConstraints({advanced:[{focusMode:'auto'}]}); }catch(e){}
-  } else {
-    focusStatus.textContent='Tap viewfinder to set focus';
-    // In MF mode we first trigger a single auto-focus, then lock
-    try{ await track.applyConstraints({advanced:[{focusMode:'auto'}]}); }catch(e){}
-    setTimeout(async ()=>{
-      try{ await track.applyConstraints({advanced:[{focusMode:'manual'}]}); }catch(e){}
-    }, 800);
-  }
-}
-
-async function applyManualFocus(sliderVal){
-  if(!stream)return;
-  const track=stream.getVideoTracks()[0];if(!track)return;
-  focusSliderVal=sliderVal;
-  const focusValEl=document.getElementById('focus-val');
-  focusValEl.textContent=sliderVal===0?'NEAR':sliderVal===100?'∞':sliderVal.toString();
-
-  // Map slider to pointOfInterest: sweep from near (center) to far (edges/horizon)
-  // pointOfInterest x: 0.5 center, y: 0.5 center — near
-  // y: 0.1 horizon — far
-  const yPOI = 0.5 - (sliderVal / 100) * 0.4; // 0.5 (center/near) → 0.1 (top/far)
-
-  if(focusCap){
-    // Device supports focusDistance — use it
-    const norm = 1 - (sliderVal / 100);
-    const dist = focusDistMin + (focusDistMax - focusDistMin) * norm;
-    try{
-      await track.applyConstraints({advanced:[{focusMode:'manual',focusDistance:dist}]});
-      return;
-    }catch(e){}
-  }
-
-  // Fallback: use pointOfInterest to sweep focus depth
-  try{
-    await track.applyConstraints({advanced:[{pointOfInterest:{x:0.5,y:yPOI},focusMode:'auto'}]});
-    // Lock after brief focus
-    setTimeout(async()=>{
-      try{ await track.applyConstraints({advanced:[{focusMode:'manual'}]}); }catch(e){}
-    }, 600);
-  }catch(e){}
-}
-
-// Tap-to-focus in MF mode: sets pointOfInterest to tapped area
-async function tapFocus(clientX, clientY){
-  if(!stream||focusModeState!=='manual')return;
-  const track=stream.getVideoTracks()[0];if(!track)return;
-  const W=window.innerWidth,H=window.innerHeight;
-  const poi={x:clientX/W, y:clientY/H};
-  try{
-    await track.applyConstraints({advanced:[{pointOfInterest:poi,focusMode:'auto'}]});
-    setTimeout(async()=>{
-      try{ await track.applyConstraints({advanced:[{focusMode:'manual'}]}); }catch(e){}
-    }, 700);
-    document.getElementById('focus-status').textContent='Focus locked';
-  }catch(e){
-    document.getElementById('focus-status').textContent='Focus (tap to set)';
-  }
-}
-
-document.getElementById('af-btn').onclick=()=>setFocusMode('auto');
-document.getElementById('mf-btn').onclick=()=>setFocusMode('manual');
-document.getElementById('focus-sl').addEventListener('input',function(){
-  applyManualFocus(parseInt(this.value));
-  const pct=(parseInt(this.value)/100)*100;
-  this.style.background=`linear-gradient(to right,rgba(220,88,87,.55) ${pct}%,rgba(255,255,255,.12) ${pct}%)`;
-});
 
 
 // ── FILTERS ─────────────────────────────────────────────────
@@ -702,7 +561,7 @@ function updateFilterBadge(){
 // Update slider track fill
 function updateSliderTrack(el,val,min,max){
   const pct=(val-min)/(max-min)*100;
-  el.style.background=`linear-gradient(to right,rgba(220,88,87,.55) ${pct}%,rgba(255,255,255,.12) ${pct}%)`;
+  el.style.background=`linear-gradient(to right,rgba(245,196,0,.55) ${pct}%,rgba(255,255,255,.12) ${pct}%)`;
 }
 
 grainSl.addEventListener('input',()=>{
@@ -723,7 +582,7 @@ distSl.addEventListener('input',()=>{
   const pct=distVal>=0?(distVal/50)*50+50:50-(Math.abs(distVal)/50)*50;
   const half=50;
   const from=Math.min(pct,half), to=Math.max(pct,half);
-  distSl.style.background=`linear-gradient(to right,rgba(255,255,255,.12) ${from}%,rgba(220,88,87,.55) ${from}%,rgba(220,88,87,.55) ${to}%,rgba(255,255,255,.12) ${to}%)`;
+  distSl.style.background=`linear-gradient(to right,rgba(255,255,255,.12) ${from}%,rgba(245,196,0,.55) ${from}%,rgba(245,196,0,.55) ${to}%,rgba(255,255,255,.12) ${to}%)`;
   applyDistortionCSS();
   updateVideoVisibility();updateFilterBadge();
 });
@@ -748,21 +607,21 @@ function updateVideoVisibility(){
 // CSS-based distortion (applied to video element, no grid artifacts)
 function applyDistortionCSS(){
   const k = distVal / 50; // -1(pin) to +1(barrel)
-  const mirror = facing === 'user' ? 'scaleX(-1) ' : '';
+  // Always manage mirror via inline style so scale combines correctly
+  const mirrorStr = facing === 'user' ? 'scaleX(-1) ' : '';
   if(k === 0){
-    vid.style.transform = mirror.trim()||'none';
+    // Let CSS class handle mirror when no distortion
+    vid.style.transform = '';
     vid.style.borderRadius = '0';
     return;
   }
   if(k > 0){
-    // Barrel: scale up (center inflates outward)
     const sc = 1 + k * 0.09;
-    vid.style.transform = mirror + `scale(${sc.toFixed(3)})`;
+    vid.style.transform = mirrorStr + `scale(${sc.toFixed(3)})`;
     vid.style.borderRadius = (k * 6).toFixed(1) + '%';
   } else {
-    // Pincushion: scale down (edges pull inward)
     const sc = 1 + k * 0.06;
-    vid.style.transform = mirror + `scale(${sc.toFixed(3)})`;
+    vid.style.transform = mirrorStr + `scale(${sc.toFixed(3)})`;
     vid.style.borderRadius = '0';
   }
 }
@@ -780,8 +639,17 @@ function draw(){
   if(hasEffects()&&vs){
     const{sx,sy,sw,sh}=vs;
 
-    // Draw video (CSS handles distortion visually)
-    ctx.drawImage(vid,sx,sy,sw,sh,aL,aT,aW,aH);
+    // Draw video with distortion-aware crop (CSS scale replicated in canvas)
+    if(distVal!==0){
+      const kd=distVal/50;
+      const cssScale=kd>0?1+kd*0.09:1+kd*0.06;
+      const cf=1/cssScale; // crop factor: barrel crops tighter
+      const csw=sw*cf, csh=sh*cf;
+      const csx=sx+(sw-csw)/2, csy=sy+(sh-csh)/2;
+      ctx.drawImage(vid,csx,csy,csw,csh,aL,aT,aW,aH);
+    } else {
+      ctx.drawImage(vid,sx,sy,sw,sh,aL,aT,aW,aH);
+    }
 
     // Chromatic aberration overlay
     if(caVal>0){
@@ -910,11 +778,7 @@ function draw(){
   ctx.font='8px "Share Tech Mono"';ctx.textAlign='right';
   ctx.fillStyle=capCs.cs==='display-p3'?C:'rgba(255,255,255,.32)';
   ctx.fillText(capCs.label,aR-pad,aT+pad+10);
-  // Focus mode badge
-  const fmBadge=focusModeState==='manual'?`MF ${focusSliderVal===100?'∞':focusSliderVal}`:'AF';
-  ctx.fillStyle=focusModeState==='manual'?C:'rgba(255,255,255,.4)';
-  ctx.font='bold 8px "Share Tech Mono"';
-  ctx.fillText(fmBadge,aR-pad,aT+pad+22);
+
 
   // Active filter indicators (top-left inside frame)
   let filX=aL+pad;
@@ -1004,15 +868,30 @@ function capture(){
     oc.restore();
   }
 
-  // Grain on capture
+  // Grain on capture — Kodak style (scaled for high-res output)
   if(grainVal>0){
-    oc.save();oc.globalCompositeOperation='overlay';
-    const grainAlpha=(grainVal/100)*.5;
-    const cnt=Math.floor(out.width*out.height*grainVal*0.00008);
+    oc.save();
+    const intensity=grainVal/100;
+    const scaleFactor=Math.min(out.width,out.height)/400; // scale grain to res
+
+    // Fine grain overlay
+    oc.globalCompositeOperation='overlay';
+    const cnt=Math.floor(out.width*out.height*intensity*0.10);
     for(let i=0;i<cnt;i++){
       const gx=Math.random()*out.width,gy=Math.random()*out.height;
-      const gs=Math.random()*2+.2,gv=Math.floor(Math.random()*255);
-      oc.fillStyle=`rgba(${gv},${gv},${gv},${grainAlpha*2.5})`;oc.fillRect(gx,gy,gs,gs);
+      const gs=(Math.random()*0.75+0.1)*scaleFactor;
+      const v=Math.floor(Math.random()*255);
+      const warm=v>180?Math.floor(Math.random()*18):0;
+      oc.fillStyle=`rgba(${Math.min(255,v+warm)},${Math.min(255,v+Math.floor(warm*.4))},${v},0.82)`;
+      oc.fillRect(gx,gy,gs,gs);
+    }
+    // Shadow clumps
+    oc.globalCompositeOperation='soft-light';
+    const shdCnt=Math.floor(out.width*out.height*intensity*0.018);
+    for(let i=0;i<shdCnt;i++){
+      const gx=Math.random()*out.width,gy=Math.random()*out.height;
+      const gs=(Math.random()*1.1+0.25)*scaleFactor;
+      oc.fillStyle=`rgba(20,16,12,${intensity*0.55})`;oc.fillRect(gx,gy,gs,gs);
     }
     oc.restore();
   }
@@ -1045,11 +924,24 @@ tabFil.onclick=()=>{tabFil.classList.add('on');tabCam.classList.remove('on');pan
 // ── SETTINGS ────────────────────────────────────────────────
 function openSettings(){settings.style.display='flex';updateFnamePreview();}
 function closeSettings(){settings.style.display='none';}
-fmtOpts.querySelectorAll('.set-opt').forEach(btn=>{
-  btn.onclick=()=>{fmtOpts.querySelectorAll('.set-opt').forEach(b=>b.classList.remove('on'));btn.classList.add('on');capFmt={fmt:btn.dataset.fmt,mime:btn.dataset.mime,ext:btn.dataset.ext};updateFnamePreview();};
+// Settings — format selection
+fmtOpts.addEventListener('click',e=>{
+  const btn=e.target.closest('.set-opt');if(!btn)return;
+  fmtOpts.querySelectorAll('.set-opt').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  capFmt={fmt:btn.dataset.fmt, mime:btn.dataset.mime, ext:btn.dataset.ext};
+  updateFnamePreview();
+  showToast(btn.dataset.fmt.toUpperCase()+' selected');
 });
-csOpts.querySelectorAll('.set-opt').forEach(btn=>{
-  btn.onclick=()=>{csOpts.querySelectorAll('.set-opt').forEach(b=>b.classList.remove('on'));btn.classList.add('on');capCs={cs:btn.dataset.cs,label:btn.dataset.csLabel};updateFnamePreview();};
+
+// Settings — color space selection
+csOpts.addEventListener('click',e=>{
+  const btn=e.target.closest('.set-opt');if(!btn)return;
+  csOpts.querySelectorAll('.set-opt').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  capCs={cs:btn.dataset.cs, label:btn.dataset.csLabel};
+  updateFnamePreview();
+  showToast(btn.dataset.csLabel+' selected');
 });
 
 // ── GALLERY ─────────────────────────────────────────────────
@@ -1096,13 +988,12 @@ wrap.addEventListener('click',e=>{
   if(x>=m.aL&&x<=m.aL+m.aW&&y>=m.aT&&y<=m.aT+m.aH){
     focus.style.left=x+'px';focus.style.top=y+'px';focus.style.opacity='1';
     clearTimeout(ftmr);ftmr=setTimeout(()=>focus.style.opacity='0',1400);
-    tapFocus(x,y); // MF mode: tap-to-focus
   }
 });
 gridBtn.onclick=()=>{gridOn=!gridOn;gridBtn.classList.toggle('on',gridOn)};
 safeBtn.onclick=()=>{safeOn=!safeOn;safeBtn.classList.toggle('on',safeOn)};
 maskBtn.onclick=cycleMask;
-flipBtn.onclick=()=>{facing=facing==='environment'?'user':'environment';lensRow.style.display='none';zoomRow.style.display='none';document.getElementById('focus-ctrl').style.display='none';lensRow.innerHTML='';zoomCap=null;focusCap=null;if(stream){initCam();setTimeout(applyDistortionCSS,500);}};
+flipBtn.onclick=()=>{facing=facing==='environment'?'user':'environment';lensRow.style.display='none';zoomRow.style.display='none';lensRow.innerHTML='';zoomCap=null;if(stream){initCam();setTimeout(applyDistortionCSS,500);}};
 capBtn.onclick=capture;
 galBtn.onclick=openGallery;
 setBtn.onclick=openSettings;
