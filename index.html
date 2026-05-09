@@ -12,10 +12,9 @@
 <link rel="manifest" href="manifest.json">
 <title>Cinemascopome</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,200;0,300;0,400;0,600;0,700;1,300&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-<style>:root{--c:#F5C400;--cd:rgba(245,196,0,.11);--cb:rgba(245,196,0,.28);}
-
+<style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
-
+:root{--c:#F5C400;--cd:rgba(245,196,0,.11);--cb:rgba(245,196,0,.28);}
 html,body{width:100%;height:100%;height:100dvh;background:#000;overflow:hidden}
 #wrap{position:fixed;inset:0;height:100vh;height:100dvh;background:#000;overflow:hidden;display:flex;flex-direction:column}
 video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1;transition:opacity .1s}
@@ -25,14 +24,14 @@ canvas{position:absolute;inset:0;z-index:3;pointer-events:none}
 /* TOP BAR */
 #top-bar{position:relative;z-index:10;flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:8px 18px 6px;background:#0e0e0e;border-bottom:1px solid rgba(255,255,255,.06)}
 .top-left{display:flex;flex-direction:column;gap:1px}
-.top-fmt-lbl{color:rgba(255,255,255,.38) !important;font-family:‘Noto Sans’,sans-serif;font-weight:300;font-size:8px;letter-spacing:.22em;color:rgba(255,255,255,.35)}
-.top-fmt-name{color:#F5C400 !important;font-family:‘Noto Sans’,sans-serif;font-weight:700;font-size:16px;letter-spacing:.1em;color:var(–c);line-height:1}
+.top-fmt-lbl{font-family:‘Noto Sans’,sans-serif;font-weight:300;font-size:8px;letter-spacing:.22em;color:rgba(255,255,255,.35)}
+.top-fmt-name{font-family:‘Noto Sans’,sans-serif;font-weight:700;font-size:16px;letter-spacing:.1em;color:var(–c);line-height:1}
 .top-center{display:flex;align-items:center;gap:4px}
 .dot{width:5px;height:5px;border-radius:50%;background:var(–c);animation:bl 1.5s infinite}
 @keyframes bl{0%,100%{opacity:1}50%{opacity:.15}}
-.live{color:rgba(255,255,255,.5) !important;font-family:‘Share Tech Mono’,monospace;font-size:8px;color:rgba(255,255,255,.4);letter-spacing:.14em}
+.live{font-family:‘Share Tech Mono’,monospace;font-size:8px;color:rgba(255,255,255,.4);letter-spacing:.14em}
 .top-right{display:flex;flex-direction:column;align-items:flex-end}
-.top-ratio{color:#F5C400 !important;font-family:‘Noto Sans’,sans-serif;font-weight:700;font-size:18px;line-height:1;letter-spacing:.04em;color:var(–c)}
+.top-ratio{font-family:‘Noto Sans’,sans-serif;font-weight:700;font-size:18px;line-height:1;letter-spacing:.04em;color:var(–c)}
 .top-ratio-lbl{font-family:‘Noto Sans’,sans-serif;font-weight:200;font-size:7px;letter-spacing:.18em;color:rgba(255,255,255,.26)}
 
 /* VIEWFINDER */
@@ -50,7 +49,7 @@ canvas{position:absolute;inset:0;z-index:3;pointer-events:none}
 #panel-cam{}
 #lens-row{display:none;align-items:center;justify-content:center;gap:6px;padding:6px 18px 0}
 .lens-btn{padding:4px 12px;border-radius:16px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);font-family:‘Noto Sans’,sans-serif;font-weight:600;font-size:12px;letter-spacing:.06em;color:rgba(255,255,255,.32);cursor:pointer;-webkit-appearance:none;transition:.15s}
-.lens-btn.on{border-color:#F5C400 !important;background:rgba(245,196,0,.11) !important;color:#F5C400 !important;border-color:var(–c);background:var(–cd);color:var(–c)}
+.lens-btn.on{border-color:var(–c);background:var(–cd);color:var(–c)}
 .lens-btn:active{opacity:.5}
 #zoom-row{display:none;align-items:center;gap:10px;padding:6px 20px 0}
 .zoom-val{font-family:‘Share Tech Mono’,monospace;font-size:10px;color:var(–c);letter-spacing:.06em;min-width:32px;text-align:right;flex-shrink:0}
@@ -60,17 +59,17 @@ input[type=range].styled::-webkit-slider-thumb{-webkit-appearance:none;appearanc
 .pill-row{display:flex;align-items:stretch;margin:6px 0 0;border-top:1px solid rgba(255,255,255,.05);border-bottom:1px solid rgba(255,255,255,.05)}
 .pill{flex:1;padding:7px 0;text-align:center;position:relative;font-family:‘Noto Sans’,sans-serif;font-weight:400;font-size:11px;letter-spacing:.08em;color:rgba(255,255,255,.2);background:none;border:none;border-right:1px solid rgba(255,255,255,.05);cursor:pointer;-webkit-appearance:none;transition:.15s}
 .pill:last-child{border-right:none}
-.pill.on{color:#F5C400 !important;background:rgba(245,196,0,.11) !important;color:var(–c);background:var(–cd)}
-.pill.on::after{content:’’;position:absolute;bottom:0;left:0;right:0;height:2px;background:#F5C400 !important;}
+.pill.on{color:var(–c);background:var(–cd)}
+.pill.on::after{content:’’;position:absolute;bottom:0;left:0;right:0;height:2px;background:var(–c)}
 .pill:active{opacity:.5}
-.ctrl-row{display:flex;align-items:center;justify-content:space-between;padding:8px 14px 8px}
-.ctrl-group{display:flex;align-items:center;gap:4px}
-.cb{display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;cursor:pointer;-webkit-appearance:none;min-width:38px;position:relative}
-.cb:active{opacity:.4}
-.ci{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);font-family:‘Share Tech Mono’,monospace;font-size:15px;color:rgba(255,255,255,.42);transition:.15s}
-.cb.on .ci{border-color:rgba(245,196,0,.4) !important;background:rgba(245,196,0,.11) !important;color:#F5C400 !important;border-color:var(–cb);background:var(–cd);color:var(–c)}
-.cl{font-family:‘Noto Sans’,sans-serif;font-weight:300;font-size:7px;letter-spacing:.14em;color:rgba(255,255,255,.2)}
-.cb.on .cl{color:rgba(245,196,0,.7) !important;color:rgba(245,196,0,.6)}
+.ctrl-row{display:flex;align-items:center;justify-content:space-between;padding:10px 12px 8px}
+.cgrp{display:flex;align-items:center;gap:5px}
+.cctr{display:flex;flex-direction:column;align-items:center;gap:3px}
+.chint{font-family:‘Noto Sans’,sans-serif;font-weight:300;font-size:7px;letter-spacing:.12em;color:rgba(255,255,255,.2)}
+.ib{display:flex;flex-direction:column;align-items:center;gap:3px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:7px 5px 5px;cursor:pointer;-webkit-appearance:none;color:rgba(255,255,255,.45);min-width:44px;position:relative;transition:.15s}
+.ib.on{color:#F5C400!important;border-color:rgba(245,196,0,.45)!important;background:rgba(245,196,0,.1)!important}
+.ib:active{opacity:.4}
+.il{font-family:‘Noto Sans’,sans-serif;font-weight:400;font-size:7px;letter-spacing:.08em;color:inherit;white-space:nowrap}
 .badge{position:absolute;top:-2px;right:-2px;min-width:15px;height:15px;border-radius:8px;padding:0 3px;background:var(–c);color:#fff;font-family:‘Noto Sans’,sans-serif;font-weight:700;font-size:8px;display:none;align-items:center;justify-content:center;letter-spacing:0;z-index:2}
 #cap{display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;cursor:pointer;-webkit-appearance:none}
 .sh{width:60px;height:60px;border-radius:50%;position:relative}
@@ -177,34 +176,34 @@ input[type=range].styled::-webkit-slider-thumb{-webkit-appearance:none;appearanc
 ```
 <!-- CAMERA PANEL -->
   <div id="lens-row"></div>
-  <div id="zoom-row">
-    <span class="zoom-icon">−</span>
-    <input type="range" id="zoom-slider" class="styled" min="10" max="30" value="10" step="1">
-    <span class="zoom-icon">+</span>
-    <span class="zoom-val" id="zoom-val">1.0×</span>
+<div id="zoom-row">
+  <span class="zoom-icon">−</span>
+  <input type="range" id="zoom-slider" class="styled" min="10" max="30" value="10" step="1">
+  <span class="zoom-icon">+</span>
+  <span class="zoom-val" id="zoom-val">1.0×</span>
+</div>
+<div class="pill-row" id="pills"></div>
+<div class="ctrl-row">
+  <div class="cgrp">
+    <button class="ib" id="gridBtn"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="1" y="1" width="16" height="16" rx="2" stroke="currentColor" stroke-width="1.3"/><line x1="7" y1="1" x2="7" y2="17" stroke="currentColor" stroke-width="1.1"/><line x1="11" y1="1" x2="11" y2="17" stroke="currentColor" stroke-width="1.1"/><line x1="1" y1="7" x2="17" y2="7" stroke="currentColor" stroke-width="1.1"/><line x1="1" y1="11" x2="17" y2="11" stroke="currentColor" stroke-width="1.1"/></svg><span class="il">Grid</span></button>
+    <button class="ib" id="safeBtn"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M1 5L1 1L5 1" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M13 1L17 1L17 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M17 13L17 17L13 17" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M5 17L1 17L1 13" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><span class="il">Safe</span></button>
+    <button class="ib" id="maskBtn"><span id="mask-svg"></span><span class="il" id="mask-lbl">Off</span></button>
   </div>
-
-  <div class="pill-row" id="pills"></div>
-  <div class="ctrl-row">
-    <div class="ctrl-group">
-      <button class="cb" id="gridBtn"><div class="ci">⊞</div><div class="cl">Grid</div></button>
-      <button class="cb" id="safeBtn"><div class="ci">▣</div><div class="cl">Safe</div></button>
-      <button class="cb" id="maskBtn"><div class="ci" id="mask-icon">◻</div><div class="cl" id="mask-lbl">Mask</div></button>
-    </div>
-    <button id="cap">
-      <div class="sh"><div class="sh-ring"></div><div class="sh-core"></div></div>
-      <div class="sl">Capture</div>
-    </button>
-    <div class="ctrl-group">
-      <button class="cb" id="galBtn"><div class="ci">▦</div><div class="cl">Gallery</div><div class="badge" id="badge"></div></button>
-      <button class="cb" id="setBtn"><div class="ci">⚙</div><div class="cl">Settings</div></button>
-      <button class="cb" id="flipBtn"><div class="ci">↻</div><div class="cl">Flip</div></button>
-    </div>
+  <div class="cctr">
+    <button id="cap"><div class="sh"><div class="sh-ring"></div><div class="sh-core"></div></div></button>
+    <span class="chint">Capture</span>
+  </div>
+  <div class="cgrp">
+    <button class="ib" id="galBtn"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="1" y="4" width="16" height="13" rx="2" stroke="currentColor" stroke-width="1.3"/><rect x="3.5" y="2" width="11" height="13" rx="1.5" stroke="currentColor" stroke-width="1" opacity=".4"/><circle cx="5.5" cy="10" r="1.8" fill="currentColor" opacity=".7"/><path d="M1 15L6 10.5L9 13L12.5 9L17 15" stroke="currentColor" stroke-width="1.1" fill="none"/></svg><span class="il">Gallery</span><div class="badge" id="badge"></div></button>
+    <button class="ib" id="flipBtn"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M14.5 9A5.5 5.5 0 0 0 4.5 5.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><path d="M3.5 9A5.5 5.5 0 0 0 13.5 12.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><polyline points="2.5,4 4.5,7 7,5" stroke="currentColor" stroke-width="1.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/><polyline points="15.5,14 13.5,11 11,13" stroke="currentColor" stroke-width="1.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="il">Flip</span></button>
+    <button class="ib" id="setBtn"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="2.5" stroke="currentColor" stroke-width="1.3"/><path d="M9 1.5v2M9 14.5v2M1.5 9h2M14.5 9h2M3.7 3.7l1.4 1.4M12.9 12.9l1.4 1.4M14.3 3.7l-1.4 1.4M5.1 12.9l-1.4 1.4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg><span class="il">Settings</span></button>
   </div>
 </div>
-
-<!-- SETTINGS -->
 ```
+
+  </div>
+
+  <!-- SETTINGS -->
 
   <div id="settings">
     <div class="set-hdr">
@@ -436,6 +435,9 @@ zoomSlider.addEventListener('input',()=>setZoom(parseInt(zoomSlider.value)/10));
 // ── DRAW ────────────────────────────────────────────────────
 function draw(){
   const W=window.innerWidth,H=window.innerHeight;
+  if(document.hidden)return;
+  if(ts&&ts-_ld<42){requestAnimationFrame(draw);return;}
+  _ld=ts;
   if(needSz){cv.width=W;cv.height=H;needSz=false;}
   ctx.clearRect(0,0,W,H);
   const m=getM();
@@ -487,56 +489,10 @@ function draw(){
   ctx.font='7px "Share Tech Mono"';ctx.fillStyle='rgba(255,255,255,.28)';ctx.textAlign='left';
   ctx.fillText('+2',mX+6,mTop+5);ctx.fillText('-2',mX+6,mBot+3);
 
-  // ── BOTTOM HUD ───────────────────────────────────────────
   const bY=aB-pad-2;
-  ctx.font='10px "Share Tech Mono"';ctx.fillStyle='rgba(255,255,255,.7)';ctx.textAlign='left';
-  const sLabel='1/125',sX=aL+pad;
-  ctx.strokeStyle=CA+'0.36)';ctx.lineWidth=1;
-  ctx.beginPath();ctx.moveTo(sX,bY-11);ctx.lineTo(sX,bY+1);ctx.lineTo(sX+4,bY+1);ctx.stroke();
-  const sW=ctx.measureText(sLabel).width;
-  ctx.beginPath();ctx.moveTo(sX+sW+10,bY-11);ctx.lineTo(sX+sW+10,bY+1);ctx.lineTo(sX+sW+6,bY+1);ctx.stroke();
-  ctx.fillText(sLabel,sX+4,bY);
-  ctx.font='9px "Share Tech Mono"';ctx.fillStyle='rgba(255,255,255,.45)';ctx.fillText('AWB',aL+pad+60,bY);
-  const scW=aW*.26,scX=aL+aW/2-scW/2;
-  ctx.fillStyle='rgba(255,255,255,.18)';
-  for(let i=0;i<=20;i++){const sx=scX+i*(scW/20);const sh=i%5===0?5:i%2===0?3:2;ctx.fillRect(sx-.5,bY-sh,1,sh);}
-  ctx.fillStyle=C;ctx.fillRect(aL+aW/2-.5,bY-7,1,7);
-  ctx.font='bold 10px "Share Tech Mono"';ctx.fillStyle=CA+'0.72)';ctx.textAlign='center';ctx.fillText('A',aL+aW/2+scW/2+14,bY);
-  ctx.font='10px "Share Tech Mono"';ctx.fillStyle='rgba(255,255,255,.7)';ctx.textAlign='right';
-  const apLabel='F1.8',apX=aR-pad,apW=ctx.measureText(apLabel).width;
-  ctx.strokeStyle=CA+'0.36)';ctx.lineWidth=1;
-  ctx.beginPath();ctx.moveTo(apX,bY-11);ctx.lineTo(apX,bY+1);ctx.lineTo(apX-4,bY+1);ctx.stroke();
-  ctx.beginPath();ctx.moveTo(apX-apW-10,bY-11);ctx.lineTo(apX-apW-10,bY+1);ctx.lineTo(apX-apW-6,bY+1);ctx.stroke();
-  ctx.fillText(apLabel,apX-4,bY);
-  ctx.font='9px "Share Tech Mono"';ctx.fillStyle='rgba(255,255,255,.45)';ctx.fillText('AUTO ISO',aR-pad-60,bY);
-
-  // Color space + focus mode indicator (top right inside frame)
-  ctx.font='8px "Share Tech Mono"';ctx.textAlign='right';
-  ctx.fillStyle=capCs.cs==='display-p3'?C:'rgba(255,255,255,.32)';
-  ctx.fillText(capCs.label,aR-pad,aT+pad+10);
-
-  // ── GRID ────────────────────────────────────────────────
-  if(gridOn){
-    ctx.strokeStyle='rgba(255,255,255,0.13)';ctx.lineWidth=0.5;ctx.setLineDash([]);
-    for(let i=1;i<=2;i++){
-      const x=aL+aW*i/3;ctx.beginPath();ctx.moveTo(x,aT);ctx.lineTo(x,aB);ctx.stroke();
-      const y=aT+aH*i/3;ctx.beginPath();ctx.moveTo(aL,y);ctx.lineTo(aR,y);ctx.stroke();
-    }
-  }
-
-  // ── SAFE AREA ───────────────────────────────────────────
-  if(safeOn){
-    ctx.setLineDash([4,4]);
-    ctx.strokeStyle=CA+'0.36)';ctx.lineWidth=0.7;
-    const s1=.05;ctx.strokeRect(aL+aW*s1,aT+aH*s1,aW*(1-s1*2),aH*(1-s1*2));
-    ctx.strokeStyle=CA+'0.22)';
-    const s2=.1;ctx.strokeRect(aL+aW*s2,aT+aH*s2,aW*(1-s2*2),aH*(1-s2*2));
-    ctx.setLineDash([]);ctx.font='700 7px sans-serif';ctx.textAlign='left';
-    ctx.fillStyle=CA+'0.48)';ctx.fillText('ACTION SAFE',aL+aW*s1+4,aT+aH*s1+10);
-    ctx.fillStyle=CA+'0.32)';ctx.fillText('TITLE SAFE',aL+aW*s2+4,aT+aH*s2+10);
-  }
-
-  ctx.textAlign='left';
+  ctx.strokeStyle=CA+'0.35)';ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(aL+aW/2,bY-5);ctx.lineTo(aL+aW/2,bY);ctx.stroke();
+    ctx.textAlign='left';
   requestAnimationFrame(draw);
 }
 
@@ -714,13 +670,9 @@ async function addExifToJpeg(blob,info){
 }
 
 // ── MASK ────────────────────────────────────────────────────
-function cycleMask(){
-  maskMode=(maskMode+1)%3;
-  const mode=MASK_MODES[maskMode];
-  maskIcon.textContent=mode.icon;maskLbl.textContent=mode.label;
-  maskBtn.classList.toggle('on',maskMode>0);
-  showToast(maskMode===0?'MASK OFF':maskMode===1?'DIM':'BLACK');
-}
+const _MS=['<svg width="18" height="18" viewBox="0 0 18 18" fill="none"><ellipse cx="9" cy="9" rx="8" ry="5.5" stroke="currentColor" stroke-width="1.3"/><circle cx="9" cy="9" r="2.5" stroke="currentColor" stroke-width="1.3"/></svg>','<svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M1 9C3.5 4 14.5 4 17 9" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M1 9C3.5 13.5 14.5 13.5 17 9" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" opacity=".35" stroke-dasharray="3 2"/><circle cx="9" cy="9" r="2.5" fill="currentColor" opacity=".55"/></svg>','<svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M1 9C3.5 4 14.5 4 17 9" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><line x1="2.5" y1="15.5" x2="15.5" y2="2.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>'];
+function _um(){const e=document.getElementById('mask-svg');if(e)e.innerHTML=_MS[maskMode];const l=document.getElementById('mask-lbl');if(l)l.textContent=MASK_MODES[maskMode].label;maskBtn.classList.toggle('on',maskMode>0);}
+function cycleMask(){maskMode=(maskMode+1)%3;_um();showToast(maskMode===0?'MASK OFF':maskMode===1?'DIM':'BLACK');}
 
 // ── SETTINGS ────────────────────────────────────────────────
 function openSettings(){settings.style.display='flex';updateFnamePreview();}
@@ -732,7 +684,7 @@ fmtOpts.addEventListener('click',e=>{
   btn.classList.add('on');
   capFmt={fmt:btn.dataset.fmt, mime:btn.dataset.mime, ext:btn.dataset.ext};
   updateFnamePreview();
-  showToast(btn.dataset.fmt.toUpperCase()+' selected', true);
+  showToast(btn.dataset.fmt.toUpperCase()+' selected');
 });
 
 // Settings — color space selection
@@ -742,7 +694,7 @@ csOpts.addEventListener('click',e=>{
   btn.classList.add('on');
   capCs={cs:btn.dataset.cs, label:btn.dataset.csLabel};
   updateFnamePreview();
-  showToast(btn.dataset.csLabel+' selected', true);
+  showToast(btn.dataset.csLabel+' selected');
 });
 
 // ── GALLERY ─────────────────────────────────────────────────
@@ -809,20 +761,11 @@ async function shareAll(){
     await new Promise(r=>setTimeout(r,300));
   }
 }
-function showToast(msg, accent){
+function showToast(msg){
   toast.innerHTML=msg;
   toast.style.cursor='default';
   toast.onclick=null;
   toast.style.bottom=(card.offsetHeight+8)+'px';
-  if(accent){
-    toast.style.background='#F5C400';
-    toast.style.color='#000';
-    toast.style.border='1.5px solid #F5C400';
-  } else {
-    toast.style.background='#1e1e1e';
-    toast.style.color='#F5C400';
-    toast.style.border='1.5px solid #F5C400';
-  }
   toast.style.opacity='1';
   clearTimeout(ttmr);ttmr=setTimeout(()=>toast.style.opacity='0',1800);
 }
@@ -862,7 +805,7 @@ const onResize=()=>{needSz=true;};
 window.addEventListener('resize',onResize);
 window.addEventListener('orientationchange',()=>setTimeout(onResize,400));
 
-const _im=MASK_MODES[maskMode];maskIcon.textContent=_im.icon;maskLbl.textContent=_im.label;maskBtn.classList.add('on');
+_um();
 applyFmt();draw();initCam();updateFnamePreview();
 </script>
 
