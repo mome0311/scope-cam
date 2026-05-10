@@ -159,6 +159,10 @@ input[type=range].styled::-webkit-slider-thumb{-webkit-appearance:none;appearanc
 <div id="wrap">
   <video id="vid" autoplay playsinline muted webkit-playsinline></video>
   <canvas id="cv"></canvas>
+  <div id="lb-t" style="position:absolute;left:0;right:0;background:#000;z-index:2;pointer-events:none;top:0;height:0"></div>
+  <div id="lb-b" style="position:absolute;left:0;right:0;background:#000;z-index:2;pointer-events:none;bottom:0;height:0"></div>
+  <div id="lb-l" style="position:absolute;top:0;bottom:0;left:0;background:#000;z-index:2;pointer-events:none;width:0"></div>
+  <div id="lb-r" style="position:absolute;top:0;bottom:0;right:0;background:#000;z-index:2;pointer-events:none;width:0"></div>
 
   <div id="top-bar">
     <div class="top-left">
@@ -436,14 +440,31 @@ zoomSlider.addEventListener('input',()=>setZoom(parseInt(zoomSlider.value)/10));
 
 // ── DRAW ────────────────────────────────────────────────────
 let _ld=0;
-function updateVideoClip(){
+function updateBars(){
   const m=getM();
-  const cT=Math.max(0,m.aT);
-  const cB=Math.max(0,m.H-(m.aT+m.aH));
-  const cL=Math.max(0,m.aL);
-  const cR=Math.max(0,m.W-(m.aL+m.aW));
-  // clip-path clips video to exactly the active frame
-  vid.style.clipPath=`inset(${cT}px ${cR}px ${cB}px ${cL}px)`;
+  const lbT=document.getElementById('lb-t');
+  const lbB=document.getElementById('lb-b');
+  const lbL=document.getElementById('lb-l');
+  const lbR=document.getElementById('lb-r');
+  if(!lbT)return;
+  // Top black bar: from topBar bottom → frame top
+  const topH=Math.max(0, m.aT - m.tH);
+  lbT.style.top = m.tH + 'px';
+  lbT.style.height = topH + 'px';
+  // Bottom black bar: from frame bottom → card top
+  const botStart = m.aT + m.aH;
+  const botH = Math.max(0, (m.H - m.cH) - botStart);
+  lbB.style.bottom = m.cH + 'px';
+  lbB.style.height = botH + 'px';
+  // Pillarbox L/R (for wide-screen formats in landscape)
+  if(m.aL > 0){
+    lbL.style.width = m.aL + 'px';
+    lbR.style.width = (m.W - m.aL - m.aW) + 'px';
+    lbL.style.top = m.tH + 'px'; lbL.style.bottom = m.cH + 'px';
+    lbR.style.top = m.tH + 'px'; lbR.style.bottom = m.cH + 'px';
+  } else {
+    lbL.style.width = '0'; lbR.style.width = '0';
+  }
 }
 function draw(ts){
   if(document.hidden){requestAnimationFrame(draw);return;}
@@ -500,7 +521,7 @@ function draw(ts){
   ctx.strokeStyle=CA+'0.35)';ctx.lineWidth=1;
   ctx.beginPath();ctx.moveTo(aL+aW/2,bY-5);ctx.lineTo(aL+aW/2,bY);ctx.stroke();
     ctx.textAlign='left';
-  updateVideoClip();
+  updateBars();
   requestAnimationFrame(draw);
 }
 
@@ -682,13 +703,21 @@ const _MS=['<svg width="18" height="18" viewBox="0 0 18 18" fill="none"><ellipse
 function _um(){const e=document.getElementById('mask-svg');if(e)e.innerHTML=_MS[maskMode];const l=document.getElementById('mask-lbl');if(l)l.textContent=MASK_MODES[maskMode].label;maskBtn.classList.toggle('on',maskMode>0);}
 function cycleMask(){
   maskMode=(maskMode+1)%3;
-  // Clip is always active (updateVideoClip runs each frame)
-  // DIM mode: reduce video brightness slightly inside frame
-  if(maskMode===1){vid.style.filter='brightness(0.65)';}
-  else{vid.style.filter='';}
+  // DIM: semi-transparent bars (rgba with alpha)
+  const bars=['lb-t','lb-b','lb-l','lb-r'];
+  bars.forEach(id=>{
+    const el=document.getElementById(id);
+    if(!el)return;
+    if(maskMode===0){el.style.background='transparent';}
+    else if(maskMode===1){el.style.background='rgba(0,0,0,0.62)';}
+    else{el.style.background='#000';}
+  });
+  // Reset video filter
+  vid.style.filter='';
   _um();
   showToast(maskMode===0?'MASK OFF':maskMode===1?'DIM':'BLACK');
 }
+
 
 // ── SETTINGS ────────────────────────────────────────────────
 function openSettings(){settings.style.display='flex';updateFnamePreview();}
@@ -817,7 +846,7 @@ document.getElementById('gal-save-all').onclick=shareAll;
 galBack.onclick=()=>galDetail.style.display='none';
 galSaveBtnEl.onclick=doSave;
 
-const onResize=()=>{needSz=true;updateVideoClip();};
+const onResize=()=>{needSz=true};
 window.addEventListener('resize',onResize);
 window.addEventListener('orientationchange',()=>setTimeout(onResize,400));
 
