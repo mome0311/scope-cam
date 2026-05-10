@@ -156,6 +156,10 @@ input[type=range].styled::-webkit-slider-thumb{-webkit-appearance:none;appearanc
 <div id="wrap">
   <video id="vid" autoplay playsinline muted webkit-playsinline></video>
   <canvas id="cv"></canvas>
+  <div id="lb-top" style="position:absolute;left:0;right:0;top:0;background:#000;z-index:4;pointer-events:none;display:none"></div>
+  <div id="lb-bot" style="position:absolute;left:0;right:0;bottom:0;background:#000;z-index:4;pointer-events:none;display:none"></div>
+  <div id="lb-l" style="position:absolute;top:0;bottom:0;left:0;background:#000;z-index:4;pointer-events:none;display:none"></div>
+  <div id="lb-r" style="position:absolute;top:0;bottom:0;right:0;background:#000;z-index:4;pointer-events:none;display:none"></div>
 
   <div id="top-bar">
     <div class="top-left">
@@ -363,7 +367,7 @@ function applyFmt(){
 // ── METRICS ─────────────────────────────────────────────────
 function getM(){
   const W=window.innerWidth,H=window.innerHeight;
-  const tH=topBar.offsetHeight||44,cH=card.offsetHeight||150;
+  const tH=topBar.offsetHeight||52,cH=card.offsetHeight||180;
   const fH=H-tH-cH,fT=tH;
   const r=FMTS[fi].r,ah=W/r;
   if(ah<=fH){const ex=(fH-ah)/2;return{W,H,aW:W,aH:ah,aT:fT+ex,aL:0,tH,cH};}
@@ -447,8 +451,14 @@ function draw(){
   if(maskMode>0){
     const a=MASK_MODES[maskMode].alpha;
     ctx.fillStyle=`rgba(0,0,0,${a})`;
-    if(aT>tH)ctx.fillRect(0,tH,W,aT-tH);
-    const cardTop=H-cH;if(aB<cardTop)ctx.fillRect(0,aB,W,cardTop-aB);
+    // Top strip: full width from topBar bottom to frame top
+    const topStrip=Math.max(0,aT-tH);
+    if(topStrip>0)ctx.fillRect(0,tH,W,topStrip);
+    // Bottom strip: full width from frame bottom to card top
+    const cardTop=H-cH;
+    const botStrip=Math.max(0,cardTop-aB);
+    if(botStrip>0)ctx.fillRect(0,aB,W,botStrip);
+    // Pillarbox sides (for non-letterbox formats)
     if(aL>0){ctx.fillRect(0,aT,aL,aH);ctx.fillRect(aR,aT,W-aR,aH);}
   }
 
@@ -493,6 +503,7 @@ function draw(){
   ctx.strokeStyle=CA+'0.35)';ctx.lineWidth=1;
   ctx.beginPath();ctx.moveTo(aL+aW/2,bY-5);ctx.lineTo(aL+aW/2,bY);ctx.stroke();
     ctx.textAlign='left';
+  updateLetterbox();
   requestAnimationFrame(draw);
 }
 
