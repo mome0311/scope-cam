@@ -297,6 +297,7 @@ const FMTS=[
 ];
 const MASK_MODES=[{label:'Off',icon:'◻',alpha:0},{label:'Dim',icon:'◑',alpha:0.62},{label:'Black',icon:'◼',alpha:1.0}];
 const LENS_PRESETS=[{label:'0.5×',zoom:.5},{label:'1×',zoom:1},{label:'2×',zoom:2},{label:'3×',zoom:3}];
+const CA='rgba(245,196,0,';
 const C='#F5C400', CA='rgba(245,196,0,';
 
 // ── STATE ───────────────────────────────────────────────────
@@ -467,6 +468,7 @@ function updateBars(){
   }
 }
 function draw(ts){
+  const W=window.innerWidth,H=window.innerHeight;
   if(document.hidden){requestAnimationFrame(draw);return;}
   if(ts&&_ld&&(ts-_ld)<42){requestAnimationFrame(draw);return;}
   if(ts)_ld=ts;
@@ -475,10 +477,7 @@ function draw(ts){
   const m=getM();
   const{aT,aH,aL,aW,tH,cH}=m;
   const aR=aL+aW,aB=aT+aH,pad=10;
-  // ── DIM overlay (canvas, only when dim mode) ─────────────────────
-  if(maskMode===1){
-    ctx.fillStyle='rgba(0,0,0,0.0)'; // dim handled by video opacity
-  }
+
 
   // ── VIGNETTE ────────────────────────────────────────────
   const vg=ctx.createRadialGradient(aL+aW/2,aT+aH/2,aH*.18,aL+aW/2,aT+aH/2,aH*.76);
