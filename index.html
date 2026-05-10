@@ -13,8 +13,11 @@
 <title>Cinemascopome</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,200;0,300;0,400;0,600;0,700;1,300&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 <style>
+/* Font fallback: if Google Fonts fails, use system fonts */
+:root { font-family: 'Noto Sans', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif; }
+</style>
+<style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
-:root{--c:#F5C400;--cd:rgba(245,196,0,.11);--cb:rgba(245,196,0,.28);}
 html,body{width:100%;height:100%;height:100dvh;background:#000;overflow:hidden}
 #wrap{position:fixed;inset:0;height:100vh;height:100dvh;background:#000;overflow:hidden;display:flex;flex-direction:column}
 video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1;transition:opacity .1s}
@@ -24,15 +27,15 @@ canvas{position:absolute;inset:0;z-index:3;pointer-events:none}
 /* TOP BAR */
 #top-bar{position:relative;z-index:10;flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:8px 18px 6px;background:#0e0e0e;border-bottom:1px solid rgba(255,255,255,.06)}
 .top-left{display:flex;flex-direction:column;gap:1px}
-.top-fmt-lbl{font-family:‘Noto Sans’,sans-serif;font-weight:300;font-size:8px;letter-spacing:.22em;color:rgba(255,255,255,.35)}
-.top-fmt-name{font-family:‘Noto Sans’,sans-serif;font-weight:700;font-size:16px;letter-spacing:.1em;color:var(–c);line-height:1}
+.top-fmt-lbl{font-family:‘Noto Sans’,-apple-system,BlinkMacSystemFont,‘Helvetica Neue’,sans-serif;font-weight:300;font-size:8px;letter-spacing:.22em;color:rgba(255,255,255,.35)}
+.top-fmt-name{font-family:‘Noto Sans’,-apple-system,BlinkMacSystemFont,‘Helvetica Neue’,sans-serif;font-weight:700;font-size:16px;letter-spacing:.1em;color:#F5C400;line-height:1}
 .top-center{display:flex;align-items:center;gap:4px}
-.dot{width:5px;height:5px;border-radius:50%;background:var(–c);animation:bl 1.5s infinite}
+.dot{width:5px;height:5px;border-radius:50%;background:#F5C400;animation:bl 1.5s infinite}
 @keyframes bl{0%,100%{opacity:1}50%{opacity:.15}}
-.live{font-family:‘Share Tech Mono’,monospace;font-size:8px;color:rgba(255,255,255,.4);letter-spacing:.14em}
+.live{font-family:‘Share Tech Mono’,‘Courier New’,monospace;font-size:8px;color:rgba(255,255,255,.4);letter-spacing:.14em}
 .top-right{display:flex;flex-direction:column;align-items:flex-end}
-.top-ratio{font-family:‘Noto Sans’,sans-serif;font-weight:700;font-size:18px;line-height:1;letter-spacing:.04em;color:var(–c)}
-.top-ratio-lbl{font-family:‘Noto Sans’,sans-serif;font-weight:200;font-size:7px;letter-spacing:.18em;color:rgba(255,255,255,.26)}
+.top-ratio{font-family:‘Noto Sans’,-apple-system,BlinkMacSystemFont,‘Helvetica Neue’,sans-serif;font-weight:700;font-size:18px;line-height:1;letter-spacing:.04em;color:#F5C400}
+.top-ratio-lbl{font-family:‘Noto Sans’,-apple-system,BlinkMacSystemFont,‘Helvetica Neue’,sans-serif;font-weight:200;font-size:7px;letter-spacing:.18em;color:rgba(255,255,255,.26)}
 
 /* VIEWFINDER */
 #viewfinder{position:relative;z-index:2;flex:1;min-height:0}
@@ -48,36 +51,36 @@ canvas{position:absolute;inset:0;z-index:3;pointer-events:none}
 /* CAMERA PANEL */
 #panel-cam{}
 #lens-row{display:none;align-items:center;justify-content:center;gap:6px;padding:6px 18px 0}
-.lens-btn{padding:4px 12px;border-radius:16px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);font-family:‘Noto Sans’,sans-serif;font-weight:600;font-size:12px;letter-spacing:.06em;color:rgba(255,255,255,.32);cursor:pointer;-webkit-appearance:none;transition:.15s}
-.lens-btn.on{border-color:var(–c);background:var(–cd);color:var(–c)}
+.lens-btn{padding:4px 12px;border-radius:16px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);font-family:‘Noto Sans’,-apple-system,BlinkMacSystemFont,‘Helvetica Neue’,sans-serif;font-weight:600;font-size:12px;letter-spacing:.06em;color:rgba(255,255,255,.32);cursor:pointer;-webkit-appearance:none;transition:.15s}
+.lens-btn.on{border-color:#F5C400;background:rgba(245,196,0,.11);color:#F5C400}
 .lens-btn:active{opacity:.5}
 #zoom-row{display:none;align-items:center;gap:10px;padding:6px 20px 0}
-.zoom-val{font-family:‘Share Tech Mono’,monospace;font-size:10px;color:var(–c);letter-spacing:.06em;min-width:32px;text-align:right;flex-shrink:0}
+.zoom-val{font-family:‘Share Tech Mono’,‘Courier New’,monospace;font-size:10px;color:#F5C400;letter-spacing:.06em;min-width:32px;text-align:right;flex-shrink:0}
 input[type=range].styled{flex:1;-webkit-appearance:none;appearance:none;height:2px;background:rgba(255,255,255,.15);border-radius:2px;outline:none;cursor:pointer}
-input[type=range].styled::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:18px;height:18px;border-radius:50%;background:var(–c);border:2px solid rgba(255,255,255,.5);cursor:pointer}
-.zoom-icon{font-family:‘Share Tech Mono’,monospace;font-size:9px;color:rgba(255,255,255,.3);flex-shrink:0}
+input[type=range].styled::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:18px;height:18px;border-radius:50%;background:#F5C400;border:2px solid rgba(255,255,255,.5);cursor:pointer}
+.zoom-icon{font-family:‘Share Tech Mono’,‘Courier New’,monospace;font-size:9px;color:rgba(255,255,255,.3);flex-shrink:0}
 .pill-row{display:flex;align-items:stretch;margin:6px 0 0;border-top:1px solid rgba(255,255,255,.05);border-bottom:1px solid rgba(255,255,255,.05)}
-.pill{flex:1;padding:7px 0;text-align:center;position:relative;font-family:‘Noto Sans’,sans-serif;font-weight:400;font-size:11px;letter-spacing:.08em;color:rgba(255,255,255,.2);background:none;border:none;border-right:1px solid rgba(255,255,255,.05);cursor:pointer;-webkit-appearance:none;transition:.15s}
+.pill{flex:1;padding:7px 0;text-align:center;position:relative;font-family:‘Noto Sans’,-apple-system,BlinkMacSystemFont,‘Helvetica Neue’,sans-serif;font-weight:400;font-size:11px;letter-spacing:.08em;color:rgba(255,255,255,.2);background:none;border:none;border-right:1px solid rgba(255,255,255,.05);cursor:pointer;-webkit-appearance:none;transition:.15s}
 .pill:last-child{border-right:none}
-.pill.on{color:var(–c);background:var(–cd)}
-.pill.on::after{content:’’;position:absolute;bottom:0;left:0;right:0;height:2px;background:var(–c)}
+.pill.on{color:#F5C400;background:rgba(245,196,0,.11)}
+.pill.on::after{content:’’;position:absolute;bottom:0;left:0;right:0;height:2px;background:#F5C400}
 .pill:active{opacity:.5}
 .ctrl-row{display:flex;align-items:center;justify-content:space-between;padding:10px 12px 8px}
 .cgrp{display:flex;align-items:center;gap:5px}
 .cctr{display:flex;flex-direction:column;align-items:center;gap:3px}
-.chint{font-family:‘Noto Sans’,sans-serif;font-weight:300;font-size:7px;letter-spacing:.12em;color:rgba(255,255,255,.2)}
+.chint{font-family:‘Noto Sans’,-apple-system,BlinkMacSystemFont,‘Helvetica Neue’,sans-serif;font-weight:300;font-size:7px;letter-spacing:.12em;color:rgba(255,255,255,.2)}
 .ib{display:flex;flex-direction:column;align-items:center;gap:3px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:7px 5px 5px;cursor:pointer;-webkit-appearance:none;color:rgba(255,255,255,.45);min-width:44px;position:relative;transition:.15s}
 .ib.on{color:#F5C400!important;border-color:rgba(245,196,0,.45)!important;background:rgba(245,196,0,.1)!important}
 .ib:active{opacity:.4}
-.il{font-family:‘Noto Sans’,sans-serif;font-weight:400;font-size:7px;letter-spacing:.08em;color:inherit;white-space:nowrap}
-.badge{position:absolute;top:-2px;right:-2px;min-width:15px;height:15px;border-radius:8px;padding:0 3px;background:var(–c);color:#fff;font-family:‘Noto Sans’,sans-serif;font-weight:700;font-size:8px;display:none;align-items:center;justify-content:center;letter-spacing:0;z-index:2}
+.il{font-family:‘Noto Sans’,-apple-system,BlinkMacSystemFont,‘Helvetica Neue’,sans-serif;font-weight:400;font-size:7px;letter-spacing:.08em;color:inherit;white-space:nowrap}
+.badge{position:absolute;top:-2px;right:-2px;min-width:15px;height:15px;border-radius:8px;padding:0 3px;background:#F5C400;color:#fff;font-family:‘Noto Sans’,-apple-system,BlinkMacSystemFont,‘Helvetica Neue’,sans-serif;font-weight:700;font-size:8px;display:none;align-items:center;justify-content:center;letter-spacing:0;z-index:2}
 #cap{display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;cursor:pointer;-webkit-appearance:none}
 .sh{width:60px;height:60px;border-radius:50%;position:relative}
 .sh-ring{position:absolute;inset:0;border-radius:50%;border:2.5px solid rgba(255,255,255,.5)}
 .sh-core{position:absolute;inset:5px;border-radius:50%;background:rgba(255,255,255,.86);transition:.1s}
-#cap:active .sh-ring{border-color:var(–c)}
+#cap:active .sh-ring{border-color:#F5C400}
 #cap:active .sh-core{transform:scale(.8);background:rgba(245,196,0,.3)}
-.sl{font-family:‘Noto Sans’,sans-serif;font-weight:300;font-size:7px;letter-spacing:.18em;color:rgba(255,255,255,.18)}
+.sl{font-family:‘Noto Sans’,-apple-system,BlinkMacSystemFont,‘Helvetica Neue’,sans-serif;font-weight:300;font-size:7px;letter-spacing:.18em;color:rgba(255,255,255,.18)}
 
 /* ── FILTER PANEL ── */
 
@@ -90,65 +93,65 @@ input[type=range].styled::-webkit-slider-thumb{-webkit-appearance:none;appearanc
 
 /* MISC */
 #focus{position:absolute;width:50px;height:50px;margin:-25px 0 0 -25px;z-index:6;pointer-events:none;opacity:0;transition:opacity .4s}
-.fc{position:absolute;width:9px;height:9px;border-color:var(–c);border-style:solid}
+.fc{position:absolute;width:9px;height:9px;border-color:#F5C400;border-style:solid}
 .fc.tl{top:0;left:0;border-width:1.5px 0 0 1.5px}
 .fc.tr{top:0;right:0;border-width:1.5px 1.5px 0 0}
 .fc.bl{bottom:0;left:0;border-width:0 0 1.5px 1.5px}
 .fc.br{bottom:0;right:0;border-width:0 1.5px 1.5px 0}
 #flash{position:absolute;inset:0;background:#fff;z-index:99;opacity:0;pointer-events:none}
-#toast{position:absolute;left:50%;transform:translateX(-50%);background:#1e1e1e;color:var(–c);font-family:‘Noto Sans’,sans-serif;font-weight:600;font-size:10px;letter-spacing:.14em;padding:9px 18px;z-index:90;opacity:0;white-space:nowrap;border:1.5px solid var(–c);border-radius:6px;transition:opacity .2s;box-shadow:0 4px 20px rgba(0,0,0,.6)}
+#toast{position:absolute;left:50%;transform:translateX(-50%);background:#1e1e1e;color:#F5C400;font-family:‘Noto Sans’,-apple-system,BlinkMacSystemFont,‘Helvetica Neue’,sans-serif;font-weight:600;font-size:10px;letter-spacing:.14em;padding:9px 18px;z-index:90;opacity:0;white-space:nowrap;border:1.5px solid #F5C400;border-radius:6px;transition:opacity .2s;box-shadow:0 4px 20px rgba(0,0,0,.6)}
 #nocam{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:20;text-align:center;display:none;pointer-events:none}
-.nocam-txt{font-family:‘Noto Sans’,sans-serif;font-weight:300;font-size:11px;letter-spacing:.18em;color:rgba(255,255,255,.3);line-height:2}
+.nocam-txt{font-family:‘Noto Sans’,-apple-system,BlinkMacSystemFont,‘Helvetica Neue’,sans-serif;font-weight:300;font-size:11px;letter-spacing:.18em;color:rgba(255,255,255,.3);line-height:2}
 
 /* SETTINGS */
 #settings{position:absolute;inset:0;z-index:50;background:#0a0a0a;display:none;flex-direction:column}
 .set-hdr{display:flex;align-items:center;justify-content:space-between;padding:12px 18px 10px;border-bottom:1px solid rgba(255,255,255,.06);flex-shrink:0}
-.set-title{font-family:‘Noto Sans’,sans-serif;font-weight:700;font-size:17px;letter-spacing:.14em;color:#fff}
+.set-title{font-family:‘Noto Sans’,-apple-system,BlinkMacSystemFont,‘Helvetica Neue’,sans-serif;font-weight:700;font-size:17px;letter-spacing:.14em;color:#fff}
 .set-close{width:34px;height:34px;border-radius:50%;border:1px solid rgba(255,255,255,.12);background:none;color:rgba(255,255,255,.5);font-size:13px;cursor:pointer;-webkit-appearance:none;display:flex;align-items:center;justify-content:center}
 .set-close:active{opacity:.5}
 .set-body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:20px 18px}
 .set-section{margin-bottom:28px}
-.set-sec-title{font-family:‘Noto Sans’,sans-serif;font-weight:300;font-size:9px;letter-spacing:.24em;color:rgba(255,255,255,.3);text-transform:uppercase;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid rgba(255,255,255,.06)}
+.set-sec-title{font-family:‘Noto Sans’,-apple-system,BlinkMacSystemFont,‘Helvetica Neue’,sans-serif;font-weight:300;font-size:9px;letter-spacing:.24em;color:rgba(255,255,255,.3);text-transform:uppercase;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid rgba(255,255,255,.06)}
 .set-options{display:flex;flex-direction:column;gap:2px}
 .set-opt{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-radius:8px;border:1px solid rgba(255,255,255,.06);background:rgba(255,255,255,.03);cursor:pointer;-webkit-appearance:none;transition:.15s;width:100%}
-.set-opt.on{border-color:var(–cb);background:var(–cd)}
+.set-opt.on{border-color:rgba(245,196,0,.28);background:rgba(245,196,0,.11)}
 .set-opt:active{opacity:.6}
 .set-opt-left{display:flex;flex-direction:column;gap:3px;text-align:left}
-.set-opt-name{font-family:‘Noto Sans’,sans-serif;font-weight:600;font-size:13px;letter-spacing:.08em;color:rgba(255,255,255,.75)}
-.set-opt.on .set-opt-name{color:var(–c)}
-.set-opt-desc{font-family:‘Noto Sans’,sans-serif;font-weight:300;font-size:9px;letter-spacing:.1em;color:rgba(255,255,255,.28);line-height:1.5}
-.set-opt-badge{font-family:‘Share Tech Mono’,monospace;font-size:9px;letter-spacing:.08em;padding:3px 8px;border-radius:3px;border:1px solid rgba(255,255,255,.14);color:rgba(255,255,255,.35)}
-.set-opt.on .set-opt-badge{border-color:var(–cb);color:var(–c);background:var(–cd)}
+.set-opt-name{font-family:‘Noto Sans’,-apple-system,BlinkMacSystemFont,‘Helvetica Neue’,sans-serif;font-weight:600;font-size:13px;letter-spacing:.08em;color:rgba(255,255,255,.75)}
+.set-opt.on .set-opt-name{color:#F5C400}
+.set-opt-desc{font-family:‘Noto Sans’,-apple-system,BlinkMacSystemFont,‘Helvetica Neue’,sans-serif;font-weight:300;font-size:9px;letter-spacing:.1em;color:rgba(255,255,255,.28);line-height:1.5}
+.set-opt-badge{font-family:‘Share Tech Mono’,‘Courier New’,monospace;font-size:9px;letter-spacing:.08em;padding:3px 8px;border-radius:3px;border:1px solid rgba(255,255,255,.14);color:rgba(255,255,255,.35)}
+.set-opt.on .set-opt-badge{border-color:rgba(245,196,0,.28);color:#F5C400;background:rgba(245,196,0,.11)}
 .set-fname{margin-top:8px;padding:12px 14px;border-radius:8px;background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.06)}
-.set-fname-lbl{font-family:‘Noto Sans’,sans-serif;font-weight:300;font-size:8px;letter-spacing:.2em;color:rgba(255,255,255,.28);margin-bottom:6px}
-.set-fname-val{font-family:‘Share Tech Mono’,monospace;font-size:9px;letter-spacing:.04em;color:var(–c);line-height:1.7;word-break:break-all}
+.set-fname-lbl{font-family:‘Noto Sans’,-apple-system,BlinkMacSystemFont,‘Helvetica Neue’,sans-serif;font-weight:300;font-size:8px;letter-spacing:.2em;color:rgba(255,255,255,.28);margin-bottom:6px}
+.set-fname-val{font-family:‘Share Tech Mono’,‘Courier New’,monospace;font-size:9px;letter-spacing:.04em;color:#F5C400;line-height:1.7;word-break:break-all}
 
 /* GALLERY */
 #gallery{position:absolute;inset:0;z-index:50;background:#0a0a0a;display:none;flex-direction:column}
 .gal-hdr{display:flex;align-items:center;justify-content:space-between;padding:12px 18px 10px;border-bottom:1px solid rgba(255,255,255,.1);flex-shrink:0;background:#1a1a1a}
-.gal-title{font-family:‘Noto Sans’,sans-serif;font-weight:700;font-size:17px;letter-spacing:.14em;color:#fff}
-.gal-count{font-family:‘Noto Sans’,sans-serif;font-weight:300;font-size:10px;letter-spacing:.14em;color:rgba(255,255,255,.3)}
+.gal-title{font-family:‘Noto Sans’,-apple-system,BlinkMacSystemFont,‘Helvetica Neue’,sans-serif;font-weight:700;font-size:17px;letter-spacing:.14em;color:#fff}
+.gal-count{font-family:‘Noto Sans’,-apple-system,BlinkMacSystemFont,‘Helvetica Neue’,sans-serif;font-weight:300;font-size:10px;letter-spacing:.14em;color:rgba(255,255,255,.3)}
 .gal-close{width:34px;height:34px;border-radius:50%;border:1px solid rgba(255,255,255,.12);background:none;color:rgba(255,255,255,.5);font-size:13px;cursor:pointer;-webkit-appearance:none;display:flex;align-items:center;justify-content:center}
 .gal-close:active{opacity:.5}
-.gal-save-all{padding:6px 12px;border:1px solid rgba(245,196,0,.4);background:none;color:#F5C400;font-family:‘Noto Sans’,sans-serif;font-weight:600;font-size:10px;letter-spacing:.14em;cursor:pointer;-webkit-appearance:none;border-radius:4px}
+.gal-save-all{padding:6px 12px;border:1px solid rgba(245,196,0,.4);background:none;color:#F5C400;font-family:‘Noto Sans’,-apple-system,BlinkMacSystemFont,‘Helvetica Neue’,sans-serif;font-weight:600;font-size:10px;letter-spacing:.14em;cursor:pointer;-webkit-appearance:none;border-radius:4px}
 .gal-save-all:active{background:rgba(245,196,0,.12)}
 #gal-grid{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:10px;display:grid;grid-template-columns:repeat(3,1fr);gap:3px;align-content:start}
 .gal-thumb{position:relative;aspect-ratio:2.39/1;background:#1a1a1a;cursor:pointer;overflow:hidden}
 .gal-thumb img{width:100%;height:100%;object-fit:cover;display:block}
 .gal-thumb-info{position:absolute;bottom:0;left:0;right:0;padding:3px 5px;background:rgba(0,0,0,.6);display:flex;justify-content:space-between;align-items:center}
-.gal-thumb-fmt{font-family:‘Noto Sans’,sans-serif;font-weight:600;font-size:7px;letter-spacing:.08em;color:var(–c)}
-.gal-thumb-cs{font-family:‘Share Tech Mono’,monospace;font-size:7px;color:rgba(255,255,255,.4)}
+.gal-thumb-fmt{font-family:‘Noto Sans’,-apple-system,BlinkMacSystemFont,‘Helvetica Neue’,sans-serif;font-weight:600;font-size:7px;letter-spacing:.08em;color:#F5C400}
+.gal-thumb-cs{font-family:‘Share Tech Mono’,‘Courier New’,monospace;font-size:7px;color:rgba(255,255,255,.4)}
 .gal-thumb:active{opacity:.7}
-.gal-empty{grid-column:1/-1;padding:50px 0;text-align:center;font-family:‘Noto Sans’,sans-serif;font-weight:300;font-size:11px;letter-spacing:.18em;color:rgba(255,255,255,.2);line-height:2}
+.gal-empty{grid-column:1/-1;padding:50px 0;text-align:center;font-family:‘Noto Sans’,-apple-system,BlinkMacSystemFont,‘Helvetica Neue’,sans-serif;font-weight:300;font-size:11px;letter-spacing:.18em;color:rgba(255,255,255,.2);line-height:2}
 #gal-detail{position:absolute;inset:0;background:#000;z-index:51;display:none;flex-direction:column}
 .gal-detail-hdr{display:flex;align-items:center;justify-content:space-between;padding:14px 18px 12px;background:#1a1a1a;flex-shrink:0;border-bottom:1px solid rgba(255,255,255,.08)}
-.gal-back{background:none;border:none;color:rgba(255,255,255,.55);cursor:pointer;-webkit-appearance:none;font-family:‘Noto Sans’,sans-serif;font-weight:300;font-size:12px;letter-spacing:.1em}
+.gal-back{background:none;border:none;color:rgba(255,255,255,.55);cursor:pointer;-webkit-appearance:none;font-family:‘Noto Sans’,-apple-system,BlinkMacSystemFont,‘Helvetica Neue’,sans-serif;font-weight:300;font-size:12px;letter-spacing:.1em}
 .gal-back:active{opacity:.5}
-.gal-save-btn{padding:7px 18px;border:1px solid var(–cb);background:none;color:var(–c);font-family:‘Noto Sans’,sans-serif;font-weight:600;font-size:11px;letter-spacing:.14em;cursor:pointer;-webkit-appearance:none}
-.gal-save-btn:active{background:var(–cd)}
+.gal-save-btn{padding:7px 18px;border:1px solid rgba(245,196,0,.28);background:none;color:#F5C400;font-family:‘Noto Sans’,-apple-system,BlinkMacSystemFont,‘Helvetica Neue’,sans-serif;font-weight:600;font-size:11px;letter-spacing:.14em;cursor:pointer;-webkit-appearance:none}
+.gal-save-btn:active{background:rgba(245,196,0,.11)}
 #gal-detail-img{flex:1;object-fit:contain;width:100%;min-height:0}
 .gal-detail-info{padding:10px 18px 14px;background:rgba(0,0,0,.7);flex-shrink:0}
-.gal-detail-fname{font-family:‘Share Tech Mono’,monospace;font-size:8px;letter-spacing:.04em;color:rgba(255,255,255,.35);line-height:1.8;word-break:break-all}
+.gal-detail-fname{font-family:‘Share Tech Mono’,‘Courier New’,monospace;font-size:8px;letter-spacing:.04em;color:rgba(255,255,255,.35);line-height:1.8;word-break:break-all}
 </style>
 
 </head>
@@ -156,10 +159,6 @@ input[type=range].styled::-webkit-slider-thumb{-webkit-appearance:none;appearanc
 <div id="wrap">
   <video id="vid" autoplay playsinline muted webkit-playsinline></video>
   <canvas id="cv"></canvas>
-  <div id="lb-top" style="position:absolute;left:0;right:0;top:0;background:#000;z-index:4;pointer-events:none;display:none"></div>
-  <div id="lb-bot" style="position:absolute;left:0;right:0;bottom:0;background:#000;z-index:4;pointer-events:none;display:none"></div>
-  <div id="lb-l" style="position:absolute;top:0;bottom:0;left:0;background:#000;z-index:4;pointer-events:none;display:none"></div>
-  <div id="lb-r" style="position:absolute;top:0;bottom:0;right:0;background:#000;z-index:4;pointer-events:none;display:none"></div>
 
   <div id="top-bar">
     <div class="top-left">
@@ -292,7 +291,7 @@ const FMTS=[
   {r:2.39,l:'2.39',n:'CINEMASCOPE'},
   {r:2.76,l:'2.76',n:'ULTRA70'},
 ];
-const MASK_MODES=[{label:'Mask',icon:'◻',alpha:0},{label:'Dim',icon:'◑',alpha:0.62},{label:'Black',icon:'◼',alpha:1.0}];
+const MASK_MODES=[{label:'Off',icon:'◻',alpha:0},{label:'Dim',icon:'◑',alpha:0.62},{label:'Black',icon:'◼',alpha:1.0}];
 const LENS_PRESETS=[{label:'0.5×',zoom:.5},{label:'1×',zoom:1},{label:'2×',zoom:2},{label:'3×',zoom:3}];
 const C='#F5C400', CA='rgba(245,196,0,';
 
@@ -436,27 +435,16 @@ zoomSlider.addEventListener('input',()=>setZoom(parseInt(zoomSlider.value)/10));
 
 
 // ── DRAW ────────────────────────────────────────────────────
-function updateLetterbox(){
-  const m=getM();
-  const tH=m.tH,cH=m.cH,W=m.W,H=m.H;
-  const aT=m.aT,aH=m.aH,aL=m.aL,aW=m.aW;
-  const lbT=document.getElementById('lb-top');
-  const lbB=document.getElementById('lb-bot');
-  const lbL=document.getElementById('lb-l');
-  const lbR=document.getElementById('lb-r');
-  if(!lbT)return;
-  const topH=Math.max(0,aT-tH);
-  lbT.style.top=tH+'px';lbT.style.height=topH+'px';
-  lbT.style.display=topH>0?'block':'none';
-  const botH=Math.max(0,(H-cH)-(aT+aH));
-  lbB.style.bottom=cH+'px';lbB.style.height=botH+'px';
-  lbB.style.display=botH>0?'block':'none';
-  if(aL>0){
-    lbL.style.width=aL+'px';lbL.style.top=tH+'px';lbL.style.bottom=cH+'px';lbL.style.display='block';
-    lbR.style.width=(W-aL-aW)+'px';lbR.style.top=tH+'px';lbR.style.bottom=cH+'px';lbR.style.display='block';
-  } else {lbL.style.display='none';lbR.style.display='none';}
-}
 let _ld=0;
+function updateVideoClip(){
+  const m=getM();
+  const cT=Math.max(0,m.aT);
+  const cB=Math.max(0,m.H-(m.aT+m.aH));
+  const cL=Math.max(0,m.aL);
+  const cR=Math.max(0,m.W-(m.aL+m.aW));
+  // clip-path clips video to exactly the active frame
+  vid.style.clipPath=`inset(${cT}px ${cR}px ${cB}px ${cL}px)`;
+}
 function draw(ts){
   if(document.hidden){requestAnimationFrame(draw);return;}
   if(ts&&_ld&&(ts-_ld)<42){requestAnimationFrame(draw);return;}
@@ -466,19 +454,9 @@ function draw(ts){
   const m=getM();
   const{aT,aH,aL,aW,tH,cH}=m;
   const aR=aL+aW,aB=aT+aH,pad=10;
-  // ── MASK ────────────────────────────────────────────────
-  if(maskMode>0){
-    const a=MASK_MODES[maskMode].alpha;
-    ctx.fillStyle=`rgba(0,0,0,${a})`;
-    // Top strip: full width from topBar bottom to frame top
-    const topStrip=Math.max(0,aT-tH);
-    if(topStrip>0)ctx.fillRect(0,tH,W,topStrip);
-    // Bottom strip: full width from frame bottom to card top
-    const cardTop=H-cH;
-    const botStrip=Math.max(0,cardTop-aB);
-    if(botStrip>0)ctx.fillRect(0,aB,W,botStrip);
-    // Pillarbox sides (for non-letterbox formats)
-    if(aL>0){ctx.fillRect(0,aT,aL,aH);ctx.fillRect(aR,aT,W-aR,aH);}
+  // ── DIM overlay (canvas, only when dim mode) ─────────────────────
+  if(maskMode===1){
+    ctx.fillStyle='rgba(0,0,0,0.0)'; // dim handled by video opacity
   }
 
   // ── VIGNETTE ────────────────────────────────────────────
@@ -522,7 +500,7 @@ function draw(ts){
   ctx.strokeStyle=CA+'0.35)';ctx.lineWidth=1;
   ctx.beginPath();ctx.moveTo(aL+aW/2,bY-5);ctx.lineTo(aL+aW/2,bY);ctx.stroke();
     ctx.textAlign='left';
-  updateLetterbox();
+  updateVideoClip();
   requestAnimationFrame(draw);
 }
 
@@ -702,7 +680,15 @@ async function addExifToJpeg(blob,info){
 // ── MASK ────────────────────────────────────────────────────
 const _MS=['<svg width="18" height="18" viewBox="0 0 18 18" fill="none"><ellipse cx="9" cy="9" rx="8" ry="5.5" stroke="currentColor" stroke-width="1.3"/><circle cx="9" cy="9" r="2.5" stroke="currentColor" stroke-width="1.3"/></svg>','<svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M1 9C3.5 4 14.5 4 17 9" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M1 9C3.5 13.5 14.5 13.5 17 9" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" opacity=".35" stroke-dasharray="3 2"/><circle cx="9" cy="9" r="2.5" fill="currentColor" opacity=".55"/></svg>','<svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M1 9C3.5 4 14.5 4 17 9" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><line x1="2.5" y1="15.5" x2="15.5" y2="2.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>'];
 function _um(){const e=document.getElementById('mask-svg');if(e)e.innerHTML=_MS[maskMode];const l=document.getElementById('mask-lbl');if(l)l.textContent=MASK_MODES[maskMode].label;maskBtn.classList.toggle('on',maskMode>0);}
-function cycleMask(){maskMode=(maskMode+1)%3;_um();showToast(maskMode===0?'MASK OFF':maskMode===1?'DIM':'BLACK');}
+function cycleMask(){
+  maskMode=(maskMode+1)%3;
+  // Clip is always active (updateVideoClip runs each frame)
+  // DIM mode: reduce video brightness slightly inside frame
+  if(maskMode===1){vid.style.filter='brightness(0.65)';}
+  else{vid.style.filter='';}
+  _um();
+  showToast(maskMode===0?'MASK OFF':maskMode===1?'DIM':'BLACK');
+}
 
 // ── SETTINGS ────────────────────────────────────────────────
 function openSettings(){settings.style.display='flex';updateFnamePreview();}
@@ -831,7 +817,7 @@ document.getElementById('gal-save-all').onclick=shareAll;
 galBack.onclick=()=>galDetail.style.display='none';
 galSaveBtnEl.onclick=doSave;
 
-const onResize=()=>{needSz=true;};
+const onResize=()=>{needSz=true;updateVideoClip();};
 window.addEventListener('resize',onResize);
 window.addEventListener('orientationchange',()=>setTimeout(onResize,400));
 
