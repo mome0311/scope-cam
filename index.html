@@ -326,7 +326,6 @@ const pillBox=document.getElementById('pills');
 const gridBtn=document.getElementById('gridBtn');
 const safeBtn=document.getElementById('safeBtn');
 const maskBtn=document.getElementById('maskBtn');
-const maskIcon=document.getElementById('mask-icon');
 const maskLbl=document.getElementById('mask-lbl');
 const flipBtn=document.getElementById('flipBtn');
 const capBtn=document.getElementById('cap');
@@ -437,11 +436,31 @@ zoomSlider.addEventListener('input',()=>setZoom(parseInt(zoomSlider.value)/10));
 
 
 // ── DRAW ────────────────────────────────────────────────────
-function draw(){
-  const W=window.innerWidth,H=window.innerHeight;
-  if(document.hidden)return;
-  if(ts&&ts-_ld<42){requestAnimationFrame(draw);return;}
-  _ld=ts;
+function updateLetterbox(){
+  const m=getM();
+  const tH=m.tH,cH=m.cH,W=m.W,H=m.H;
+  const aT=m.aT,aH=m.aH,aL=m.aL,aW=m.aW;
+  const lbT=document.getElementById('lb-top');
+  const lbB=document.getElementById('lb-bot');
+  const lbL=document.getElementById('lb-l');
+  const lbR=document.getElementById('lb-r');
+  if(!lbT)return;
+  const topH=Math.max(0,aT-tH);
+  lbT.style.top=tH+'px';lbT.style.height=topH+'px';
+  lbT.style.display=topH>0?'block':'none';
+  const botH=Math.max(0,(H-cH)-(aT+aH));
+  lbB.style.bottom=cH+'px';lbB.style.height=botH+'px';
+  lbB.style.display=botH>0?'block':'none';
+  if(aL>0){
+    lbL.style.width=aL+'px';lbL.style.top=tH+'px';lbL.style.bottom=cH+'px';lbL.style.display='block';
+    lbR.style.width=(W-aL-aW)+'px';lbR.style.top=tH+'px';lbR.style.bottom=cH+'px';lbR.style.display='block';
+  } else {lbL.style.display='none';lbR.style.display='none';}
+}
+let _ld=0;
+function draw(ts){
+  if(document.hidden){requestAnimationFrame(draw);return;}
+  if(ts&&_ld&&(ts-_ld)<42){requestAnimationFrame(draw);return;}
+  if(ts)_ld=ts;
   if(needSz){cv.width=W;cv.height=H;needSz=false;}
   ctx.clearRect(0,0,W,H);
   const m=getM();
