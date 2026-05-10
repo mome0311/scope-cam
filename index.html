@@ -357,7 +357,6 @@ background:rgba(255,255,255,.03);cursor:pointer;-webkit-appearance:none;width:10
   </div>
 
   <div id="toast"></div>
-  <div id="flash"></div>
   <div id="focus"><div class="fc tl"></div><div class="fc tr"></div><div class="fc bl"></div><div class="fc br"></div></div>
 </div>
 
@@ -413,7 +412,6 @@ const flipBtn = document.getElementById('flipBtn');
 const setBtn  = document.getElementById('setBtn');
 const badge   = document.getElementById('badge');
 const toast   = document.getElementById('toast');
-const flash   = document.getElementById('flash');
 const focus   = document.getElementById('focus');
 const gallery = document.getElementById('gallery');
 const gGrid   = document.getElementById('g-grid');
@@ -670,10 +668,26 @@ function getVideoCropRect() {
   };
 }
 
+function vfFlash() {
+  const m = getM();
+  const { aL, aT, aW, aH } = m;
+  let alpha = 0.85;
+  const step = () => {
+    ctx.save();
+    ctx.globalCompositeOperation = 'source-over';
+    ctx.fillStyle = `rgba(255,255,255,${alpha})`;
+    ctx.fillRect(aL, aT, aW, aH);
+    ctx.restore();
+    alpha -= 0.12;
+    if (alpha > 0) requestAnimationFrame(step);
+  };
+  requestAnimationFrame(step);
+}
+
 async function capture() {
   if (!vid.videoWidth) { showToast('NO VIDEO'); return; }
-  flash.style.transition = 'none'; flash.style.opacity = '1';
-  setTimeout(() => { flash.style.transition = 'opacity .12s'; flash.style.opacity = '0'; }, 80);
+  // Viewfinder-only flash (canvas overlay, no full-screen glare)
+  vfFlash();
   const now = new Date();
 
   // Try ImageCapture (full sensor resolution)
@@ -696,6 +710,7 @@ async function capture() {
     } catch(e) {}
   }
   // Fallback: video frame
+  vfFlash(); // flash immediately for video frame (instant)
   const vc = getVideoCropRect();
   const oW = Math.round(vc.sw), oH = Math.round(vc.sh);
   const oc = makeCanvas(oW, oH);
