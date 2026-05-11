@@ -207,6 +207,54 @@ background:rgba(255,255,255,.03);cursor:pointer;-webkit-appearance:none;width:10
 .sh-fname{margin-top:8px;padding:12px 14px;border-radius:8px;background:rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.07)}
 .sh-fname-lbl{font:300 8px/1 ‘Noto Sans’,sans-serif;letter-spacing:.2em;color:rgba(255,255,255,.3);margin-bottom:6px}
 .sh-fname-val{font:9px/1.7 ‘Share Tech Mono’,monospace;color:#F5C400;word-break:break-all}
+
+/* MODE SWITCH */
+#mode-row{display:flex;border-bottom:1px solid rgba(255,255,255,.07);background:#0e0e0e}
+.mode-btn{flex:1;padding:9px 0;font:600 11px/1 ‘Noto Sans’,sans-serif;letter-spacing:.16em;color:rgba(255,255,255,.25);background:none;border:none;cursor:pointer;-webkit-appearance:none;position:relative;transition:.15s}
+.mode-btn.on{color:#F5C400}
+.mode-btn.on::after{content:’’;position:absolute;bottom:0;left:25%;right:25%;height:2px;background:#F5C400;border-radius:1px}
+.mode-btn:active{opacity:.5}
+/* REC button */
+#rec-btn{background:none;border:none;cursor:pointer;-webkit-appearance:none;display:flex;flex-direction:column;align-items:center;gap:3px}
+.rec-ring{width:62px;height:62px;border-radius:50%;border:2.5px solid rgba(255,80,80,.7);position:relative;display:flex;align-items:center;justify-content:center}
+.rec-core{width:28px;height:28px;border-radius:50%;background:rgba(220,50,50,.9);transition:.15s}
+.rec-core.recording{border-radius:6px;width:22px;height:22px;background:#ff2222}
+.rec-ring.recording{border-color:#ff2222}
+.rec-btn-lbl{font:300 7px/1 ‘Noto Sans’,sans-serif;letter-spacing:.12em;color:rgba(255,255,255,.2)}
+/* Timer */
+#rec-timer{
+position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+font:700 13px/1 ‘Share Tech Mono’,monospace;letter-spacing:.1em;
+color:#ff4444;background:rgba(0,0,0,.65);padding:4px 10px;border-radius:4px;
+z-index:8;display:none;pointer-events:none;
+border:1px solid rgba(255,68,68,.4);
+}
+#rec-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#ff4444;margin-right:5px;animation:blink 1s infinite}
+/* Video codec selector */
+#codec-row{display:none;align-items:center;justify-content:center;gap:8px;padding:6px 18px 0}
+.codec-btn{padding:5px 16px;border-radius:16px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.04);font:600 11px/1 ‘Noto Sans’,sans-serif;letter-spacing:.08em;color:rgba(255,255,255,.35);cursor:pointer;-webkit-appearance:none;transition:.15s}
+.codec-btn.on{border-color:#F5C400;background:rgba(245,196,0,.12);color:#F5C400}
+.codec-btn:active{opacity:.5}
+
+/* FPS selector */
+#fps-row{display:flex;align-items:center;justify-content:center;gap:6px;padding:6px 18px 0}
+.fps-btn{padding:5px 12px;border-radius:14px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.04);font:600 11px/1 ‘Noto Sans’,sans-serif;letter-spacing:.06em;color:rgba(255,255,255,.35);cursor:pointer;-webkit-appearance:none;transition:.15s;flex-shrink:0}
+.fps-btn.on{border-color:#F5C400;background:rgba(245,196,0,.12);color:#F5C400}
+.fps-btn:active{opacity:.5}
+/* LUT strip */
+#lut-row{display:flex;overflow-x:auto;gap:0;scrollbar-width:none;-webkit-overflow-scrolling:touch;border-top:1px solid rgba(255,255,255,.06);border-bottom:1px solid rgba(255,255,255,.06);margin-top:0}
+#lut-row::-webkit-scrollbar{display:none}
+.lut-btn{flex-shrink:0;padding:8px 12px;border:none;border-right:1px solid rgba(255,255,255,.06);background:none;cursor:pointer;-webkit-appearance:none;display:flex;flex-direction:column;align-items:center;gap:3px;min-width:64px;transition:.15s}
+.lut-btn:last-child{border-right:none}
+.lut-btn.on{background:rgba(245,196,0,.08)}
+.lut-btn:active{opacity:.5}
+.lut-swatch{width:36px;height:22px;border-radius:4px;border:1.5px solid rgba(255,255,255,.1);overflow:hidden;flex-shrink:0}
+.lut-swatch.on{border-color:#F5C400}
+.lut-name{font:400 7px/1 ‘Noto Sans’,sans-serif;letter-spacing:.08em;color:rgba(255,255,255,.35);white-space:nowrap}
+.lut-btn.on .lut-name{color:#F5C400}
+/* LUT active badge in HUD */
+#lut-hud{position:absolute;bottom:8px;right:8px;z-index:8;pointer-events:none;display:none}
+.lut-hud-lbl{font:700 8px/1 ‘Share Tech Mono’,monospace;letter-spacing:.1em;color:#F5C400;background:rgba(0,0,0,.6);padding:3px 7px;border-radius:3px;border:1px solid rgba(245,196,0,.35)}
 </style>
 
 </head>
@@ -233,11 +281,22 @@ background:rgba(255,255,255,.03);cursor:pointer;-webkit-appearance:none;width:10
 
   <!-- VIEWFINDER SPACER -->
 
+  <div id="lut-hud"><div class="lut-hud-lbl" id="lut-hud-lbl"></div></div>
+  <div id="rec-timer"><span id="rec-dot"></span><span id="rec-time">00:00</span></div>
   <div id="vf"></div>
 
   <!-- BOTTOM CARD -->
 
   <div id="card">
+    <div id="mode-row">
+      <button class="mode-btn on" id="mode-photo">PHOTO</button>
+      <button class="mode-btn" id="mode-video">VIDEO</button>
+    </div>
+    <div id="fps-row"></div>
+    <div id="codec-row">
+      <button class="codec-btn on" id="codec-rec709">Rec.709</button>
+      <button class="codec-btn" id="codec-hq">High Quality</button>
+    </div>
     <div id="lens-row"></div>
     <div id="zoom-row">
       <span class="zoom-icon">−</span>
@@ -246,6 +305,7 @@ background:rgba(255,255,255,.03);cursor:pointer;-webkit-appearance:none;width:10
       <span class="zoom-val" id="z-val">1.0×</span>
     </div>
     <div id="pills-row"></div>
+    <div id="lut-row"></div>
     <div id="ctrl-row">
       <!-- Left group -->
       <div class="cg">
@@ -266,6 +326,12 @@ background:rgba(255,255,255,.03);cursor:pointer;-webkit-appearance:none;width:10
       <div class="cc">
         <button id="cap"><div class="sh"><div class="sh-ring"></div><div class="sh-core"></div></div></button>
         <span class="chint">Capture</span>
+      </div>
+      <div class="cc" id="rec-wrap" style="display:none">
+        <button id="rec-btn">
+          <div class="rec-ring" id="rec-ring"><div class="rec-core" id="rec-core"></div></div>
+        </button>
+        <span class="rec-btn-lbl" id="rec-lbl">REC</span>
       </div>
       <!-- Right group -->
       <div class="cg">
@@ -387,6 +453,14 @@ let capCs  = {cs:'srgb', label:'sRGB'};
 const photos = [];
 let detailIdx = null;
 let needSz = true, ftmr = null, ttmr = null;
+let videoMode = 'photo';       // 'photo' | 'video'
+let isRecording = false;
+let mediaRecorder = null;
+let recChunks = [];
+let recTimerInterval = null;
+let recSecs = 0;
+let recCanvas = null, recCtx = null;
+let codecMode = 'rec709';
 
 // ── DOM ───────────────────────────────────────────────────────────────────────
 const vid     = document.getElementById('vid');
@@ -495,7 +569,7 @@ async function initCam() {
   if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; }
   imageCapture = null;
   const tries = [
-    { facingMode:{ideal:facing}, width:{ideal:65535}, height:{ideal:65535} },
+    { facingMode:{ideal:facing}, width:{ideal:65535}, height:{ideal:65535}, frameRate:{ideal:selectedFps,max:selectedFps} },
     { facingMode:{ideal:facing} },
     true
   ];
@@ -703,7 +777,9 @@ async function capture() {
       const cH = Math.min(Math.round(vc.sh*scY), bmp.height-cY);
       const oc = makeCanvas(cW, cH);
       if (facing==='user') { oc.ctx.translate(cW,0); oc.ctx.scale(-1,1); }
+      applyLutToCtx(oc.ctx);
       oc.ctx.drawImage(bmp, cX, cY, cW, cH, 0, 0, cW, cH);
+      oc.ctx.filter='none';
       bmp.close();
       await saveCanvas(oc.cv, cW, cH, now);
       return;
@@ -715,7 +791,9 @@ async function capture() {
   const oW = Math.round(vc.sw), oH = Math.round(vc.sh);
   const oc = makeCanvas(oW, oH);
   if (facing==='user') { oc.ctx.translate(oW,0); oc.ctx.scale(-1,1); }
+  applyLutToCtx(oc.ctx);
   oc.ctx.drawImage(vid, vc.sx, vc.sy, vc.sw, vc.sh, 0, 0, oW, oH);
+  oc.ctx.filter='none';
   await saveCanvas(oc.cv, oW, oH, now);
 }
 
@@ -806,7 +884,8 @@ function buildFilename(d=new Date()) {
   const p = n => String(n).padStart(2,'0');
   const date = `${d.getFullYear()}${p(d.getMonth()+1)}${p(d.getDate())}`;
   const time = `${p(d.getHours())}${p(d.getMinutes())}${p(d.getSeconds())}`;
-  return `Cinemascopome_${FMTS[fi].n.replace(/\s/g,'_')}_${FMTS[fi].l.replace('.','p')}_${capCs.label}_${date}_${time}.${capFmt.ext}`;
+  const lutTag = LUTS[currentLutIdx].id !== 'off' ? '_'+LUTS[currentLutIdx].name.replace(/\s/g,'') : '';
+  return `Cinemascopome_${FMTS[fi].n.replace(/\s/g,'_')}_${FMTS[fi].l.replace('.','p')}_${capCs.label}${lutTag}_${date}_${time}.${capFmt.ext}`;
 }
 function updateFnamePrev() { fnamePrev.textContent = buildFilename(); }
 
@@ -920,6 +999,13 @@ document.getElementById('cs-opts').addEventListener('click', e => {
   updateFnamePrev();
 });
 
+// Mode & codec buttons
+document.getElementById('mode-photo').onclick = () => setMode('photo');
+document.getElementById('mode-video').onclick = () => setMode('video');
+document.getElementById('codec-rec709').onclick = () => setCodec('rec709');
+document.getElementById('codec-hq').onclick     = () => setCodec('hq');
+document.getElementById('rec-btn').onclick = () => { if(isRecording) stopRec(); else startRec(); };
+
 // Tap to focus
 document.getElementById('app').addEventListener('click', e => {
   if (e.target.closest('button')||e.target.closest('#card')||e.target.closest('#gallery')||e.target.closest('#settings')||e.target.closest('#toast')) return;
@@ -931,9 +1017,259 @@ document.getElementById('app').addEventListener('click', e => {
   }
 });
 
+
+
+// ── LUT DEFINITIONS ─────────────────────────────────────────────────────────
+const LUTS = [
+  { id:'off',     name:'Off',
+    css:'none',
+    swatch:'#888',
+    desc:'No grade' },
+  { id:'k2383',   name:'K 2383',
+    css:'contrast(1.06) saturate(0.85) sepia(0.14) brightness(1.02)',
+    swatch:'linear-gradient(135deg,#8a7060,#c4a882)',
+    desc:'Kodak Vision3 print' },
+  { id:'fuji',    name:'Fuji',
+    css:'contrast(1.09) saturate(0.90) hue-rotate(4deg) brightness(0.97)',
+    swatch:'linear-gradient(135deg,#607080,#a8c4b8)',
+    desc:'Fuji 3510 print' },
+  { id:'teal',    name:'T&O',
+    css:'contrast(1.12) saturate(1.18) hue-rotate(-10deg) brightness(1.0)',
+    swatch:'linear-gradient(135deg,#206080,#e08040)',
+    desc:'Teal & Orange' },
+  { id:'log',     name:'Log',
+    css:'contrast(0.70) brightness(1.22) saturate(0.60)',
+    swatch:'linear-gradient(135deg,#909090,#b0a898)',
+    desc:'Flat / Log look' },
+  { id:'noir',    name:'Noir',
+    css:'grayscale(1) contrast(1.15) brightness(0.95)',
+    swatch:'linear-gradient(135deg,#333,#ccc)',
+    desc:'Black & white' },
+  { id:'warm',    name:'Warm',
+    css:'sepia(0.28) saturate(1.1) contrast(1.04) brightness(1.02)',
+    swatch:'linear-gradient(135deg,#a07040,#e8c890)',
+    desc:'Warm film tone' },
+];
+let currentLutIdx = 0; // default Off
+
+function applyLutPreview() {
+  const lut = LUTS[currentLutIdx];
+  vid.style.filter = lut.css;
+  // HUD badge
+  const hudEl = document.getElementById('lut-hud');
+  const hudLbl = document.getElementById('lut-hud-lbl');
+  if (lut.id === 'off') {
+    hudEl.style.display = 'none';
+  } else {
+    hudLbl.textContent = lut.name;
+    hudEl.style.display = 'block';
+  }
+  // Update LUT buttons
+  document.querySelectorAll('.lut-btn').forEach((b,i) => {
+    b.classList.toggle('on', i === currentLutIdx);
+    b.querySelector('.lut-swatch').classList.toggle('on', i === currentLutIdx);
+  });
+}
+
+function buildLutRow() {
+  const row = document.getElementById('lut-row');
+  row.innerHTML = '';
+  LUTS.forEach((lut, i) => {
+    const b = document.createElement('button');
+    b.className = 'lut-btn' + (i === 0 ? ' on' : '');
+    const sw = document.createElement('div');
+    sw.className = 'lut-swatch' + (i === 0 ? ' on' : '');
+    sw.style.background = lut.swatch;
+    const nm = document.createElement('div');
+    nm.className = 'lut-name'; nm.textContent = lut.name;
+    b.appendChild(sw); b.appendChild(nm);
+    b.onclick = () => { currentLutIdx = i; applyLutPreview(); };
+    row.appendChild(b);
+  });
+}
+
+// Apply LUT to a canvas context before drawing
+function applyLutToCtx(octx) {
+  const lut = LUTS[currentLutIdx];
+  octx.filter = lut.css === 'none' ? 'none' : lut.css;
+}
+
+// ── FRAME RATE ─────────────────────────────────────────────────────────────
+const FPS_OPTS = [24, 25, 30, 60];
+let selectedFps = 24;
+
+function buildFpsRow() {
+  const row = document.getElementById('fps-row');
+  row.innerHTML = '';
+  FPS_OPTS.forEach(fps => {
+    const b = document.createElement('button');
+    b.className = 'fps-btn' + (fps === selectedFps ? ' on' : '');
+    b.textContent = fps + 'fps';
+    b.onclick = () => {
+      selectedFps = fps;
+      row.querySelectorAll('.fps-btn').forEach(x => x.classList.toggle('on', parseInt(x.textContent) === fps));
+      // Restart camera with new fps if stream active
+      if (stream) initCam();
+    };
+    row.appendChild(b);
+  });
+}
+
+// ── VIDEO MODE ────────────────────────────────────────────────────────────────
+function setMode(mode) {
+  videoMode = mode;
+  document.getElementById('mode-photo').classList.toggle('on', mode==='photo');
+  document.getElementById('mode-video').classList.toggle('on', mode==='video');
+  document.getElementById('cap').parentElement.style.display       = mode==='photo' ? 'flex':'none';
+  document.getElementById('rec-wrap').style.display                 = mode==='video' ? 'flex':'none';
+  document.getElementById('codec-row').style.display                = mode==='video' ? 'flex':'none';
+  if (mode==='photo' && isRecording) stopRec();
+}
+
+function setCodec(c) {
+  codecMode = c;
+  document.getElementById('codec-rec709').classList.toggle('on', c==='rec709');
+  document.getElementById('codec-hq').classList.toggle('on',    c==='hq');
+}
+
+// Pick best supported MIME type
+function getBestMime() {
+  const candidates = [
+    'video/mp4;codecs=avc1.42E01E',
+    'video/mp4;codecs=avc1',
+    'video/mp4',
+    'video/webm;codecs=h264',
+    'video/webm;codecs=vp9',
+    'video/webm',
+  ];
+  for (const t of candidates) {
+    if (MediaRecorder.isTypeSupported(t)) return t;
+  }
+  return '';
+}
+
+// Recording canvas: draws only the active frame, no HUD
+function ensureRecCanvas() {
+  if (!recCanvas) {
+    recCanvas = document.createElement('canvas');
+    recCtx = recCanvas.getContext('2d');
+  }
+  const m = getM();
+  if (recCanvas.width !== Math.round(m.aW) || recCanvas.height !== Math.round(m.aH)) {
+    recCanvas.width  = Math.round(m.aW);
+    recCanvas.height = Math.round(m.aH);
+  }
+  return recCanvas;
+}
+
+function drawRecFrame() {
+  if (!isRecording) return;
+  const c = ensureRecCanvas();
+  const m = getM();
+  const W = window.innerWidth, H = window.innerHeight;
+  const vW = vid.videoWidth, vH = vid.videoHeight;
+  if (!vW || !vH) { requestAnimationFrame(drawRecFrame); return; }
+  const sc = Math.max(W/vW, H/vH);
+  const ox = (W-vW*sc)/2, oy = (H-vH*sc)/2;
+  const sx = (m.aL-ox)/sc, sy = (m.aT-oy)/sc;
+  const sw = m.aW/sc,       sh = m.aH/sc;
+  applyLutToCtx(recCtx);
+  recCtx.drawImage(vid, sx, sy, sw, sh, 0, 0, c.width, c.height);
+  recCtx.filter = 'none';
+  requestAnimationFrame(drawRecFrame);
+}
+
+async function startRec() {
+  if (!stream) return;
+  if (isRecording) { stopRec(); return; }
+  const mime = getBestMime();
+  if (!mime) { showToast('RECORDING NOT SUPPORTED'); return; }
+
+  ensureRecCanvas();
+  const bitrate = codecMode==='hq' ? 50_000_000 : 20_000_000; // 50Mbps HQ / 20Mbps Rec.709
+
+  let recStream;
+  try {
+    // Capture letterboxed frame from recording canvas
+    recStream = recCanvas.captureStream(selectedFps);
+  } catch(e) {
+    // Fallback: record raw camera stream
+    recStream = stream;
+  }
+
+  recChunks = [];
+  try {
+    mediaRecorder = new MediaRecorder(recStream, { mimeType:mime, videoBitsPerSecond:bitrate });
+  } catch(e) {
+    mediaRecorder = new MediaRecorder(recStream);
+  }
+
+  mediaRecorder.ondataavailable = e => { if (e.data.size>0) recChunks.push(e.data); };
+  mediaRecorder.onstop = () => saveRecording();
+  mediaRecorder.start(1000); // collect chunks every 1s
+
+  isRecording = true;
+  drawRecFrame();
+
+  // UI
+  document.getElementById('rec-core').classList.add('recording');
+  document.getElementById('rec-ring').classList.add('recording');
+  document.getElementById('rec-lbl').textContent = 'STOP';
+  document.getElementById('rec-timer').style.display = 'block';
+  recSecs = 0;
+  updateRecTimer();
+  recTimerInterval = setInterval(()=>{recSecs++;updateRecTimer();}, 1000);
+}
+
+function stopRec() {
+  if (!mediaRecorder || !isRecording) return;
+  mediaRecorder.stop();
+  isRecording = false;
+  clearInterval(recTimerInterval);
+  recTimerInterval = null;
+  document.getElementById('rec-core').classList.remove('recording');
+  document.getElementById('rec-ring').classList.remove('recording');
+  document.getElementById('rec-lbl').textContent = 'REC';
+  document.getElementById('rec-timer').style.display = 'none';
+}
+
+function updateRecTimer() {
+  const m = Math.floor(recSecs/60), s = recSecs%60;
+  document.getElementById('rec-time').textContent =
+    String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+}
+
+function saveRecording() {
+  if (!recChunks.length) return;
+  const mime = recChunks[0].type || 'video/mp4';
+  const ext  = mime.includes('webm') ? 'webm' : 'mp4';
+  const blob = new Blob(recChunks, { type:mime });
+  const now  = new Date();
+  const p = n => String(n).padStart(2,'0');
+  const date = `${now.getFullYear()}${p(now.getMonth()+1)}${p(now.getDate())}`;
+  const time = `${p(now.getHours())}${p(now.getMinutes())}${p(now.getSeconds())}`;
+  const codec = codecMode === 'hq' ? 'HQ' : 'Rec709';
+  const lutTag = LUTS[currentLutIdx].id !== 'off' ? '_'+LUTS[currentLutIdx].name.replace(/\s/g,'') : '';
+  const fname = `Cinemascopome_${FMTS[fi].n.replace(/\s/g,'_')}_${FMTS[fi].l.replace('.','p')}_${codec}${lutTag}_${date}_${time}.${ext}`;
+
+  const url = URL.createObjectURL(blob);
+  // Save video via share or download
+  const file = new File([blob], fname, {type:mime});
+  if (navigator.canShare && navigator.canShare({files:[file]})) {
+    navigator.share({files:[file], title:'Cinemascopome'}).catch(()=>{});
+  } else {
+    const a = document.createElement('a'); a.href=url; a.download=fname;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  }
+  showToast('VIDEO SAVED');
+  recChunks = [];
+}
+
 // ── INIT ─────────────────────────────────────────────────────────────────────
 applyFmt();
 updateMaskBtn();
+buildLutRow();
+buildFpsRow();
 requestAnimationFrame(draw);
 initCam();
 </script>
