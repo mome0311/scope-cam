@@ -292,7 +292,7 @@ border:1px solid rgba(255,68,68,.4);
       <button class="mode-btn on" id="mode-photo">PHOTO</button>
       <button class="mode-btn" id="mode-video">VIDEO</button>
     </div>
-    <div id="fps-row"></div>
+    <div id="fps-row" style="display:none"></div>
     <div id="codec-row">
       <button class="codec-btn on" id="codec-rec709">Rec.709</button>
       <button class="codec-btn" id="codec-hq">High Quality</button>
@@ -1120,9 +1120,10 @@ function setMode(mode) {
   videoMode = mode;
   document.getElementById('mode-photo').classList.toggle('on', mode==='photo');
   document.getElementById('mode-video').classList.toggle('on', mode==='video');
-  document.getElementById('cap').parentElement.style.display       = mode==='photo' ? 'flex':'none';
-  document.getElementById('rec-wrap').style.display                 = mode==='video' ? 'flex':'none';
-  document.getElementById('codec-row').style.display                = mode==='video' ? 'flex':'none';
+  document.getElementById('cap').parentElement.style.display   = mode==='photo' ? 'flex':'none';
+  document.getElementById('rec-wrap').style.display             = mode==='video' ? 'flex':'none';
+  document.getElementById('codec-row').style.display            = mode==='video' ? 'flex':'none';
+  document.getElementById('fps-row').style.display              = mode==='video' ? 'flex':'none';
   if (mode==='photo' && isRecording) stopRec();
 }
 
@@ -1154,10 +1155,15 @@ function ensureRecCanvas() {
     recCanvas = document.createElement('canvas');
     recCtx = recCanvas.getContext('2d');
   }
-  const m = getM();
-  if (recCanvas.width !== Math.round(m.aW) || recCanvas.height !== Math.round(m.aH)) {
-    recCanvas.width  = Math.round(m.aW);
-    recCanvas.height = Math.round(m.aH);
+  // Use actual video resolution cropped to selected format ratio
+  const vW = vid.videoWidth, vH = vid.videoHeight;
+  if (!vW || !vH) return recCanvas;
+  const r = FMTS[fi].r;
+  let cW, cH;
+  if (vW / vH > r) { cH = vH; cW = Math.round(vH * r); }
+  else              { cW = vW; cH = Math.round(vW / r); }
+  if (recCanvas.width !== cW || recCanvas.height !== cH) {
+    recCanvas.width = cW; recCanvas.height = cH;
   }
   return recCanvas;
 }
@@ -1165,16 +1171,20 @@ function ensureRecCanvas() {
 function drawRecFrame() {
   if (!isRecording) return;
   const c = ensureRecCanvas();
-  const m = getM();
-  const W = window.innerWidth, H = window.innerHeight;
   const vW = vid.videoWidth, vH = vid.videoHeight;
   if (!vW || !vH) { requestAnimationFrame(drawRecFrame); return; }
-  const sc = Math.max(W/vW, H/vH);
-  const ox = (W-vW*sc)/2, oy = (H-vH*sc)/2;
-  const sx = (m.aL-ox)/sc, sy = (m.aT-oy)/sc;
-  const sw = m.aW/sc,       sh = m.aH/sc;
+  // Crop video to format ratio in actual video pixel space
+  const r = FMTS[fi].r;
+  let cX, cY, cW, cH;
+  if (vW / vH > r) {
+    cH = vH; cW = Math.round(vH * r);
+    cX = Math.round((vW - cW) / 2); cY = 0;
+  } else {
+    cW = vW; cH = Math.round(vW / r);
+    cX = 0; cY = Math.round((vH - cH) / 2);
+  }
   applyLutToCtx(recCtx);
-  recCtx.drawImage(vid, sx, sy, sw, sh, 0, 0, c.width, c.height);
+  recCtx.drawImage(vid, cX, cY, cW, cH, 0, 0, c.width, c.height);
   recCtx.filter = 'none';
   requestAnimationFrame(drawRecFrame);
 }
