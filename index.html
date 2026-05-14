@@ -16,143 +16,199 @@
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
 html,body{width:100%;height:100%;background:#000;overflow:hidden}
 #app{position:fixed;inset:0;background:#000;display:flex;flex-direction:column;height:100dvh}
-
-/* VIDEO */
 video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1}
 video.mirror{transform:scaleX(-1)}
 canvas{position:absolute;inset:0;z-index:3;pointer-events:none}
-
-/* LETTERBOX BARS — solid black divs, z-index 2, above video */
 #lb-t,#lb-b{position:absolute;left:0;right:0;background:#000;z-index:2;pointer-events:none}
 #lb-l,#lb-r{position:absolute;top:0;bottom:0;background:#000;z-index:2;pointer-events:none}
 
-/* TOP BAR */
+/* ── TOP STATUS BAR ── */
 #top{
 position:relative;z-index:10;flex-shrink:0;
-background:#0e0e0e;border-bottom:1px solid rgba(255,255,255,.07);
-display:flex;align-items:center;justify-content:space-between;
-padding:8px 18px 7px;padding-top:max(8px,env(safe-area-inset-top));
+background:rgba(10,10,10,.92);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+border-bottom:1px solid rgba(255,255,255,.06);
+padding:max(env(safe-area-inset-top),6px) 16px 8px;
+display:flex;align-items:center;justify-content:space-between;gap:8px;
 }
-.t-left{display:flex;flex-direction:column;gap:1px}
-.t-lbl{font:300 8px/1 ‘Noto Sans’,sans-serif;letter-spacing:.22em;color:rgba(255,255,255,.35)}
-.t-name{font:700 17px/1 ‘Noto Sans’,sans-serif;letter-spacing:.1em;color:#F5C400}
-.t-mid{display:flex;align-items:center;gap:4px}
-.dot{width:5px;height:5px;border-radius:50%;background:#F5C400;animation:blink 1.4s infinite}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:.15}}
-.t-live{font:9px ‘Share Tech Mono’,monospace;color:rgba(255,255,255,.4);letter-spacing:.14em}
-.t-right{display:flex;flex-direction:column;align-items:flex-end;gap:1px}
-.t-ratio{font:700 19px/1 ‘Noto Sans’,sans-serif;letter-spacing:.04em;color:#F5C400}
-.t-rlbl{font:200 7px/1 ‘Noto Sans’,sans-serif;letter-spacing:.18em;color:rgba(255,255,255,.28)}
+.top-toggles{display:flex;align-items:center;gap:5px}
+.tgl{width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.45);cursor:pointer;-webkit-appearance:none;display:flex;align-items:center;justify-content:center;transition:.15s;flex-shrink:0}
+.tgl.on{background:rgba(245,196,0,.14);border-color:#F5C400;color:#F5C400}
+.tgl:active{opacity:.4}
+.top-center{display:flex;flex-direction:column;align-items:center;gap:1px;flex:1}
+.top-fmt{font:700 14px/1 ‘Noto Sans’,sans-serif;letter-spacing:.1em;color:#F5C400}
+.top-ratio{font:300 9px/1 ‘Noto Sans’,sans-serif;letter-spacing:.12em;color:rgba(255,255,255,.4)}
+.top-right{display:flex;align-items:center;gap:6px}
+#lut-badge{font:600 9px/1 ‘Share Tech Mono’,monospace;letter-spacing:.1em;color:#F5C400;background:rgba(0,0,0,.6);padding:3px 7px;border-radius:3px;border:1px solid rgba(245,196,0,.3);display:none;white-space:nowrap}
+.tgl-set{width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.45);cursor:pointer;-webkit-appearance:none;display:flex;align-items:center;justify-content:center;transition:.15s;flex-shrink:0}
+.tgl-set:active{opacity:.4}
 
-/* VIEWFINDER */
+/* ── VIEWFINDER ── */
 #vf{position:relative;z-index:2;flex:1;min-height:0}
+#rec-timer{position:absolute;top:12px;left:50%;transform:translateX(-50%);font:700 11px/1 ‘Share Tech Mono’,monospace;letter-spacing:.1em;color:#ff4444;background:rgba(0,0,0,.65);padding:4px 10px;border-radius:4px;z-index:8;display:none;pointer-events:none;border:1px solid rgba(255,68,68,.35)}
+#rec-dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:#ff4444;margin-right:5px;animation:blink 1s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.1}}
 
-/* CARD */
-#card{
+/* ── FLOAT CONTROLS (format / lut / lens) ── */
+#float-ctrl{
 position:relative;z-index:10;flex-shrink:0;
-background:#0e0e0e;border-radius:16px 16px 0 0;
-border-top:1.5px solid #F5C400;
-padding-bottom:max(env(safe-area-inset-bottom),6px);
+background:rgba(10,10,10,.88);
 }
-#card::before{content:’’;display:block;width:34px;height:3px;border-radius:2px;background:rgba(255,255,255,.12);margin:8px auto 0}
-
-/* LENS PILLS */
-#lens-row{display:none;align-items:center;justify-content:center;gap:6px;padding:6px 18px 0}
-.lpill{
-padding:5px 14px;border-radius:16px;
-border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.04);
-font:600 12px/1 ‘Noto Sans’,sans-serif;letter-spacing:.06em;color:rgba(255,255,255,.35);
-cursor:pointer;-webkit-appearance:none;transition:.15s;
-}
+#lut-row{display:flex;overflow-x:auto;gap:0;scrollbar-width:none;-webkit-overflow-scrolling:touch;border-bottom:1px solid rgba(255,255,255,.05)}
+#lut-row::-webkit-scrollbar{display:none}
+.lut-btn{flex-shrink:0;padding:6px 9px;border:none;border-right:1px solid rgba(255,255,255,.05);background:none;cursor:pointer;-webkit-appearance:none;display:flex;flex-direction:column;align-items:center;gap:3px;min-width:52px;transition:.15s}
+.lut-btn:last-child{border-right:none}
+.lut-btn.on{background:rgba(245,196,0,.08)}
+.lut-btn:active{opacity:.5}
+.lut-sw{width:28px;height:16px;border-radius:3px;border:1.5px solid rgba(255,255,255,.1);flex-shrink:0}
+.lut-btn.on .lut-sw{border-color:#F5C400}
+.lut-nm{font:400 7px/1 ‘Noto Sans’,sans-serif;letter-spacing:.08em;color:rgba(255,255,255,.3);white-space:nowrap}
+.lut-btn.on .lut-nm{color:#F5C400}
+#lens-row{display:none;align-items:center;justify-content:center;gap:5px;padding:5px 14px 0}
+.lpill{padding:4px 12px;border-radius:14px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.04);font:600 11px/1 ‘Noto Sans’,sans-serif;letter-spacing:.06em;color:rgba(255,255,255,.38);cursor:pointer;-webkit-appearance:none;transition:.15s}
 .lpill.on{border-color:#F5C400;background:rgba(245,196,0,.12);color:#F5C400}
 .lpill:active{opacity:.5}
-
-/* ZOOM SLIDER */
-#zoom-row{display:none;align-items:center;gap:10px;padding:6px 18px 0}
-.zoom-icon{font:9px ‘Share Tech Mono’,monospace;color:rgba(255,255,255,.3);flex-shrink:0}
-.zoom-val{font:10px ‘Share Tech Mono’,monospace;color:#F5C400;min-width:32px;text-align:right;flex-shrink:0}
-input[type=range].slider{
-flex:1;-webkit-appearance:none;height:2px;
-background:rgba(255,255,255,.15);border-radius:2px;outline:none;cursor:pointer;
-}
-input[type=range].slider::-webkit-slider-thumb{
--webkit-appearance:none;width:18px;height:18px;border-radius:50%;
-background:#F5C400;border:2px solid rgba(255,255,255,.5);cursor:pointer;
-}
-
-/* FORMAT PILLS */
-#pills-row{
-display:flex;border-top:1px solid rgba(255,255,255,.06);
-border-bottom:1px solid rgba(255,255,255,.06);margin-top:6px;
-}
-.fpill{
-flex:1;padding:8px 0;text-align:center;position:relative;
-font:400 11px/1 ‘Noto Sans’,sans-serif;letter-spacing:.08em;
-color:rgba(255,255,255,.22);background:none;border:none;
-border-right:1px solid rgba(255,255,255,.06);cursor:pointer;-webkit-appearance:none;
-}
-.fpill:last-child{border-right:none}
-.fpill.on{color:#F5C400;background:rgba(245,196,0,.1)}
-.fpill.on::after{content:’’;position:absolute;bottom:0;left:0;right:0;height:2px;background:#F5C400}
+#zoom-row{display:none;align-items:center;gap:8px;padding:4px 18px 0}
+.zoom-icon{font:9px ‘Share Tech Mono’,monospace;color:rgba(255,255,255,.28);flex-shrink:0}
+.zoom-val{font:10px ‘Share Tech Mono’,monospace;color:#F5C400;min-width:28px;text-align:right;flex-shrink:0}
+input[type=range].slider{flex:1;-webkit-appearance:none;height:2px;background:rgba(255,255,255,.15);border-radius:2px;outline:none;cursor:pointer}
+input[type=range].slider::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:#F5C400;border:2px solid rgba(255,255,255,.4);cursor:pointer}
+#pills-row{display:flex;padding:4px 0 0;justify-content:center;gap:0;border-bottom:1px solid rgba(255,255,255,.05)}
+.fpill{padding:5px 12px;font:600 10px/1 ‘Noto Sans’,sans-serif;letter-spacing:.1em;color:rgba(255,255,255,.25);background:none;border:none;cursor:pointer;-webkit-appearance:none;position:relative;transition:.15s}
+.fpill.on{color:#F5C400}
+.fpill.on::after{content:’’;position:absolute;bottom:-1px;left:20%;right:20%;height:1.5px;background:#F5C400;border-radius:1px}
 .fpill:active{opacity:.5}
 
-/* CONTROLS */
-#ctrl-row{display:flex;align-items:center;justify-content:space-between;padding:10px 12px 8px}
-.cg{display:flex;align-items:center;gap:5px}
-.cc{display:flex;flex-direction:column;align-items:center;gap:3px}
-.chint{font:300 7px/1 ‘Noto Sans’,sans-serif;letter-spacing:.12em;color:rgba(255,255,255,.22)}
+/* ── HARDWARE PANEL ── */
+#hw-panel{
+position:relative;z-index:10;flex-shrink:0;
+background:#111;
+border-radius:22px 22px 0 0;
+border-top:1px solid rgba(255,255,255,.08);
+padding-bottom:max(env(safe-area-inset-bottom),10px);
+box-shadow:0 -8px 40px rgba(0,0,0,.6);
+}
 
-/* Icon buttons */
-.ib{
+/* Info strip */
+#hw-info{
+display:flex;align-items:stretch;
+border-bottom:1px solid rgba(255,255,255,.06);
+padding:10px 16px 8px;
+gap:0;
+}
+.hw-stat{
 display:flex;flex-direction:column;align-items:center;gap:3px;
-background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);
-border-radius:10px;padding:7px 5px 5px;min-width:46px;
-cursor:pointer;-webkit-appearance:none;color:rgba(255,255,255,.45);
-transition:color .15s,border-color .15s,background .15s;position:relative;
+flex:1;position:relative;
 }
-.ib.on{color:#F5C400;border-color:rgba(245,196,0,.5);background:rgba(245,196,0,.1)}
-.ib:active{opacity:.4}
-.ib svg{flex-shrink:0}
-.il{font:400 7px/1 ‘Noto Sans’,sans-serif;letter-spacing:.08em;color:inherit;white-space:nowrap}
-
-/* Shutter */
-#cap{background:none;border:none;cursor:pointer;-webkit-appearance:none;display:block}
-.sh{width:62px;height:62px;border-radius:50%;position:relative}
-.sh-ring{position:absolute;inset:0;border-radius:50%;border:2.5px solid rgba(255,255,255,.55)}
-.sh-core{position:absolute;inset:6px;border-radius:50%;background:rgba(255,255,255,.88);transition:.1s}
-#cap:active .sh-ring{border-color:#F5C400}
-#cap:active .sh-core{transform:scale(.8);background:rgba(245,196,0,.35)}
-
-/* Badge */
-.badge{
-position:absolute;top:-3px;right:-3px;min-width:15px;height:15px;
-border-radius:8px;padding:0 3px;background:#F5C400;color:#000;
-font:700 8px/15px ‘Noto Sans’,sans-serif;display:none;
-align-items:center;justify-content:center;z-index:1;
+.hw-stat + .hw-stat::before{
+content:’’;position:absolute;left:0;top:10%;bottom:10%;
+width:1px;background:rgba(255,255,255,.08);
 }
+.hw-val{font:700 18px/1 ‘Share Tech Mono’,monospace;letter-spacing:-.01em;color:rgba(255,255,255,.88)}
+.hw-key{font:400 8px/1 ‘Noto Sans’,sans-serif;letter-spacing:.18em;color:rgba(255,255,255,.3);text-transform:uppercase}
+/* Mode/FPS/codec in info strip */
+.hw-stat-sm{display:flex;flex-direction:column;align-items:center;gap:3px;flex:1.4}
+#mode-fps-row{display:flex;align-items:center;justify-content:space-between;padding:4px 16px 2px;gap:8px}
+.mode-grp{display:flex;gap:0}
+.mode-btn{padding:4px 12px;font:600 9px/1 ‘Noto Sans’,sans-serif;letter-spacing:.12em;color:rgba(255,255,255,.25);background:none;border:none;cursor:pointer;-webkit-appearance:none;position:relative;transition:.15s}
+.mode-btn.on{color:#F5C400}
+.mode-btn.on::after{content:’’;position:absolute;bottom:-1px;left:15%;right:15%;height:1.5px;background:#F5C400;border-radius:1px}
+.mode-btn:active{opacity:.5}
+#fps-row{display:none;align-items:center;gap:4px}
+.fps-btn{padding:3px 8px;border-radius:10px;border:1px solid rgba(255,255,255,.14);background:rgba(0,0,0,.4);font:600 9px/1 ‘Noto Sans’,sans-serif;letter-spacing:.05em;color:rgba(255,255,255,.32);cursor:pointer;-webkit-appearance:none;transition:.15s;flex-shrink:0}
+.fps-btn.on{border-color:#F5C400;background:rgba(245,196,0,.12);color:#F5C400}
+.fps-btn:active{opacity:.5}
+#codec-row{display:none;align-items:center;gap:4px}
+.codec-btn{padding:3px 8px;border-radius:10px;border:1px solid rgba(255,255,255,.14);background:rgba(0,0,0,.4);font:600 9px/1 ‘Noto Sans’,sans-serif;letter-spacing:.05em;color:rgba(255,255,255,.32);cursor:pointer;-webkit-appearance:none;transition:.15s}
+.codec-btn.on{border-color:#F5C400;background:rgba(245,196,0,.12);color:#F5C400}
+.codec-btn:active{opacity:.5}
+
+/* Main controls row */
+#hw-controls{
+display:flex;align-items:center;justify-content:space-between;
+padding:10px 20px 8px;
+background:rgba(30,22,14,.55);
+border-radius:16px;
+margin:6px 10px 4px;
+}
+
+/* Gallery thumb */
+#gal-thumb-btn{
+width:56px;height:56px;border-radius:10px;overflow:hidden;
+background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.18);
+cursor:pointer;-webkit-appearance:none;display:flex;align-items:center;justify-content:center;
+flex-shrink:0;transition:.15s;position:relative;
+}
+#gal-thumb-btn img{width:100%;height:100%;object-fit:cover;display:none}
+.gal-thumb-empty{color:rgba(255,255,255,.28)}
+.gal-thumb-cnt{position:absolute;bottom:2px;right:3px;font:700 8px/1 ‘Share Tech Mono’,monospace;color:#fff;text-shadow:0 1px 4px rgba(0,0,0,.9)}
+#gal-thumb-btn:active{opacity:.6}
+
+/* Shutter / REC */
+.shoot-area{display:flex;flex-direction:column;align-items:center;gap:0}
+/* Shutter knob — big hardware dial */
+#cap{
+background:none;border:none;cursor:pointer;-webkit-appearance:none;
+width:76px;height:76px;border-radius:50%;
+background:radial-gradient(circle at 35% 30%, #d8d8d8, #888 55%, #555);
+box-shadow:0 4px 16px rgba(0,0,0,.7), 0 1px 0 rgba(255,255,255,.15) inset, 0 -1px 0 rgba(0,0,0,.4) inset;
+display:flex;align-items:center;justify-content:center;
+position:relative;transition:box-shadow .1s,transform .1s;
+}
+#cap::after{
+content:’’;position:absolute;inset:8px;border-radius:50%;
+border:1.5px solid rgba(255,255,255,.12);
+}
+#cap:active{
+transform:scale(.94);
+box-shadow:0 2px 8px rgba(0,0,0,.8), 0 0 0 3px rgba(245,196,0,.5);
+}
+#rec-btn{
+background:none;border:none;cursor:pointer;-webkit-appearance:none;
+width:76px;height:76px;border-radius:50%;
+background:radial-gradient(circle at 35% 30%, #cc3333, #661111 60%);
+box-shadow:0 4px 16px rgba(0,0,0,.7), 0 1px 0 rgba(255,80,80,.25) inset;
+display:flex;align-items:center;justify-content:center;
+transition:box-shadow .1s,transform .1s;
+}
+#rec-btn.recording{
+background:radial-gradient(circle at 35% 30%, #ff4444, #aa1111 60%);
+box-shadow:0 4px 16px rgba(255,0,0,.4), 0 0 0 4px rgba(255,68,68,.3);
+}
+#rec-btn:active{transform:scale(.94)}
+.rec-sq{width:24px;height:24px;border-radius:4px;background:rgba(255,255,255,.9);transition:.2s}
+.rec-sq.recording{border-radius:3px;width:20px;height:20px}
+
+/* Mode selector (M S I style) */
+.mode-sel{display:flex;align-items:center;gap:4px}
+.msi{
+width:36px;height:36px;border-radius:50%;
+background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);
+color:rgba(255,255,255,.35);font:600 11px/1 ‘Noto Sans’,sans-serif;
+cursor:pointer;-webkit-appearance:none;display:flex;align-items:center;justify-content:center;
+transition:.15s;flex-shrink:0;
+}
+.msi.on{background:rgba(245,196,0,.16);border-color:#F5C400;color:#F5C400}
+.msi:active{opacity:.4}
+
+/* Flip */
+#flip-btn{
+width:48px;height:48px;border-radius:50%;
+background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);
+color:rgba(255,255,255,.5);cursor:pointer;-webkit-appearance:none;
+display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:.15s;
+}
+#flip-btn:active{opacity:.4;transform:scale(.9)}
 
 /* TOAST */
-#toast{
-position:absolute;left:50%;transform:translateX(-50%);
-background:#1e1e1e;color:#F5C400;
-font:600 10px/1 ‘Noto Sans’,sans-serif;letter-spacing:.14em;
-padding:9px 18px;z-index:99;opacity:0;pointer-events:none;
-white-space:nowrap;border:1.5px solid #F5C400;border-radius:6px;
-transition:opacity .2s;box-shadow:0 4px 20px rgba(0,0,0,.6);
-}
+#toast{position:absolute;left:50%;transform:translateX(-50%);background:#1e1e1e;color:#F5C400;font:600 10px/1 ‘Noto Sans’,sans-serif;letter-spacing:.14em;padding:9px 18px;z-index:99;opacity:0;pointer-events:none;white-space:nowrap;border:1.5px solid #F5C400;border-radius:6px;transition:opacity .2s;box-shadow:0 4px 20px rgba(0,0,0,.6)}
 #toast.accent{background:#F5C400;color:#000;border-color:#F5C400}
-
-/* FOCUS RING */
+/* FOCUS */
 #focus{position:absolute;width:52px;height:52px;margin:-26px 0 0 -26px;z-index:6;pointer-events:none;opacity:0;transition:opacity .4s}
 .fc{position:absolute;width:10px;height:10px;border-color:#F5C400;border-style:solid}
 .fc.tl{top:0;left:0;border-width:1.5px 0 0 1.5px}
 .fc.tr{top:0;right:0;border-width:1.5px 1.5px 0 0}
 .fc.bl{bottom:0;left:0;border-width:0 0 1.5px 1.5px}
 .fc.br{bottom:0;right:0;border-width:0 1.5px 1.5px 0}
-
-/* FLASH */
-#flash{position:absolute;inset:0;background:#fff;z-index:99;opacity:0;pointer-events:none}
-
 /* GALLERY */
 #gallery{position:absolute;inset:0;z-index:50;background:#0a0a0a;display:none;flex-direction:column}
 .gh{display:flex;align-items:center;justify-content:space-between;padding:14px 18px 12px;border-bottom:1px solid rgba(255,255,255,.08);flex-shrink:0;background:#1a1a1a}
@@ -180,8 +236,6 @@ transition:opacity .2s;box-shadow:0 4px 20px rgba(0,0,0,.6);
 #g-detail-img{flex:1;object-fit:contain;width:100%;min-height:0}
 .gd-info{padding:10px 18px 14px;background:#111;flex-shrink:0}
 .gd-fname{font:9px/1.8 ‘Share Tech Mono’,monospace;color:rgba(255,255,255,.35);word-break:break-all}
-
-/* SETTINGS */
 #settings{position:absolute;inset:0;z-index:50;background:#0a0a0a;display:none;flex-direction:column}
 .sh-hdr{display:flex;align-items:center;justify-content:space-between;padding:14px 18px 12px;border-bottom:1px solid rgba(255,255,255,.08);flex-shrink:0;background:#1a1a1a}
 .sh-title{font:700 17px/1 ‘Noto Sans’,sans-serif;letter-spacing:.14em;color:#fff}
@@ -191,11 +245,7 @@ transition:opacity .2s;box-shadow:0 4px 20px rgba(0,0,0,.6);
 .sh-sec{margin-bottom:28px}
 .sh-sec-title{font:300 9px/1 ‘Noto Sans’,sans-serif;letter-spacing:.24em;color:rgba(255,255,255,.3);text-transform:uppercase;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid rgba(255,255,255,.06)}
 .sh-opts{display:flex;flex-direction:column;gap:2px}
-.sh-opt{
-display:flex;align-items:center;justify-content:space-between;
-padding:12px 14px;border-radius:8px;border:1px solid rgba(255,255,255,.07);
-background:rgba(255,255,255,.03);cursor:pointer;-webkit-appearance:none;width:100%;transition:.15s;
-}
+.sh-opt{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-radius:8px;border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.03);cursor:pointer;-webkit-appearance:none;width:100%;transition:.15s}
 .sh-opt.on{border-color:rgba(245,196,0,.45);background:rgba(245,196,0,.1)}
 .sh-opt:active{opacity:.6}
 .sh-opt-l{display:flex;flex-direction:column;gap:3px;text-align:left}
@@ -207,54 +257,6 @@ background:rgba(255,255,255,.03);cursor:pointer;-webkit-appearance:none;width:10
 .sh-fname{margin-top:8px;padding:12px 14px;border-radius:8px;background:rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.07)}
 .sh-fname-lbl{font:300 8px/1 ‘Noto Sans’,sans-serif;letter-spacing:.2em;color:rgba(255,255,255,.3);margin-bottom:6px}
 .sh-fname-val{font:9px/1.7 ‘Share Tech Mono’,monospace;color:#F5C400;word-break:break-all}
-
-/* MODE SWITCH */
-#mode-row{display:flex;border-bottom:1px solid rgba(255,255,255,.07);background:#0e0e0e}
-.mode-btn{flex:1;padding:9px 0;font:600 11px/1 ‘Noto Sans’,sans-serif;letter-spacing:.16em;color:rgba(255,255,255,.25);background:none;border:none;cursor:pointer;-webkit-appearance:none;position:relative;transition:.15s}
-.mode-btn.on{color:#F5C400}
-.mode-btn.on::after{content:’’;position:absolute;bottom:0;left:25%;right:25%;height:2px;background:#F5C400;border-radius:1px}
-.mode-btn:active{opacity:.5}
-/* REC button */
-#rec-btn{background:none;border:none;cursor:pointer;-webkit-appearance:none;display:flex;flex-direction:column;align-items:center;gap:3px}
-.rec-ring{width:62px;height:62px;border-radius:50%;border:2.5px solid rgba(255,80,80,.7);position:relative;display:flex;align-items:center;justify-content:center}
-.rec-core{width:28px;height:28px;border-radius:50%;background:rgba(220,50,50,.9);transition:.15s}
-.rec-core.recording{border-radius:6px;width:22px;height:22px;background:#ff2222}
-.rec-ring.recording{border-color:#ff2222}
-.rec-btn-lbl{font:300 7px/1 ‘Noto Sans’,sans-serif;letter-spacing:.12em;color:rgba(255,255,255,.2)}
-/* Timer */
-#rec-timer{
-position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
-font:700 13px/1 ‘Share Tech Mono’,monospace;letter-spacing:.1em;
-color:#ff4444;background:rgba(0,0,0,.65);padding:4px 10px;border-radius:4px;
-z-index:8;display:none;pointer-events:none;
-border:1px solid rgba(255,68,68,.4);
-}
-#rec-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#ff4444;margin-right:5px;animation:blink 1s infinite}
-/* Video codec selector */
-#codec-row{display:none;align-items:center;justify-content:center;gap:8px;padding:6px 18px 0}
-.codec-btn{padding:5px 16px;border-radius:16px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.04);font:600 11px/1 ‘Noto Sans’,sans-serif;letter-spacing:.08em;color:rgba(255,255,255,.35);cursor:pointer;-webkit-appearance:none;transition:.15s}
-.codec-btn.on{border-color:#F5C400;background:rgba(245,196,0,.12);color:#F5C400}
-.codec-btn:active{opacity:.5}
-
-/* FPS selector */
-#fps-row{display:flex;align-items:center;justify-content:center;gap:6px;padding:6px 18px 0}
-.fps-btn{padding:5px 12px;border-radius:14px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.04);font:600 11px/1 ‘Noto Sans’,sans-serif;letter-spacing:.06em;color:rgba(255,255,255,.35);cursor:pointer;-webkit-appearance:none;transition:.15s;flex-shrink:0}
-.fps-btn.on{border-color:#F5C400;background:rgba(245,196,0,.12);color:#F5C400}
-.fps-btn:active{opacity:.5}
-/* LUT strip */
-#lut-row{display:flex;overflow-x:auto;gap:0;scrollbar-width:none;-webkit-overflow-scrolling:touch;border-top:1px solid rgba(255,255,255,.06);border-bottom:1px solid rgba(255,255,255,.06);margin-top:0}
-#lut-row::-webkit-scrollbar{display:none}
-.lut-btn{flex-shrink:0;padding:8px 12px;border:none;border-right:1px solid rgba(255,255,255,.06);background:none;cursor:pointer;-webkit-appearance:none;display:flex;flex-direction:column;align-items:center;gap:3px;min-width:64px;transition:.15s}
-.lut-btn:last-child{border-right:none}
-.lut-btn.on{background:rgba(245,196,0,.08)}
-.lut-btn:active{opacity:.5}
-.lut-swatch{width:36px;height:22px;border-radius:4px;border:1.5px solid rgba(255,255,255,.1);overflow:hidden;flex-shrink:0}
-.lut-swatch.on{border-color:#F5C400}
-.lut-name{font:400 7px/1 ‘Noto Sans’,sans-serif;letter-spacing:.08em;color:rgba(255,255,255,.35);white-space:nowrap}
-.lut-btn.on .lut-name{color:#F5C400}
-/* LUT active badge in HUD */
-#lut-hud{position:absolute;bottom:8px;right:8px;z-index:8;pointer-events:none;display:none}
-.lut-hud-lbl{font:700 8px/1 ‘Share Tech Mono’,monospace;letter-spacing:.1em;color:#F5C400;background:rgba(0,0,0,.6);padding:3px 7px;border-radius:3px;border:1px solid rgba(245,196,0,.35)}
 </style>
 
 </head>
@@ -265,38 +267,40 @@ border:1px solid rgba(255,68,68,.4);
   <div id="lb-t"></div><div id="lb-b"></div>
   <div id="lb-l"></div><div id="lb-r"></div>
 
-  <!-- TOP BAR -->
+  <!-- TOP STATUS BAR -->
 
   <div id="top">
-    <div class="t-left">
-      <div class="t-lbl">Format</div>
-      <div class="t-name" id="t-name">CINEMASCOPE</div>
+    <div class="top-toggles">
+      <button class="tgl" id="gridBtn">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="1" width="14" height="14" rx="1.5" stroke="currentColor" stroke-width="1.3"/><line x1="6" y1="1" x2="6" y2="15" stroke="currentColor" stroke-width="1"/><line x1="10" y1="1" x2="10" y2="15" stroke="currentColor" stroke-width="1"/><line x1="1" y1="6" x2="15" y2="6" stroke="currentColor" stroke-width="1"/><line x1="1" y1="10" x2="15" y2="10" stroke="currentColor" stroke-width="1"/></svg>
+      </button>
+      <button class="tgl" id="safeBtn">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M1 4L1 1L4 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M12 1L15 1L15 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M15 12L15 15L12 15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M4 15L1 15L1 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </button>
+      <button class="tgl" id="maskBtn"><span id="mask-ico"></span></button>
     </div>
-    <div class="t-mid"><div class="dot"></div><div class="t-live">LIVE</div></div>
-    <div class="t-right">
-      <div class="t-ratio" id="t-ratio">2.39</div>
-      <div class="t-rlbl">Aspect Ratio</div>
+    <div class="top-center">
+      <div class="top-fmt" id="t-name">CINEMASCOPE</div>
+      <div class="top-ratio" id="t-ratio">2.39 : 1</div>
+    </div>
+    <div class="top-right">
+      <div id="lut-badge"></div>
+      <button class="tgl-set" id="setBtn">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="2.2" stroke="currentColor" stroke-width="1.2"/><path d="M8 1v1.8M8 13.2V15M1 8h1.8M13.2 8H15M3.1 3.1l1.2 1.2M11.7 11.7l1.2 1.2M12.9 3.1l-1.2 1.2M4.3 11.7l-1.2 1.2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+      </button>
     </div>
   </div>
 
-  <!-- VIEWFINDER SPACER -->
+  <!-- VIEWFINDER -->
 
-  <div id="lut-hud"><div class="lut-hud-lbl" id="lut-hud-lbl"></div></div>
-  <div id="rec-timer"><span id="rec-dot"></span><span id="rec-time">00:00</span></div>
-  <div id="vf"></div>
+  <div id="vf">
+    <div id="rec-timer"><span id="rec-dot"></span><span id="rec-time">00:00</span></div>
+  </div>
 
-  <!-- BOTTOM CARD -->
+  <!-- FLOAT: LUT / lens / pills -->
 
-  <div id="card">
-    <div id="mode-row">
-      <button class="mode-btn on" id="mode-photo">PHOTO</button>
-      <button class="mode-btn" id="mode-video">VIDEO</button>
-    </div>
-    <div id="fps-row" style="display:none"></div>
-    <div id="codec-row">
-      <button class="codec-btn on" id="codec-rec709">Rec.709</button>
-      <button class="codec-btn" id="codec-hq">High Quality</button>
-    </div>
+  <div id="float-ctrl">
+    <div id="lut-row"></div>
     <div id="lens-row"></div>
     <div id="zoom-row">
       <span class="zoom-icon">−</span>
@@ -305,54 +309,82 @@ border:1px solid rgba(255,68,68,.4);
       <span class="zoom-val" id="z-val">1.0×</span>
     </div>
     <div id="pills-row"></div>
-    <div id="lut-row"></div>
-    <div id="ctrl-row">
-      <!-- Left group -->
-      <div class="cg">
-        <button class="ib" id="gridBtn">
-          <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="1" y="1" width="16" height="16" rx="2" stroke="currentColor" stroke-width="1.3"/><line x1="7" y1="1" x2="7" y2="17" stroke="currentColor" stroke-width="1.1"/><line x1="11" y1="1" x2="11" y2="17" stroke="currentColor" stroke-width="1.1"/><line x1="1" y1="7" x2="17" y2="7" stroke="currentColor" stroke-width="1.1"/><line x1="1" y1="11" x2="17" y2="11" stroke="currentColor" stroke-width="1.1"/></svg>
-          <span class="il">Grid</span>
-        </button>
-        <button class="ib" id="safeBtn">
-          <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M1 5L1 1L5 1" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M13 1L17 1L17 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M17 13L17 17L13 17" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M5 17L1 17L1 13" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
-          <span class="il">Safe</span>
-        </button>
-        <button class="ib" id="maskBtn">
-          <span id="mask-ico"></span>
-          <span class="il" id="mask-lbl">Off</span>
-        </button>
-      </div>
-      <!-- Shutter -->
-      <div class="cc">
-        <button id="cap"><div class="sh"><div class="sh-ring"></div><div class="sh-core"></div></div></button>
-        <span class="chint">Capture</span>
-      </div>
-      <div class="cc" id="rec-wrap" style="display:none">
-        <button id="rec-btn">
-          <div class="rec-ring" id="rec-ring"><div class="rec-core" id="rec-core"></div></div>
-        </button>
-        <span class="rec-btn-lbl" id="rec-lbl">REC</span>
-      </div>
-      <!-- Right group -->
-      <div class="cg">
-        <button class="ib" id="galBtn">
-          <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="1" y="4" width="16" height="13" rx="2" stroke="currentColor" stroke-width="1.3"/><rect x="3.5" y="2" width="11" height="13" rx="1.5" stroke="currentColor" stroke-width="1" opacity=".4"/><circle cx="5.5" cy="10" r="1.8" fill="currentColor" opacity=".7"/><path d="M1 15L6 10.5L9 13L12.5 9L17 15" stroke="currentColor" stroke-width="1.1" fill="none"/></svg>
-          <span class="il">Gallery</span>
-          <div class="badge" id="badge"></div>
-        </button>
-        <button class="ib" id="flipBtn">
-          <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M14.5 9A5.5 5.5 0 0 0 4.5 5.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><path d="M3.5 9A5.5 5.5 0 0 0 13.5 12.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><polyline points="2.5,4 4.5,7 7,5" stroke="currentColor" stroke-width="1.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/><polyline points="15.5,14 13.5,11 11,13" stroke="currentColor" stroke-width="1.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          <span class="il">Flip</span>
-        </button>
-        <button class="ib" id="setBtn">
-          <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="2.5" stroke="currentColor" stroke-width="1.3"/><path d="M9 1.5v2M9 14.5v2M1.5 9h2M14.5 9h2M3.7 3.7l1.4 1.4M12.9 12.9l1.4 1.4M14.3 3.7l-1.4 1.4M5.1 12.9l-1.4 1.4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
-          <span class="il">Settings</span>
-        </button>
-      </div>
-    </div>
   </div>
 
-  <!-- GALLERY OVERLAY -->
+  <!-- HARDWARE PANEL -->
+
+  <div id="hw-panel">
+    <!-- Info strip: SS / EV / ISO + mode -->
+    <div id="hw-info">
+      <div class="hw-stat">
+        <div class="hw-val" id="hw-ss">AUTO</div>
+        <div class="hw-key">SS</div>
+      </div>
+      <div class="hw-stat">
+        <div class="hw-val" id="hw-ev">0.0</div>
+        <div class="hw-key">EV</div>
+      </div>
+      <div class="hw-stat">
+        <div class="hw-val" id="hw-iso">AUTO</div>
+        <div class="hw-key">ISO</div>
+      </div>
+      <div class="hw-stat" style="flex:1.8">
+        <div style="display:flex;flex-direction:column;align-items:center;gap:4px;width:100%">
+          <div style="display:flex;gap:4px" id="mode-fps-row">
+            <div class="mode-grp">
+              <button class="mode-btn on" id="mode-photo">PHOTO</button>
+              <button class="mode-btn" id="mode-video">VIDEO</button>
+            </div>
+          </div>
+          <div style="display:flex;gap:4px;align-items:center">
+            <div id="fps-row"></div>
+            <div id="codec-row">
+              <button class="codec-btn on" id="codec-rec709">Rec.709</button>
+              <button class="codec-btn" id="codec-hq">HQ</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+```
+<!-- Main controls: thumb | shutter | mode-sel | flip -->
+<div id="hw-controls">
+  <!-- Gallery thumbnail -->
+  <button id="gal-thumb-btn">
+    <img id="gal-thumb-img" src="" alt="">
+    <svg class="gal-thumb-empty" width="20" height="20" viewBox="0 0 22 22" fill="none"><rect x="1" y="4" width="20" height="16" rx="2.5" stroke="currentColor" stroke-width="1.4"/><circle cx="7" cy="11" r="2" fill="currentColor" opacity=".6"/><path d="M1 17L7 12L11 15L15 10L21 17" stroke="currentColor" stroke-width="1.2" fill="none"/></svg>
+    <span class="gal-thumb-cnt" id="gal-cnt"></span>
+  </button>
+
+  <!-- Shutter (photo) -->
+  <div id="cap-wrap">
+    <button id="cap"></button>
+  </div>
+  <!-- REC (video, hidden) -->
+  <div id="rec-wrap" style="display:none">
+    <button id="rec-btn">
+      <div class="rec-sq" id="rec-sq"></div>
+    </button>
+  </div>
+
+  <!-- Mode selector (M=mask, S=safe, I=grid — visual style) -->
+  <div class="mode-sel">
+    <button class="msi" id="msi-mask" title="Mask"><span id="msi-mask-ico"></span></button>
+    <button class="msi" id="msi-safe" title="Safe">S</button>
+    <button class="msi" id="msi-grid" title="Grid">G</button>
+  </div>
+
+  <!-- Flip -->
+  <button id="flip-btn">
+    <svg width="20" height="20" viewBox="0 0 22 22" fill="none"><path d="M18 11A7 7 0 0 0 5.5 7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M4 11A7 7 0 0 0 16.5 15" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><polyline points="3,5.5 5.5,8.5 8.5,6.5" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/><polyline points="19,16.5 16.5,13.5 13.5,15.5" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </button>
+</div>
+```
+
+  </div>
+
+  <!-- GALLERY -->
 
   <div id="gallery">
     <div class="gh">
@@ -374,7 +406,7 @@ border:1px solid rgba(255,68,68,.4);
     </div>
   </div>
 
-  <!-- SETTINGS OVERLAY -->
+  <!-- SETTINGS -->
 
   <div id="settings">
     <div class="sh-hdr">
@@ -467,7 +499,7 @@ const vid     = document.getElementById('vid');
 const cv      = document.getElementById('cv');
 const ctx     = cv.getContext('2d');
 const topEl   = document.getElementById('top');
-const card    = document.getElementById('card');
+// card removed — now split into float-ctrl + bottom
 const tName   = document.getElementById('t-name');
 const tRatio  = document.getElementById('t-ratio');
 const lensRow = document.getElementById('lens-row');
@@ -479,12 +511,12 @@ const gridBtn = document.getElementById('gridBtn');
 const safeBtn = document.getElementById('safeBtn');
 const maskBtn = document.getElementById('maskBtn');
 const maskIco = document.getElementById('mask-ico');
-const maskLbl = document.getElementById('mask-lbl');
+// mask-lbl removed (icon-only button)
 const capBtn  = document.getElementById('cap');
-const galBtn  = document.getElementById('galBtn');
-const flipBtn = document.getElementById('flipBtn');
+const galBtn = document.getElementById('gal-thumb-btn');
+const flipBtn = document.getElementById('flip-btn');
 const setBtn  = document.getElementById('setBtn');
-const badge   = document.getElementById('badge');
+const badge = document.getElementById('gal-cnt');
 const toast   = document.getElementById('toast');
 const focus   = document.getElementById('focus');
 const gallery = document.getElementById('gallery');
@@ -521,7 +553,7 @@ function applyFmt() {
 function getM() {
   const W = window.innerWidth, H = window.innerHeight;
   const tH = topEl.offsetHeight || 52;
-  const cH = card.offsetHeight  || 190;
+  const cH = (document.getElementById('float-ctrl').offsetHeight||80) + (document.getElementById('hw-panel').offsetHeight||200);
   const fH = H - tH - cH;
   const r  = FMTS[fi].r;
   const ah = W / r;
@@ -720,8 +752,9 @@ function draw(ts) {
 function updateMaskBtn() {
   const m = MASK[maskMode];
   maskIco.innerHTML = m.svg;
-  maskLbl.textContent = m.lbl;
   maskBtn.classList.toggle('on', maskMode > 0);
+  const msiEl=document.getElementById('msi-mask-ico');if(msiEl)msiEl.innerHTML=MASK[maskMode].svg;
+  const msiBtn=document.getElementById('msi-mask');if(msiBtn)msiBtn.classList.toggle('on',maskMode>0);
 }
 function cycleMask() {
   maskMode = (maskMode + 1) % 3;
@@ -892,7 +925,7 @@ function updateFnamePrev() { fnamePrev.textContent = buildFilename(); }
 // ── TOAST ─────────────────────────────────────────────────────────────────────
 function showToast(msg, accent=false) {
   toast.textContent = msg;
-  toast.style.bottom = (card.offsetHeight + 10) + 'px';
+  toast.style.bottom = ((document.getElementById('float-ctrl').offsetHeight||80)+(document.getElementById('hw-panel').offsetHeight||200)+10)+'px';
   toast.className = accent ? 'accent' : '';
   toast.style.opacity = '1';
   toast.style.pointerEvents = 'none';
@@ -902,7 +935,7 @@ function showToast(msg, accent=false) {
 }
 function showInstantToast(photo, res) {
   toast.innerHTML = `${res} &nbsp;<span style="opacity:.5">|</span>&nbsp; <span style="text-decoration:underline">写真に保存</span>`;
-  toast.style.bottom = (card.offsetHeight + 10) + 'px';
+  toast.style.bottom = ((document.getElementById('float-ctrl').offsetHeight||80)+(document.getElementById('hw-panel').offsetHeight||200)+10)+'px';
   toast.className = '';
   toast.style.opacity = '1';
   toast.style.pointerEvents = 'auto';
@@ -934,8 +967,19 @@ async function shareAll() {
 // ── GALLERY ───────────────────────────────────────────────────────────────────
 function updateBadge() {
   const n = photos.length;
-  badge.textContent = n>99?'99+':n; badge.style.display = n>0?'flex':'none';
+  badge.textContent = n > 0 ? (n>99?'99+':String(n)) : '';
   gCount.textContent = n + ' PHOTO' + (n!==1?'S':'');
+  // Update gallery thumbnail
+  const thumbImg = document.getElementById('gal-thumb-img');
+  const emptyIco = document.querySelector('.gal-thumb-empty');
+  if (n > 0 && photos[photos.length-1]) {
+    thumbImg.src = photos[photos.length-1].url;
+    thumbImg.style.display = 'block';
+    if (emptyIco) emptyIco.style.display = 'none';
+  } else {
+    thumbImg.style.display = 'none';
+    if (emptyIco) emptyIco.style.display = 'block';
+  }
 }
 function openGallery()  { gallery.style.display='flex'; renderGrid(); }
 function closeGallery() { gallery.style.display='none'; gDetail.style.display='none'; }
@@ -975,6 +1019,13 @@ capBtn.onclick  = capture;
 galBtn.onclick  = openGallery;
 flipBtn.onclick = () => { facing=facing==='environment'?'user':'environment'; lensRow.style.display='none'; zoomRow.style.display='none'; lensRow.innerHTML=''; zoomCap=null; zoom=1; if(stream)initCam(); };
 setBtn.onclick  = openSettings;
+
+// MSI buttons mirror the top toggles
+document.getElementById('msi-mask').onclick = cycleMask;
+document.getElementById('msi-safe').onclick = () => { safeOn=!safeOn; safeBtn.classList.toggle('on',safeOn); document.getElementById('msi-safe').classList.toggle('on',safeOn); };
+document.getElementById('msi-grid').onclick = () => { gridOn=!gridOn; gridBtn.classList.toggle('on',gridOn); document.getElementById('msi-grid').classList.toggle('on',gridOn); };
+// Sync MSI mask icon with mask mode
+const _origUm = _um;
 
 document.getElementById('g-close').onclick  = closeGallery;
 document.getElementById('g-all-btn').onclick = shareAll;
@@ -1056,14 +1107,9 @@ function applyLutPreview() {
   const lut = LUTS[currentLutIdx];
   vid.style.filter = lut.css;
   // HUD badge
-  const hudEl = document.getElementById('lut-hud');
-  const hudLbl = document.getElementById('lut-hud-lbl');
-  if (lut.id === 'off') {
-    hudEl.style.display = 'none';
-  } else {
-    hudLbl.textContent = lut.name;
-    hudEl.style.display = 'block';
-  }
+
+  const badgeEl = document.getElementById('lut-badge');
+  if (badgeEl) { badgeEl.textContent = lut.id==='off' ? '' : lut.name; badgeEl.style.display = lut.id==='off' ? 'none' : 'inline-block'; }
   // Update LUT buttons
   document.querySelectorAll('.lut-btn').forEach((b,i) => {
     b.classList.toggle('on', i === currentLutIdx);
@@ -1120,7 +1166,7 @@ function setMode(mode) {
   videoMode = mode;
   document.getElementById('mode-photo').classList.toggle('on', mode==='photo');
   document.getElementById('mode-video').classList.toggle('on', mode==='video');
-  document.getElementById('cap').parentElement.style.display   = mode==='photo' ? 'flex':'none';
+  document.getElementById('cap-wrap').style.display = mode==='photo'?'block':'none';
   document.getElementById('rec-wrap').style.display             = mode==='video' ? 'flex':'none';
   document.getElementById('codec-row').style.display            = mode==='video' ? 'flex':'none';
   document.getElementById('fps-row').style.display              = mode==='video' ? 'flex':'none';
@@ -1222,9 +1268,11 @@ async function startRec() {
   drawRecFrame();
 
   // UI
-  document.getElementById('rec-core').classList.add('recording');
-  document.getElementById('rec-ring').classList.add('recording');
-  document.getElementById('rec-lbl').textContent = 'STOP';
+  const rb=document.getElementById('rec-btn');
+  if(rb)rb.classList.add('recording');
+  const rsq=document.getElementById('rec-sq');
+  if(rsq)rsq.classList.add('recording');
+
   document.getElementById('rec-timer').style.display = 'block';
   recSecs = 0;
   updateRecTimer();
@@ -1237,9 +1285,11 @@ function stopRec() {
   isRecording = false;
   clearInterval(recTimerInterval);
   recTimerInterval = null;
-  document.getElementById('rec-core').classList.remove('recording');
-  document.getElementById('rec-ring').classList.remove('recording');
-  document.getElementById('rec-lbl').textContent = 'REC';
+  const rb2=document.getElementById('rec-btn');
+  if(rb2)rb2.classList.remove('recording');
+  const rsq2=document.getElementById('rec-sq');
+  if(rsq2)rsq2.classList.remove('recording');
+
   document.getElementById('rec-timer').style.display = 'none';
 }
 
